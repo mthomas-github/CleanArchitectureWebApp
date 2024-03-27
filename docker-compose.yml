@@ -40,6 +40,5 @@ services:
   csdtpfblazorwebapp-redis:
     image: redis:latest
     container_name: CSDTPFBlazorWebApp.Redis
-    restart: always
     ports:
         - 6379:6379  
