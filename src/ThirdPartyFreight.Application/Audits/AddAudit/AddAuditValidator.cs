@@ -2,7 +2,7 @@
 
 namespace ThirdPartyFreight.Application.Audits.AddAudit;
 
-public class AddAuditValidator : AbstractValidator<AddAuditCommand>
+internal sealed class AddAuditValidator : AbstractValidator<AddAuditCommand>
 {
     public AddAuditValidator()
     { 

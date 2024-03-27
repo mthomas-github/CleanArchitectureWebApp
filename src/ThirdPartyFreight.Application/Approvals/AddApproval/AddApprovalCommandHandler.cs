@@ -5,7 +5,7 @@ using ThirdPartyFreight.Application.Abstractions.Messaging;
 
 namespace ThirdPartyFreight.Application.Approvals.AddApproval;
 
-public class AddApprovalCommandHandler(IApprovalRepository approvalRepository, IUnitOfWork unitOfWork, IDateTimeProvider dateTimeProvider)
+internal sealed class AddApprovalCommandHandler(IApprovalRepository approvalRepository, IUnitOfWork unitOfWork, IDateTimeProvider dateTimeProvider)
     :ICommandHandler<AddApprovalCommand>
 {
     public async Task<Result> Handle(AddApprovalCommand request, CancellationToken cancellationToken)

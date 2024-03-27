@@ -22,4 +22,9 @@
     <Folder Include="Envelopes\UpdateEnvelope\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <InternalsVisibleTo Include="ThirdPartyFreight.Application.UnitTests" />
+    <InternalsVisibleTo Include="ThirdPartyFreight.Api.FunctionalTests" />
+  </ItemGroup>
+
 </Project>

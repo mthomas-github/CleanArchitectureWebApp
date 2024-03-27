@@ -4,7 +4,7 @@ using ThirdPartyFreight.Application.Abstractions.Messaging;
 
 namespace ThirdPartyFreight.Application.Audits.AddAudit;
 
-public class AddAuditCommandHandler(IAuditRepository auditRepository, IUnitOfWork unitOfWork)
+internal sealed class AddAuditCommandHandler(IAuditRepository auditRepository, IUnitOfWork unitOfWork)
     :ICommandHandler<AddAuditCommand>
 {
     public async Task<Result> Handle(AddAuditCommand request, CancellationToken cancellationToken)

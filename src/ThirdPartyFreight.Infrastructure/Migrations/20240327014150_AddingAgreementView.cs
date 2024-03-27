@@ -2,15 +2,15 @@
 
 #nullable disable
 
-namespace ThirdPartyFreight.Infrastructure.Migrations
+namespace ThirdPartyFreight.Infrastructure.Migrations;
+
+/// <inheritdoc />
+public partial class AddingAgreementView : Migration
 {
     /// <inheritdoc />
-    public partial class AddingAgreementView : Migration
+    protected override void Up(MigrationBuilder migrationBuilder)
     {
-        /// <inheritdoc />
-        protected override void Up(MigrationBuilder migrationBuilder)
-        {
-            migrationBuilder.Sql(@"
+        migrationBuilder.Sql(@"
                 CREATE VIEW View_TPFAgreements AS (
                   SELECT
                   	a.Id,
@@ -70,12 +70,11 @@ namespace ThirdPartyFreight.Infrastructure.Migrations
                   LEFT JOIN TPF_Notes n
                   	ON n.AgreementId = a.Id
                   );");
-        }
+    }
 
-        /// <inheritdoc />
-        protected override void Down(MigrationBuilder migrationBuilder)
-        {
-            migrationBuilder.Sql("DROP VIEW View_TPFAgreements;");
-        }
+    /// <inheritdoc />
+    protected override void Down(MigrationBuilder migrationBuilder)
+    {
+        migrationBuilder.Sql("DROP VIEW View_TPFAgreements;");
     }
 }

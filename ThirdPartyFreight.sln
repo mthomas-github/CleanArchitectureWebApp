@@ -19,6 +19,16 @@ Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-co
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "elsa", "elsa", "{067FC9AD-031D-41B1-ADAC-D2AE6C54CD0A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ThirdPartyFreight.Api.FunctionalTests", "test\ThirdPartyFreight.Api.FunctionalTests\ThirdPartyFreight.Api.FunctionalTests.csproj", "{206421B1-25A2-44F5-AAA8-3E05921D010D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ThirdPartyFreight.Application.IntegrationTests", "test\ThirdPartyFreight.Application.IntegrationTests\ThirdPartyFreight.Application.IntegrationTests.csproj", "{6F8FBBB4-82E0-4D64-97AF-803B33A2E443}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ThirdPartyFreight.Application.UnitTests", "test\ThirdPartyFreight.Application.UnitTests\ThirdPartyFreight.Application.UnitTests.csproj", "{3D783600-BF8A-4D85-842E-1637EA1FCA55}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ThirdPartyFreight.ArchitectureTests", "test\ThirdPartyFreight.ArchitectureTests\ThirdPartyFreight.ArchitectureTests.csproj", "{DE2BB387-1EBA-455E-9A19-125FA6BAC1E1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ThirdPartyFreight.Domain.UnitTests", "test\ThirdPartyFreight.Domain.UnitTests\ThirdPartyFreight.Domain.UnitTests.csproj", "{FD4F9662-83DF-4681-9F02-539CB5E33B44}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,6 +55,26 @@ Global
 		{03A48B1A-0CFD-4E47-92CA-29B5F5A36B10}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{03A48B1A-0CFD-4E47-92CA-29B5F5A36B10}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{03A48B1A-0CFD-4E47-92CA-29B5F5A36B10}.Release|Any CPU.Build.0 = Release|Any CPU
+		{206421B1-25A2-44F5-AAA8-3E05921D010D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{206421B1-25A2-44F5-AAA8-3E05921D010D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{206421B1-25A2-44F5-AAA8-3E05921D010D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{206421B1-25A2-44F5-AAA8-3E05921D010D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6F8FBBB4-82E0-4D64-97AF-803B33A2E443}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6F8FBBB4-82E0-4D64-97AF-803B33A2E443}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6F8FBBB4-82E0-4D64-97AF-803B33A2E443}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6F8FBBB4-82E0-4D64-97AF-803B33A2E443}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3D783600-BF8A-4D85-842E-1637EA1FCA55}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3D783600-BF8A-4D85-842E-1637EA1FCA55}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3D783600-BF8A-4D85-842E-1637EA1FCA55}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3D783600-BF8A-4D85-842E-1637EA1FCA55}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DE2BB387-1EBA-455E-9A19-125FA6BAC1E1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DE2BB387-1EBA-455E-9A19-125FA6BAC1E1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DE2BB387-1EBA-455E-9A19-125FA6BAC1E1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DE2BB387-1EBA-455E-9A19-125FA6BAC1E1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FD4F9662-83DF-4681-9F02-539CB5E33B44}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FD4F9662-83DF-4681-9F02-539CB5E33B44}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FD4F9662-83DF-4681-9F02-539CB5E33B44}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FD4F9662-83DF-4681-9F02-539CB5E33B44}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -54,6 +84,11 @@ Global
 		{A8506DD4-DB1A-45A5-BF97-72DA07435023} = {4C942005-7D69-4BD0-BA3E-C1754DD17F30}
 		{C9C273FE-40A3-48A9-87E1-F205AE37E822} = {4C942005-7D69-4BD0-BA3E-C1754DD17F30}
 		{FBCED092-8555-4BF5-BF84-0699F0FD688F} = {4C942005-7D69-4BD0-BA3E-C1754DD17F30}
+		{206421B1-25A2-44F5-AAA8-3E05921D010D} = {46DE2999-D82D-4370-BC82-E07955E425FF}
+		{6F8FBBB4-82E0-4D64-97AF-803B33A2E443} = {46DE2999-D82D-4370-BC82-E07955E425FF}
+		{3D783600-BF8A-4D85-842E-1637EA1FCA55} = {46DE2999-D82D-4370-BC82-E07955E425FF}
+		{DE2BB387-1EBA-455E-9A19-125FA6BAC1E1} = {46DE2999-D82D-4370-BC82-E07955E425FF}
+		{FD4F9662-83DF-4681-9F02-539CB5E33B44} = {46DE2999-D82D-4370-BC82-E07955E425FF}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {BAF98603-8778-40E7-804B-7B80DCA7C5F1}

@@ -2,7 +2,7 @@
 
 namespace ThirdPartyFreight.Application.Approvals.AddApproval;
 
-public class AddApprovalValidator : AbstractValidator<AddApprovalCommand>
+internal sealed class AddApprovalValidator : AbstractValidator<AddApprovalCommand>
 {
     public AddApprovalValidator()
     {

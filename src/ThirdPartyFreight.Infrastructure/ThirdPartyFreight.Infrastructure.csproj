@@ -31,4 +31,9 @@
     <ProjectReference Include="..\ThirdPartyFreight.Application\ThirdPartyFreight.Application.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <InternalsVisibleTo Include="ThirdPartyFreight.Api.FunctionalTests" />
+    <InternalsVisibleTo Include="ThirdPartyFreight.Application.IntegrationTests" />
+  </ItemGroup>
+
 </Project>
