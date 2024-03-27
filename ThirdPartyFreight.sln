@@ -1,0 +1,59 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.9.34723.18
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{4C942005-7D69-4BD0-BA3E-C1754DD17F30}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{46DE2999-D82D-4370-BC82-E07955E425FF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ThirdPartyFreight.Domain", "src\ThirdPartyFreight.Domain\ThirdPartyFreight.Domain.csproj", "{77FFAA2E-6A71-416A-B021-3254F4DA420A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ThirdPartyFreight.Application", "src\ThirdPartyFreight.Application\ThirdPartyFreight.Application.csproj", "{A8506DD4-DB1A-45A5-BF97-72DA07435023}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ThirdPartyFreight.Infrastructure", "src\ThirdPartyFreight.Infrastructure\ThirdPartyFreight.Infrastructure.csproj", "{C9C273FE-40A3-48A9-87E1-F205AE37E822}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ThirdPartyFreight.Api", "src\ThirdPartyFreight.Api\ThirdPartyFreight.Api.csproj", "{FBCED092-8555-4BF5-BF84-0699F0FD688F}"
+EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{03A48B1A-0CFD-4E47-92CA-29B5F5A36B10}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{77FFAA2E-6A71-416A-B021-3254F4DA420A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{77FFAA2E-6A71-416A-B021-3254F4DA420A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{77FFAA2E-6A71-416A-B021-3254F4DA420A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{77FFAA2E-6A71-416A-B021-3254F4DA420A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A8506DD4-DB1A-45A5-BF97-72DA07435023}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A8506DD4-DB1A-45A5-BF97-72DA07435023}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A8506DD4-DB1A-45A5-BF97-72DA07435023}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A8506DD4-DB1A-45A5-BF97-72DA07435023}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C9C273FE-40A3-48A9-87E1-F205AE37E822}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C9C273FE-40A3-48A9-87E1-F205AE37E822}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C9C273FE-40A3-48A9-87E1-F205AE37E822}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C9C273FE-40A3-48A9-87E1-F205AE37E822}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FBCED092-8555-4BF5-BF84-0699F0FD688F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FBCED092-8555-4BF5-BF84-0699F0FD688F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FBCED092-8555-4BF5-BF84-0699F0FD688F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FBCED092-8555-4BF5-BF84-0699F0FD688F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{03A48B1A-0CFD-4E47-92CA-29B5F5A36B10}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{03A48B1A-0CFD-4E47-92CA-29B5F5A36B10}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{03A48B1A-0CFD-4E47-92CA-29B5F5A36B10}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{03A48B1A-0CFD-4E47-92CA-29B5F5A36B10}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{77FFAA2E-6A71-416A-B021-3254F4DA420A} = {4C942005-7D69-4BD0-BA3E-C1754DD17F30}
+		{A8506DD4-DB1A-45A5-BF97-72DA07435023} = {4C942005-7D69-4BD0-BA3E-C1754DD17F30}
+		{C9C273FE-40A3-48A9-87E1-F205AE37E822} = {4C942005-7D69-4BD0-BA3E-C1754DD17F30}
+		{FBCED092-8555-4BF5-BF84-0699F0FD688F} = {4C942005-7D69-4BD0-BA3E-C1754DD17F30}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {BAF98603-8778-40E7-804B-7B80DCA7C5F1}
+	EndGlobalSection
+EndGlobal

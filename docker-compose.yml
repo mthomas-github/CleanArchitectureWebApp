@@ -1,0 +1,47 @@
+version: '3.4'
+
+services:
+  thirdpartyfreight.api:
+    image: ${DOCKER_REGISTRY-}thirdpartyfreightapi
+    container_name: ThirdPartyFreight.Api
+    build:
+      context: .
+      dockerfile: src/ThirdPartyFreight.Api/Dockerfile
+  csdtpfblazorwebapp-db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: CSDTPFBlazorWebApp.Db
+    environment:
+      SA_PASSWORD: "SuperHardPassword!!"
+      ACCEPT_EULA: "Y"
+    ports:
+        - 1433:1433
+    volumes:
+        -  ./.containers/database:/var/opt/mssql/data
+  csdtpfblazorwebapp-idp:
+    image: quay.io/keycloak/keycloak:latest
+    container_name: CSDTPFBlazorWebApp.Identity
+    environment:
+        - KEYCLOAK_ADMIN=admin
+        - KEYCLOAK_ADMIN_PASSWORD=admin
+    command:
+        - start-dev
+        - --import-realm 
+    volumes:
+        - ./.files/csd-tpf-realm-export.json:/opt/keycloak/data/import/realm.json
+        - ./.containers/identity:/opt/keycloak/data
+    ports:
+        - 18080:8080 
+  csdtpfblazorwebapp-seq:
+    image: datalust/seq:latest
+    container_name: CSDTPFBlazorWebApp.Seq
+    environment:
+        - ACCEPT_EULA=Y
+    ports:
+        - 5341:5341
+        - 8081:80
+  csdtpfblazorwebapp-redis:
+    image: redis:latest
+    container_name: CSDTPFBlazorWebApp.Redis
+    restart: always
+    ports:
+        - 6379:6379  
