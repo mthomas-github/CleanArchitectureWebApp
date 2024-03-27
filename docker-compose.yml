@@ -25,8 +25,6 @@ services:
         - KEYCLOAK_ADMIN_PASSWORD=admin
     command:
         - start-dev
-    volumes:
-        - ./.containers/identity:/opt/keycloak/data
     ports:
         - 18080:8080 
   csdtpfblazorwebapp-seq:
