@@ -25,9 +25,7 @@ services:
         - KEYCLOAK_ADMIN_PASSWORD=admin
     command:
         - start-dev
-        - --import-realm 
     volumes:
-        - ./.files/csd-tpf-realm-export.json:/opt/keycloak/data/import/realm.json
         - ./.containers/identity:/opt/keycloak/data
     ports:
         - 18080:8080 

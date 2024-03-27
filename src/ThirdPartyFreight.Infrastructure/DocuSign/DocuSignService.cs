@@ -241,7 +241,6 @@ internal sealed class DocuSignService(
     private static EnvelopeDefinition MakeEnvelope(string signerEmail, string signerName, string templateId,
         string customerNumber, string companyName, string shipSites)
     {
-        //TODO: Modify this to be pull from Configuration or App Settings
         Text textCustomerNumber = new()
         {
             TabLabel = "prefill-customerNumber",

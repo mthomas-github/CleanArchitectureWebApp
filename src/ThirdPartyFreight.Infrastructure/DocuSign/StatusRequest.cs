@@ -24,13 +24,13 @@ public sealed class StatusRequest
         ToDate = toDate;
     }
 
-    public string UserFilter { get; init; } = "sender";
-    public string EnvelopeIds { get; init; } = string.Empty;
-    public string IncludeInformation { get; init; } = "recipients";
-    public string LastQueriedDate { get; init; } = string.Empty;
-    public string OrderBy { get; init; } = "last_modified";
-    public string FromStatus { get; init; } = "Changed";
-    public string StatusToInclude { get; init; } = "completed,declined,delivered,processing,signed,voided";
-    public string? FromDate { get; init; } = string.Empty;
-    public string? ToDate { get; init; } = string.Empty;
+    public string UserFilter { get; init; }
+    public string EnvelopeIds { get; init; }
+    public string IncludeInformation { get; init; }
+    public string LastQueriedDate { get; init; }
+    public string OrderBy { get; init; }
+    public string FromStatus { get; init; }
+    public string StatusToInclude { get; init; }
+    public string? FromDate { get; init; }
+    public string? ToDate { get; init; }
 }
