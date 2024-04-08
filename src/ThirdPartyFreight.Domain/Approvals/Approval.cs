@@ -60,4 +60,31 @@ public sealed class Approval : Entity
         approval.RaiseDomainEvent(new ApprovalCreatedDomainEvent(approval.Id));
         return approval;
     }
+
+    public static Approval Update(
+        Guid id,
+        DateTime? firstApprovalOnUtc,
+        DateTime? firstApprovalEndUtc,
+        DateTime? secondApprovalOnUtc,
+        DateTime? secondApprovalEndUtc,
+        DateTime? thirdApprovalOnUtc,
+        DateTime? thirdApprovalEndUtc,
+        DateTime? completedOn)
+    {
+        var approval = new Approval(
+                       id,
+                                  Guid.Empty,
+                                  DateTime.MinValue,
+                                  firstApprovalOnUtc,
+                                  firstApprovalEndUtc,
+                                  secondApprovalOnUtc,
+                                  secondApprovalEndUtc,
+                                  thirdApprovalOnUtc,
+                                  thirdApprovalEndUtc,
+                                  completedOn
+                              );
+
+        approval.RaiseDomainEvent(new ApprovalUpdatedDomainEvent(approval.Id));
+        return approval;
+    }
 }
