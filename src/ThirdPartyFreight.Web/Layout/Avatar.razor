@@ -1,0 +1,17 @@
+﻿<TelerikAvatar 
+    Type="AvatarType.Icon"
+    FillMode="@FillMode"
+    Rounded="@Rounded"
+    Size="@Size"
+    ThemeColor="@ThemeColor"
+    Bordered="@Bordered">
+    <TelerikSvgIcon Icon="@SvgIcon.User"></TelerikSvgIcon>
+</TelerikAvatar>
+
+@code {
+    public bool Bordered { get; set; } = true;
+    public string FillMode { get; set; } = "ThemeConstants.Button.FillMode.Outline";
+    public string Rounded { get; set; } = "ThemeConstants.Button.Rounded.Full";
+    public string Size { get; set; } = "ThemeConstants.Button.Size.Medium";
+    public string ThemeColor { get; set; } = "ThemeConstants.Button.ThemeColor.Base";
+}

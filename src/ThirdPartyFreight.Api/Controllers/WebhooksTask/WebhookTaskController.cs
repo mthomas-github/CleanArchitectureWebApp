@@ -9,9 +9,5 @@ namespace ThirdPartyFreight.Api.Controllers.WebhooksTask;
 
 public class WebhookTaskController : ControllerBase
 {
-    [HttpPost("run-task")]
-    public async Task<IActionResult> RunTask(WebhookEvent webhookEvent, CancellationToken cancellationToken)
-    {
 
-    }
 }

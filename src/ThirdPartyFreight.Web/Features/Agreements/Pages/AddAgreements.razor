@@ -1,0 +1,131 @@
+﻿@page "/new-agreement"
+@page "/edit-agreement"
+
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+
+@if (ShowWizard)
+{
+    <Wizard Steps="@_contentUiSteps" OnFinish="@OnFinish" StartingStep="@StartingStep"></Wizard>
+}
+else
+{
+    <div class="demo-alert demo-alert-success" role="alert">
+        The order was submitted successfully.
+    </div>
+}
+
+
+@code {
+    private bool ShowWizard { get; set; } = true;
+    private int StartingStep { get; set; } = 0;
+
+    private static Agreement? _dataModel = null;
+    private List<UiStep>? _contentUiSteps;
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (!ShowWizard && !firstRender)
+        {
+            NavigationManager.NavigateTo("./Agreements");
+        };
+    }
+
+    public void OnStepFinish(WizardStepChangeEventArgs args, Agreement agreement)
+    {
+        _dataModel = agreement;
+
+        if (args.TargetIndex != 3) return;
+        agreement.CreatedBy = "admin";
+        agreement.CsrName = "admin";
+        HandleDataModelChanged(agreement);
+    }
+
+    private static void HandleDataModelChanged(Agreement newDataModel)
+    {
+        _dataModel = newDataModel;
+    }
+
+    private async Task OnFinish()
+    {
+        var result = await
+            Http.PostAsJsonAsync("api/Agreements", _dataModel);
+        var msg = await result.Content.ReadFromJsonAsync<int>();
+        ShowWizard = false;
+        StateHasChanged();
+    }
+
+    protected override void OnInitialized()
+    {
+        _contentUiSteps =
+        [
+            new UiStep
+            {
+                StepLabel = "Agreement AgreementType",
+                ChildContent = (dataModel) =>
+                {
+                    // Render your component here
+                    return builder =>
+                    {
+                        builder.OpenComponent(0, typeof(AgreementTypeStep));
+                        builder.AddAttribute(1, "DataModel", dataModel);
+                        builder.CloseComponent();
+                    };
+                },
+                OnChange = OnStepFinish,
+            },
+
+
+        new UiStep
+            {
+                StepLabel = "Customer Information",
+                ChildContent = (dataModel) =>
+                {
+                    // Render your component here
+                    return builder =>
+                    {
+                        builder.OpenComponent(0, typeof(AgreementCustomerInformationStep));
+                        builder.AddAttribute(1, "DataModel", dataModel);
+                        builder.CloseComponent();
+                    };
+                },
+                OnChange = OnStepFinish,
+            },
+
+
+        new UiStep
+            {
+                StepLabel = "Sites Information",
+                ChildContent = (dataModel) =>
+                {
+                    // Render your component here
+                    return builder =>
+                    {
+                        builder.OpenComponent(0, typeof(AgreementSitesStep));
+                        builder.AddAttribute(1, "DataModel", dataModel);
+                        builder.CloseComponent();
+                    };
+                },
+                OnChange = OnStepFinish,
+            },
+
+
+        new UiStep
+            {
+                StepLabel = "Review",
+                ChildContent = (dataModel) =>
+                {
+                    // Render your component here
+                    return builder =>
+                    {
+                        builder.OpenComponent(0, typeof(AgreementReviewStep));
+                        builder.AddAttribute(1, "DataModel", dataModel);
+                        builder.CloseComponent();
+                    };
+                },
+                OnChange = OnStepFinish,
+            }
+        ];
+    }
+
+}

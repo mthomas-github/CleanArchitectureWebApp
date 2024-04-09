@@ -1,0 +1,36 @@
+﻿<TelerikCard Class="select-customer-card">
+    <CardBody>
+        <TelerikFloatingLabel Text="Current Status:" Class="custom-label">
+            <div class="k-form-field-wrap txt-margin-bottom">
+                <TelerikTextBox FillMode="@FillMode" Rounded="@Rounded" Size="@Size" ReadOnly="@ReadOnly" @bind-Value="@Status"></TelerikTextBox>
+            </div>
+        </TelerikFloatingLabel>
+        <TelerikFloatingLabel Text="Agreement Type:" Class="custom-label">
+            <div class="k-form-field-wrap txt-margin-bottom">
+                <TelerikTextBox FillMode="@FillMode" Rounded="@Rounded" Size="@Size" ReadOnly="@ReadOnly" @bind-Value="@AgreementType"></TelerikTextBox>
+            </div>
+        </TelerikFloatingLabel>
+        <TelerikFloatingLabel Text="Envelope Status:" Class="custom-label">
+            <div class="k-form-field-wrap txt-margin-bottom">
+                <TelerikTextBox FillMode="@FillMode" Rounded="@Rounded" Size="@Size" ReadOnly="@ReadOnly" @bind-Value="@EnvelopeStatus"></TelerikTextBox>
+            </div>
+        </TelerikFloatingLabel>
+        <TelerikFloatingLabel Text="MDM Ticket#:" Class="custom-label">
+            <div class="k-form-field-wrap txt-margin-bottom">
+                <TelerikTextBox FillMode="@FillMode" Rounded="@Rounded" Size="@Size" ReadOnly="@ReadOnly" @bind-Value="@MdmTicketNumber"></TelerikTextBox>
+            </div>
+        </TelerikFloatingLabel>
+    </CardBody>
+</TelerikCard>
+
+@code {
+    [Parameter] public required string Status { get; set; } = string.Empty;
+    [Parameter] public required string AgreementType { get; set; } = string.Empty;
+    [Parameter] public string? EnvelopeStatus { get; set; } = string.Empty;
+    [Parameter] public string? MdmTicketNumber { get; set; } = string.Empty;
+
+    private string FillMode { get; set; } = ThemeConstants.TextBox.FillMode.Flat;
+    private string Rounded { get; set; } = ThemeConstants.TextBox.Rounded.Large;
+    private string Size { get; set; } = ThemeConstants.TextBox.Size.Large;
+    private bool ReadOnly { get; set; } = true;
+}

@@ -1,0 +1,24 @@
+﻿@if (ColSpanSize.HasValue)
+{
+    <TileLayoutItem HeaderText="@TileTitle" ColSpan="@ColSpanSize.Value">
+        <Content>
+            @ChildContent
+        </Content>
+    </TileLayoutItem>
+}
+else
+{
+    <TileLayoutItem HeaderText="@TileTitle">
+        <Content>
+            @ChildContent
+        </Content>
+    </TileLayoutItem>
+}
+
+@code {
+    [Parameter] public required string TileTitle { get; set; } = string.Empty;
+
+    [Parameter] public int? ColSpanSize { get; set; }
+
+    [Parameter] public RenderFragment ChildContent { get; set; } = default!;
+}

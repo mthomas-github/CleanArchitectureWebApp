@@ -1,0 +1,23 @@
+﻿<TelerikTabStrip @bind-ActiveTabIndex="@ActiveTabIndex">
+
+    @foreach (var grid in GridList)
+    {
+        <TabStripTab Title="@grid.GridName">
+            <TelerikGrid Data="@grid.GridData" Height="100%" Class="grid-no-scroll" Pageable="true">
+                <GridColumns>
+                    @foreach (var col in grid.Columns)
+                    {
+                        <GridColumn Field="@col.Field" Title="@col.Title" />
+                    }
+                </GridColumns>
+            </TelerikGrid>
+        </TabStripTab>
+    }
+</TelerikTabStrip>
+
+@code {
+
+    [Parameter] public List<ModalGrid> GridList { get; set; } = [];
+    private int ActiveTabIndex { get; set; } = 0;
+
+}

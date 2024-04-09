@@ -1,0 +1,60 @@
+﻿<TelerikStackLayout Orientation="StackLayoutOrientation.Vertical" Spacing="15px">
+    <TelerikCard>
+        <CardBody>
+            <div class="button-container">
+                @foreach (var btn in _agreementButtons)
+                {
+                    <TelerikButton @onclick="@(() => SetActiveButton(btn))" Class="@btn.BtnClass" FillMode="@(btn.BtnFillMode)"
+                                   ThemeColor="@GetButtonThemeColor(btn)">@btn.BtnLabel</TelerikButton>
+                }
+            </div>
+        </CardBody>
+    </TelerikCard>
+</TelerikStackLayout>
+
+@code {
+
+    [Parameter]
+    public Agreement? DataModel { get; set; }
+
+    [Parameter]
+    public EventCallback<Agreement> DataModelChanged { get; set; }
+
+    private readonly List<AgreementButton> _agreementButtons =
+    [
+        new AgreementButton { BtnLabel = "Add", IsActive = false, AgreementType = AgreementTypesEnum.Add},
+    new AgreementButton { BtnLabel = "Remove", IsActive = false, AgreementType = AgreementTypesEnum.Removal},
+    new AgreementButton { BtnLabel = "Update", IsActive = false, AgreementType = AgreementTypesEnum.Update }
+    ];
+
+    private class AgreementButton
+    {
+        public AgreementTypesEnum AgreementType { get; init; }
+        public string BtnLabel { get; init; } = string.Empty;
+        public string BtnClass { get; set; } = "agreementTypeBtn";
+        public string BtnFillMode { get; set; } = ThemeConstants.Button.FillMode.Solid;
+        public string BtnThemeColor { get; set; } = ThemeConstants.Button.ThemeColor.Primary;
+        public bool IsActive { get; set; }
+    }
+
+    // Method to set the active button
+    private void SetActiveButton(AgreementButton button)
+    {
+        foreach (var btn in _agreementButtons)
+        {
+            btn.IsActive = false;
+        }
+
+        button.IsActive = true;
+        if (DataModel is not null)
+        {
+            DataModel.AgreementType = button.AgreementType;
+            DataModelChanged.InvokeAsync(DataModel);
+        }
+    }
+
+    private static string GetButtonThemeColor(AgreementButton button)
+    {
+        return button.IsActive ? ThemeConstants.Button.ThemeColor.Success : ThemeConstants.Button.ThemeColor.Primary;
+    }
+}

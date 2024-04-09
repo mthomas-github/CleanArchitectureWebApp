@@ -1,0 +1,122 @@
+﻿@inject HttpClient Http
+
+@if (_isLoading)
+{
+    <div class="loading">
+        <div class="spinner"></div>
+    </div>
+}
+else
+{
+    <TelerikStackLayout Orientation="StackLayoutOrientation.Vertical" Spacing="15px">
+        <TelerikCard Class="select-customer-card">
+            <CardBody>
+                <label for="customer-select" class="label-space">Select a Customer:</label>
+                <TelerikAutoComplete ScrollMode="@DropDownScrollMode.Virtual"
+                                     Id="customer-select"
+                                     class="customer-select-au"
+                                     Data="@Customers"
+                                     ValueField="@(nameof(GetCustomersDto.CustomerNumber))"
+                                     Width="100%"
+                                     Filterable="true"
+                                     PageSize="10"
+                                     ItemHeight="35"
+                                     Placeholder="Start Typing Customer #..."
+                                     FilterOperator="@StringFilterOperator.StartsWith"
+                                     @bind-Value="@_customerNumber"
+                                     OnChange="@SetCustomerName">
+                </TelerikAutoComplete>
+                <div style="margin-bottom: 10px">
+                    <TelerikFloatingLabel Text="Business Name:" Class="custom-label">
+                        <div class="k-form-field-wrap txt-margin-bottom">
+                            <TelerikTextBox @bind-Value="@_businessName"></TelerikTextBox>
+                        </div>
+                    </TelerikFloatingLabel>
+                    <TelerikFloatingLabel Text="Customer Name:" Class="custom-label">
+                        <div class="k-form-field-wrap txt-margin-bottom">
+                            <TelerikTextBox @bind-Value="@DataModel!.CustomerName"></TelerikTextBox>
+                        </div>
+                    </TelerikFloatingLabel>
+                    <TelerikFloatingLabel Text="Customer Email:" Class="custom-label">
+                        <div class="k-form-field-wrap">
+                            <TelerikTextBox InputMode="email" @bind-Value="@DataModel!.CustomerEmail"></TelerikTextBox>
+                        </div>
+                    </TelerikFloatingLabel>
+                </div>
+            </CardBody>
+        </TelerikCard>
+    </TelerikStackLayout>
+}
+
+<style>
+    .txt-margin-bottom {
+        margin-bottom: 10px;
+    }
+
+    .customer-select-au {
+        margin-bottom: 10px;
+    }
+
+    .custom-label {
+        width: 100%;
+    }
+</style>
+
+@code {
+
+    IEnumerable<GetCustomersDto>? Customers { get; set; }
+
+    private string _customerNumber = string.Empty;
+    private string _businessName = string.Empty;
+    bool _isLoading = true;
+
+    [Parameter]
+    public Agreement? DataModel { get; set; }
+
+    [Parameter]
+    public EventCallback<Agreement> DataModelChanged { get; set; }
+
+    private async Task UpdateDataModel(Agreement newDataModel)
+    {
+        // Update the DataModel
+        DataModel = newDataModel;
+
+        // Notify the parent component (Wizard) about the change in DataModel
+        await DataModelChanged.InvokeAsync(DataModel);
+    }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        Customers = await Http.GetFromJsonAsync<IEnumerable<GetCustomersDto>>("api/Customers");
+        _isLoading = false;
+    }
+
+    private void SetCustomerName()
+    {
+        try
+        {
+            if (Customers == null)
+            {
+                Console.WriteLine("Customers collection is null.");
+                return;
+            }
+
+            var customer = Customers.FirstOrDefault(x => x.CustomerNumber == _customerNumber);
+            if (customer != null && DataModel is not null)
+            {
+                _businessName = customer.CustomerName;
+                DataModel.Detail.CustomerNumber = int.Parse(_customerNumber);
+                DataModel.Detail.CompanyName = _businessName;
+            }
+            else
+            {
+                Console.WriteLine("Customer not found with CustomerNumber: " + _customerNumber);
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Error setting business name: " + ex.Message);
+        }
+    }
+}

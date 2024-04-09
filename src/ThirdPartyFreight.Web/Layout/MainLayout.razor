@@ -1,0 +1,81 @@
+﻿@inherits LayoutComponentBase
+@inject ILocalStorageService LocalStorage
+
+<TelerikRootComponent>
+    <div class="header">
+        <div class="nav-container">
+            <div class="menu-button">
+                <TelerikButton Icon="@SvgIcon.Menu" OnClick="ToggleMenuDrawer" />
+            </div>
+            <div class="title">
+                <h1>CSD Third Party Freight Request Tool</h1>
+            </div>
+            @{
+                if (!WindowWidthSmall)
+                {
+                    <HeaderSettings></HeaderSettings>
+                }
+            }
+        </div>
+    </div>
+    <TelerikDrawer @ref="MenuDrawer"
+                   Expanded="@Expanded"
+                   ExpandedChanged="((bool newValue) => ExpandedChangedHandler(newValue))"
+                   Width="190px" Data="Data" Mode="DrawerMode.Push" Position="DrawerPosition.Start" MiniMode="true">
+        <DrawerContent>
+            @Body
+        </DrawerContent>
+    </TelerikDrawer>
+</TelerikRootComponent>
+
+<TelerikMediaQuery Media="(max-width: 768px)" OnChange="((changed) => WindowWidthSmall = changed)"></TelerikMediaQuery>
+
+@code
+{
+    TelerikDrawer<DrawerItem> MenuDrawer { get; set; } = new();
+
+    bool Expanded { get; set; }
+    bool WindowWidthSmall { get; set; }
+
+    static IEnumerable<DrawerItem> Data =>
+        new List<DrawerItem>
+        {
+            new() { Text = "Home", Icon = SvgIcon.Grid, Url="/"},
+            new() { Text = "Dashboard", Icon = SvgIcon.ChartLineMarkers, Url="/user/dashboard"},
+            new() { Text = "Agreements", Icon = SvgIcon.DocumentManager, Url="/Agreements"},
+            new() { Separator = true},
+            new() { Text = "Team Metrics", Icon = SvgIcon.ChartRadar, Url="/team/dashboard"}
+        };
+
+    async Task ToggleMenuDrawer()
+    {
+        if (Expanded)
+        {
+            await MenuDrawer.CollapseAsync();
+        }
+        else
+        {
+            await MenuDrawer.ExpandAsync();
+        }
+    }
+
+    async Task ExpandedChangedHandler(bool value)
+    {
+        Expanded = value;
+
+        await LocalStorage.SetItemAsync("drawerState", value);
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        var hasKey = await LocalStorage.ContainKeyAsync("drawerState");
+        if (hasKey)
+        {
+            Expanded = await LocalStorage.GetItemAsync<bool>("drawerState");
+        }
+        else
+        {
+            Expanded = false;
+        }
+    }
+}

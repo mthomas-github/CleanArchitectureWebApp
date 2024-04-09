@@ -1,0 +1,37 @@
+﻿<TelerikCard Class="select-customer-card">
+    <CardBody>
+        <TelerikFloatingLabel Text="Customer Number:" Class="custom-label">
+            <div class="k-form-field-wrap txt-margin-bottom">
+                <TelerikTextBox FillMode="@FillMode" Rounded="@Rounded" Size="@Size" ReadOnly="@ReadOnly" @bind-Value="@CustomerNumber"></TelerikTextBox>
+            </div>
+        </TelerikFloatingLabel>
+        <TelerikFloatingLabel Text="Company Name:" Class="custom-label">
+            <div class="k-form-field-wrap txt-margin-bottom">
+                <TelerikTextBox FillMode="@FillMode" Rounded="@Rounded" Size="@Size" ReadOnly="@ReadOnly" @bind-Value="@CompanyName" Width="150%"></TelerikTextBox>
+            </div>
+        </TelerikFloatingLabel>
+        <TelerikFloatingLabel Text="Customer Name:" Class="custom-label">
+            <div class="k-form-field-wrap txt-margin-bottom">
+                <TelerikTextBox FillMode="@FillMode" Rounded="@Rounded" Size="@Size" ReadOnly="@ReadOnly" @bind-Value="@CustomerName" Width="150%"></TelerikTextBox>
+            </div>
+        </TelerikFloatingLabel>
+        <TelerikFloatingLabel Text="Customer Email:" Class="custom-label">
+            <div class="k-form-field-wrap txt-margin-bottom">
+                <TelerikTextBox FillMode="@FillMode" Rounded="@Rounded" Size="@Size" ReadOnly="@ReadOnly" @bind-Value="@CustomerEmail" Width="150%"></TelerikTextBox>
+            </div>
+        </TelerikFloatingLabel>
+    </CardBody>
+</TelerikCard>
+
+
+@code {
+    [Parameter] public required string CustomerNumber { get; set; } = string.Empty;
+    [Parameter] public required string CompanyName { get; set; } = string.Empty;
+    [Parameter] public required string CustomerName { get; set; } = string.Empty;
+    [Parameter] public required string CustomerEmail { get; set; } = string.Empty;
+
+    private string FillMode { get; set; } = ThemeConstants.TextBox.FillMode.Flat;
+    private string Rounded { get; set; } = ThemeConstants.TextBox.Rounded.Large;
+    private string Size { get; set; } = ThemeConstants.TextBox.Size.Large;
+    private bool ReadOnly { get; set; } = true;
+}

@@ -1,0 +1,28 @@
+﻿<TelerikTabStrip @bind-ActiveTabIndex="@ActiveTabIndex">
+    @foreach (var tab in StripTabList)
+    {
+        <TabStripTab Title="@tab.Title" Class="Carrier-Tab">
+            <div class="row">
+                @foreach (var txtInput in TxtInputList.Where(txtInput => tab.Title == txtInput.StripTitleName))
+                {
+                    <div class="col-6">
+                        <label for="@txtInput.ForName">@txtInput.Label</label>
+                        <br/>
+                        <TelerikTextBox Name="@txtInput.ForName" FillMode="@FillMode" Rounded="@Rounded" Size="@Size" ReadOnly="@ReadOnly" @bind-Value="@txtInput.BindValue"/>
+                    </div>
+                }
+            </div>
+        </TabStripTab>
+    }
+</TelerikTabStrip>
+
+@code {
+    private string FillMode { get; set; } = ThemeConstants.TextBox.FillMode.Flat;
+    private string Rounded { get; set; } = ThemeConstants.TextBox.Rounded.Large;
+    private string Size { get; set; } = ThemeConstants.TextBox.Size.Large;
+    private bool ReadOnly { get; set; } = true;
+    private int ActiveTabIndex { get; set; } = 0;
+
+    [Parameter] public List<StripTab> StripTabList { get; set; } = [];
+    [Parameter] public List<TxtInput> TxtInputList { get; set; } = [];
+}

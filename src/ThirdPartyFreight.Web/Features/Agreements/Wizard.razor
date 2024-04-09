@@ -1,0 +1,42 @@
+﻿<TelerikWizard @bind-Value="@StartingStep" OnFinish="@OnFinish">
+    <WizardSteps>
+        @foreach (var step in Steps)
+        {
+            if (step.OnChange is not null)
+            {
+                <WizardStep Label="@step.StepLabel" OnChange="@(args => step.OnChange(args, DataModel))">
+                    <Content>
+                        @step.ChildContent?.Invoke(DataModel)
+                    </Content>
+                </WizardStep>
+            }
+            else
+            {
+                <WizardStep Label="@step.StepLabel">
+                    <Content>
+                        @step.ChildContent?.Invoke(DataModel)
+                    </Content>
+                </WizardStep>
+            }
+        }
+    </WizardSteps>
+</TelerikWizard>
+
+@code {
+    [Parameter] public required IEnumerable<UiStep> Steps { get; set; }
+    [Parameter] public EventCallback OnFinish { get; set; }
+    [Parameter] public int StartingStep { get; set; }
+
+    private Agreement DataModel { get; set; } = new()
+    {
+        DocuSignEnvelope = new AgreementEnvelope()
+        {
+            EnvelopeStatus = DocuSignStatusEnum.DRAFT
+        },
+        Detail = new AgreementDetail(),
+        AgreementType = AgreementTypesEnum.Creating,
+        AgreementStatus = AgreementStatusEnum.Creating,
+        SiteType = SitesTypesEnum.Creating,
+        Sites = new List<AgreementSite>(),
+    };
+}

@@ -1,0 +1,124 @@
+﻿<TelerikWindow Class="demo-window" Width="1260px" Height="968px" Centered="true" Visible="@WindowIsVisible" VisibleChanged="@WindowIsVisibleChanged" Modal="true" FooterLayoutAlign="WindowFooterLayoutAlign.Center">
+    <WindowTitle>
+        <strong>Agreement Request @Data!.Id</strong>
+    </WindowTitle>
+    <WindowActions>
+        <WindowAction Name="Close" />
+    </WindowActions>
+    <WindowContent>
+        <TelerikGridLayout RowSpacing="6px" ColumnSpacing="10px">
+            <GridLayoutRows>
+                <GridLayoutRow Height="20px"></GridLayoutRow>
+                <GridLayoutRow Height="100px"></GridLayoutRow>
+                <GridLayoutRow Height="20px"></GridLayoutRow>
+                <GridLayoutRow Height="100dpx"></GridLayoutRow>
+            </GridLayoutRows>
+            <GridLayoutColumns>
+                <GridLayoutColumn Width="270px"></GridLayoutColumn>
+                <GridLayoutColumn Width="270px"></GridLayoutColumn>
+                <GridLayoutColumn Width="300px"></GridLayoutColumn>
+            </GridLayoutColumns>
+            <GridLayoutItems>
+                <GridLayoutItem Row="1" Column="1">
+                    <div class="grid-layout-heading k-text-uppercase k-font-weight-bold k-text-inverse">Customer Information</div>
+                </GridLayoutItem>
+                <GridLayoutItem Row="1" Column="3">
+                    <div class="grid-layout-heading k-text-uppercase k-font-weight-bold k-text-inverse">Status Information</div>
+                </GridLayoutItem>
+                <GridLayoutItem Row="2" Column="1">
+                    <Content-CustomerInfo CompanyName="@Data!.CustomerName" CustomerNumber="@Data.CustomerNumber.ToString()" CustomerEmail="@Data.CustomerEmail" CustomerName="@Data.CustomerName" />
+                </GridLayoutItem>
+                <GridLayoutItem Row="2" Column="3">
+                    <Content Status="@Data!.AgreementStatus" EnvelopeStatus="@Data.EnvelopeStatus" MdmTicketNumber="@Data.MdmTicket" AgreementType="@Data.AgreementType" />
+                </GridLayoutItem>
+                <GridLayoutItem Row="3" Column="1">
+                    <div class="grid-layout-heading k-text-uppercase k-font-weight-bold k-text-inverse">Carrier Information</div>
+                </GridLayoutItem>
+                <GridLayoutItem Row="4" Column="1" ColumnSpan="2">
+                    <Content-CarrierInfo StripTabList="@CourierStripTabList" TxtInputList="@CourierTxtInputList" />
+                </GridLayoutItem>
+                <GridLayoutItem Row="3" Column="3">
+                    <div class="grid-layout-heading k-text-uppercase k-font-weight-bold k-text-inverse">Sites & Documents</div>
+                </GridLayoutItem>
+                <GridLayoutItem Row="4" Column="3" ColumnSpan="2">
+                    <Content-SitesAndDocuments GridList="@GridDataList" />
+                </GridLayoutItem>
+            </GridLayoutItems>
+        </TelerikGridLayout>
+    </WindowContent>
+    <WindowFooter>
+        <TelerikButton Icon="@SvgIcon.X" OnClick="@(() => WindowIsVisibleChanged.InvokeAsync(false))">Close</TelerikButton>
+    </WindowFooter>
+</TelerikWindow>
+
+
+
+
+@code {
+    [Parameter]
+    public bool WindowIsVisible { get; set; }
+
+    [Parameter]
+    public EventCallback<bool> WindowIsVisibleChanged { get; set; }
+
+    [Parameter]
+    public Agreement? Data { get; set; }
+
+    private List<StripTab> CourierStripTabList { get; set; } =
+    [
+        new StripTab { Title = "Primary Courier" },
+    new StripTab { Title = "LTL Courier" }
+    ];
+
+    private List<TxtInput> CourierTxtInputList { get; set; } =
+    [
+        new TxtInput { Label = "Courier Name", ForName = "primaryCourierName", PlaceHolder = "Courier Name", BindValue = "", StripTitleName="Primary Courier" },
+        new TxtInput { Label = "Account Number", ForName = "primaryAcctNumber", PlaceHolder = "Account Number", BindValue = "", StripTitleName="Primary Courier"},
+        new TxtInput { Label = "LTL Courier Name", ForName = "ltlCourierName", PlaceHolder = "LTL Carrier Name", BindValue = "", StripTitleName="LTL Courier"},
+        new TxtInput { Label = "LTL Courier Bill To", ForName = "ltlCourierBillTo", PlaceHolder = "LTL Bill To Name", BindValue = "", StripTitleName="LTL Courier"},
+        new TxtInput { Label = "LTL Address", ForName = "ltlCarrierAddress", PlaceHolder = "LTL Carrier Address", BindValue = "", StripTitleName="LTL Courier"}
+    ];
+
+    private List<ModalGrid> GridDataList { get; set; } =
+    [
+        new ModalGrid { GridName = "Sites", GridData = null, Columns = [ new ModalGridColumn() { Field = "SiteNumber", Title = "Site #" }, new ModalGridColumn() {Field = "SiteAddress", Title = "Site Address"} ]},
+        new ModalGrid { GridName = "Documents", GridData = null, Columns = [new ModalGridColumn() { Field = "DocumentType", Title = "Document AgreementType" }]}
+    ];
+
+    protected override void OnParametersSet()
+    {
+        if (Data is null) return;
+        var agreement = Data!;
+        //TODO: Bind the courier info to list
+        if (agreement.Carriers is null) return;
+        var primaryCourier = agreement.Carriers.FirstOrDefault(c => c.CarrierType == CarrierTypesEnum.Primary);
+
+        if (primaryCourier is not null)
+        {
+            CourierTxtInputList[0].BindValue = primaryCourier.CarrierName;
+            CourierTxtInputList[1].BindValue = primaryCourier.CarrierAccount;
+        }
+        else
+        {
+            CourierTxtInputList[0].BindValue = "";
+            CourierTxtInputList[1].BindValue = "";
+        }
+
+        var ltlCourier = agreement.Carriers.FirstOrDefault(c => c.CarrierType == CarrierTypesEnum.LtlPrimary);
+        if (ltlCourier is not null)
+        {
+            CourierTxtInputList[2].BindValue = ltlCourier.CarrierName;
+            CourierTxtInputList[3].BindValue = ltlCourier.CarrierAccount;
+            if(ltlCourier.CarrierAddress is not null)
+                CourierTxtInputList[4].BindValue = ltlCourier.CarrierAddress.HasValue() ? ltlCourier.CarrierAddress : "";
+        }
+        else
+        {
+            CourierTxtInputList[2].BindValue = "";
+            CourierTxtInputList[3].BindValue = "";
+        }
+
+        GridDataList[0].GridData = agreement.Sites.Cast<object>().ToList();
+        GridDataList[1].GridData = agreement.Documents is not null ? agreement.Documents.Cast<object>().ToList() : [];
+    }
+}

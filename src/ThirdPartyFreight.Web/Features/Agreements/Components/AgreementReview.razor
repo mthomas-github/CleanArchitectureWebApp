@@ -1,0 +1,75 @@
+﻿<TelerikGridLayout RowSpacing="6px" ColumnSpacing="6px">
+    <GridLayoutRows>
+        <GridLayoutRow Height="20px"></GridLayoutRow>
+        <GridLayoutRow Height="100px"></GridLayoutRow>
+        <GridLayoutRow Height="20px"></GridLayoutRow>
+        <GridLayoutRow Height="100dpx"></GridLayoutRow>
+    </GridLayoutRows>
+    <GridLayoutColumns>
+        <GridLayoutColumn Width="210px"></GridLayoutColumn>
+        <GridLayoutColumn Width="210px"></GridLayoutColumn>
+        <GridLayoutColumn Width="220px"></GridLayoutColumn>
+    </GridLayoutColumns>
+    <GridLayoutItems>
+        <GridLayoutItem Row="1" Column="1">
+            <div class="grid-layout-heading k-text-uppercase k-font-weight-bold k-text-inverse">Customer Information</div>
+        </GridLayoutItem>
+        <GridLayoutItem Row="1" Column="3">
+            <div class="grid-layout-heading k-text-uppercase k-font-weight-bold k-text-inverse">Status Information</div>
+        </GridLayoutItem>
+        <GridLayoutItem Row="2" Column="1" ColumnSpan="2">
+            <CustomerInfo CompanyName="@DataModel!.CustomerName" CustomerNumber="@DataModel!.CustomerNumber" CustomerEmail="@DataModel!.CustomerEmail" CustomerName="@DataModel!.CustomerName" />
+        </GridLayoutItem>
+        <GridLayoutItem Row="2" Column="3">
+            <StatusInfo Status="@DataModel!.Status" EnvelopeStatus="@DataModel.EnvelopeStatus" MdmTicketNumber="@DataModel!.MdmTicket" AgreementType="@DataModel!.AgreementType" />
+        </GridLayoutItem>
+        <GridLayoutItem Row="3" Column="1">
+            <div class="grid-layout-heading k-text-uppercase k-font-weight-bold k-text-inverse">Sites & Documents</div>
+        </GridLayoutItem>
+        <GridLayoutItem Row="4" Column="1" ColumnSpan="3">
+            <SitesAndDocuments GridList="@GridDataList" />
+        </GridLayoutItem>
+    </GridLayoutItems>
+</TelerikGridLayout>
+
+@code {
+
+    [Parameter]
+    public Agreement? DataModel { get; set; }
+
+    private string _agreementType = string.Empty;
+
+    private List<ModalGrid> GridDataList { get; set; } = [];
+
+    protected override void OnParametersSet()
+    {
+        if (DataModel is null) return;
+        _agreementType = DataModel.AgreementType;
+
+        var sites = new ModalGrid
+            {
+                GridName = "Sites",
+                GridData = DataModel.Sites.Cast<object>().ToList(),
+                Columns =
+                [
+                    new ModalGridColumn() { Field = "SiteNumber", Title = "Site #" },
+                new ModalGridColumn() { Field = "SiteAddress", Title = "Site Address" }
+                ]
+            };
+
+        DataModel.Documents ??= [];
+        var docs = new ModalGrid
+            {
+                GridName = "Documents",
+                GridData = DataModel.Documents.Cast<object>().ToList(),
+                Columns =
+                [
+                    new ModalGridColumn() { Field = "DocumentType", Title = "Document AgreementType" }
+                ]
+            };
+
+        if (GridDataList.Any()) return;
+        GridDataList.Add(sites);
+        GridDataList.Add(docs);
+    }
+}
