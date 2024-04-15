@@ -11,7 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="WorkflowTask\Events\" />
+    <Folder Include="WorkFlowTask\Events\" />
   </ItemGroup>
 
 </Project>

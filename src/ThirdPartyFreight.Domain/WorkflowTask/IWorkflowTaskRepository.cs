@@ -1,8 +1,8 @@
 ﻿namespace ThirdPartyFreight.Domain.WorkflowTask;
 
-public interface IWorkflowTaskRepository
+public interface IWorkFlowTaskRepository
 {
-    Task<WorkflowTask?> GetByIdAsync(long id, CancellationToken cancellationToken = default);
-
-    void Add(WorkflowTask workflowTask);
+    Task<WorkFlowTask?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
+    void Add(WorkFlowTask workFlowTask);
+    void Update(WorkFlowTask workFlowTask);
 }

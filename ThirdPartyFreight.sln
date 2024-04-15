@@ -33,7 +33,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ElsaServer", "elsa\ElsaServ
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ElsaStudioBlazorServer", "elsa\ElsaStudioBlazorServer\ElsaStudioBlazorServer.csproj", "{A4020FA2-F09A-4EBC-8A44-E81D104E9EBA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ThirdPartyFreight.Web", "src\ThirdPartyFreight.Web\ThirdPartyFreight.Web.csproj", "{D445C93A-B3AF-4C7F-9AFF-CEFBCA0543AC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ThirdPartyFreight.Web", "src\ThirdPartyFreight.Web\ThirdPartyFreight.Web.csproj", "{D445C93A-B3AF-4C7F-9AFF-CEFBCA0543AC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

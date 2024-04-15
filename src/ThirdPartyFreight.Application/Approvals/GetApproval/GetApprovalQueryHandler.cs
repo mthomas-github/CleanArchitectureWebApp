@@ -7,7 +7,7 @@ using ThirdPartyFreight.Application.Abstractions.Messaging;
 
 namespace ThirdPartyFreight.Application.Approvals.GetApproval;
 
-internal sealed class GetApprovalQueryHandler : IQueryHandler<GetApprovalQuery, ApprovalResponse>
+internal sealed class GetApprovalQueryHandler : IQueryHandler<GetApprovalQuery, Approval>
 {
     private readonly ISqlConnectionFactory _sqlConnectionFactory;
 
@@ -16,7 +16,7 @@ internal sealed class GetApprovalQueryHandler : IQueryHandler<GetApprovalQuery, 
         _sqlConnectionFactory = sqlConnectionFactory;
     }
 
-    public async Task<Result<ApprovalResponse>> Handle(GetApprovalQuery request, CancellationToken cancellationToken)
+    public async Task<Result<Approval>> Handle(GetApprovalQuery request, CancellationToken cancellationToken)
     {
         using IDbConnection connection = _sqlConnectionFactory.CreateConnection();
 
@@ -38,8 +38,8 @@ internal sealed class GetApprovalQueryHandler : IQueryHandler<GetApprovalQuery, 
                             Id = @ApprovalId;
                            """;
 
-        ApprovalResponse? result = await connection.QueryFirstOrDefaultAsync<ApprovalResponse>(sql, new { request.ApprovalId });
+        Approval? result = await connection.QueryFirstOrDefaultAsync<Approval>(sql, new { request.ApprovalId });
 
-        return result ?? Result.Failure<ApprovalResponse>(ApprovalErrors.NotFound);
+        return result ?? Result.Failure<Approval>(ApprovalErrors.NotFound);
     }
 }

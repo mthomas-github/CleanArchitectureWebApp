@@ -20,6 +20,7 @@
 
   <ItemGroup>
     <Folder Include="Envelopes\UpdateEnvelope\" />
+    <Folder Include="WorkflowTasks\AddWorkFlowTask\" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,17 +1,22 @@
-﻿namespace ThirdPartyFreight.Domain.WorkflowTask;
+﻿using System;
+using ThirdPartyFreight.Domain.Abstractions;
 
-public sealed class WorkflowTask
+namespace ThirdPartyFreight.Domain.WorkflowTask;
+
+public sealed class WorkFlowTask : Entity
 {
 
-    private WorkflowTask(
-        long id,
+    private WorkFlowTask(
+        Guid id,
         string externalId,
         string processId,
         string name,
         string description,
+        Guid agreementId,
         bool isCompleted,
         DateTimeOffset createdAt,
         DateTimeOffset? completedAt)
+        : base(id)
     {
         Id = id;
         ExternalId = externalId;
@@ -21,14 +26,10 @@ public sealed class WorkflowTask
         IsCompleted = isCompleted;
         CreatedAt = createdAt;
         CompletedAt = completedAt;
+        AgreementId = agreementId;
     }
 
-    private WorkflowTask() { }
-
-    /// <summary>
-    /// The ID of the task.
-    /// </summary>
-    public long Id { get; private set; }
+    private WorkFlowTask() { }
 
     /// <summary>
     /// An external ID that can be used to reference the task.
@@ -51,6 +52,11 @@ public sealed class WorkflowTask
     public string Description { get; private set; } = default!;
 
     /// <summary>
+    /// The Agreement that the approval task belongs to.
+    /// </summary>
+    public Guid AgreementId { get; private set; }
+
+    /// <summary>
     /// Whether the task has been completed.
     /// </summary>
     public bool IsCompleted { get; private set; }
@@ -66,24 +72,32 @@ public sealed class WorkflowTask
     public DateTimeOffset? CompletedAt { get; private set; }
 
 
-    public static WorkflowTask Create(
+    public static WorkFlowTask Create(
         string externalId,
         string processId,
         string name,
         string description,
+        Guid agreementId,
         DateTimeOffset createdAt)
     {
-        var workflowTask = new WorkflowTask(
-                       0,
-                                  externalId,
-                                  processId,
-                                  name,
-                                  description,
-                                  false,
-                                  createdAt,
-                                  null
-                              );
+        var workflowTask = new WorkFlowTask(Guid.NewGuid(), externalId, processId, name, description, agreementId, false, createdAt,
+            null);
 
         return workflowTask;
     }
+
+
+    public static WorkFlowTask Update(
+        Guid requestWorkFlowTaskId, 
+        string workflowTaskExternalId, 
+        string workflowTaskProcessId, 
+        string workflowTaskName, 
+        string workflowTaskDescription, 
+        Guid workflowTaskAgreementId)
+    {
+        var updated = new WorkFlowTask(requestWorkFlowTaskId, workflowTaskExternalId, workflowTaskProcessId, workflowTaskName, workflowTaskDescription, workflowTaskAgreementId, true, DateTimeOffset.UtcNow, DateTimeOffset.UtcNow);
+
+        return updated;
+    }
+
 }

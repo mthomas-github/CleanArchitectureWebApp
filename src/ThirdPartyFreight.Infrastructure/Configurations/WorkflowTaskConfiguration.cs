@@ -4,9 +4,9 @@ using ThirdPartyFreight.Domain.WorkflowTask;
 
 namespace ThirdPartyFreight.Infrastructure.Configurations;
 
-public class WorkflowTaskConfiguration : IEntityTypeConfiguration<WorkflowTask>
+public class WorkflowTaskConfiguration : IEntityTypeConfiguration<WorkFlowTask>
 {
-    public void Configure(EntityTypeBuilder<WorkflowTask> builder)
+    public void Configure(EntityTypeBuilder<WorkFlowTask> builder)
     {
         builder.ToTable("TPF_WorkflowTasks");
 
