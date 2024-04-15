@@ -1,6 +1,6 @@
 ﻿<TelerikWindow Class="demo-window" Width="1260px" Height="968px" Centered="true" Visible="@WindowIsVisible" VisibleChanged="@WindowIsVisibleChanged" Modal="true" FooterLayoutAlign="WindowFooterLayoutAlign.Center">
     <WindowTitle>
-        <strong>Agreement Request @Data!.Id</strong>
+        <strong>GetGetAgreement Request @Data!.AgreementId</strong>
     </WindowTitle>
     <WindowActions>
         <WindowAction Name="Close" />
@@ -26,22 +26,22 @@
                     <div class="grid-layout-heading k-text-uppercase k-font-weight-bold k-text-inverse">Status Information</div>
                 </GridLayoutItem>
                 <GridLayoutItem Row="2" Column="1">
-                    <Content-CustomerInfo CompanyName="@Data!.CustomerName" CustomerNumber="@Data.CustomerNumber.ToString()" CustomerEmail="@Data.CustomerEmail" CustomerName="@Data.CustomerName" />
+                    <CustomerInfo CompanyName="@Data!.CustomerName" CustomerNumber="@Data.CustomerNumber" CustomerEmail="@Data.CustomerEmail" CustomerName="@Data.CustomerName" />
                 </GridLayoutItem>
                 <GridLayoutItem Row="2" Column="3">
-                    <Content Status="@Data!.AgreementStatus" EnvelopeStatus="@Data.EnvelopeStatus" MdmTicketNumber="@Data.MdmTicket" AgreementType="@Data.AgreementType" />
+                    <StatusInfo Status="@Data!.Status.ToString()" EnvelopeStatus="@Data.EnvelopeStatus.ToString()" MdmTicketNumber="@Data.MdmTicket" AgreementType="@Data.AgreementType.ToString()" />
                 </GridLayoutItem>
                 <GridLayoutItem Row="3" Column="1">
                     <div class="grid-layout-heading k-text-uppercase k-font-weight-bold k-text-inverse">Carrier Information</div>
                 </GridLayoutItem>
                 <GridLayoutItem Row="4" Column="1" ColumnSpan="2">
-                    <Content-CarrierInfo StripTabList="@CourierStripTabList" TxtInputList="@CourierTxtInputList" />
+                    <CarrierInfo StripTabList="@CourierStripTabList" TxtInputList="@CourierTxtInputList" />
                 </GridLayoutItem>
                 <GridLayoutItem Row="3" Column="3">
                     <div class="grid-layout-heading k-text-uppercase k-font-weight-bold k-text-inverse">Sites & Documents</div>
                 </GridLayoutItem>
                 <GridLayoutItem Row="4" Column="3" ColumnSpan="2">
-                    <Content-SitesAndDocuments GridList="@GridDataList" />
+                    <SitesAndDocuments GridList="@GridDataList" />
                 </GridLayoutItem>
             </GridLayoutItems>
         </TelerikGridLayout>
@@ -62,7 +62,7 @@
     public EventCallback<bool> WindowIsVisibleChanged { get; set; }
 
     [Parameter]
-    public Agreement? Data { get; set; }
+    public GetAgreement? Data { get; set; }
 
     private List<StripTab> CourierStripTabList { get; set; } =
     [
@@ -89,9 +89,8 @@
     {
         if (Data is null) return;
         var agreement = Data!;
-        //TODO: Bind the courier info to list
         if (agreement.Carriers is null) return;
-        var primaryCourier = agreement.Carriers.FirstOrDefault(c => c.CarrierType == CarrierTypesEnum.Primary);
+        var primaryCourier = agreement.Carriers.FirstOrDefault(c => c.CarrierType == CarrierType.Parcel);
 
         if (primaryCourier is not null)
         {
@@ -104,7 +103,7 @@
             CourierTxtInputList[1].BindValue = "";
         }
 
-        var ltlCourier = agreement.Carriers.FirstOrDefault(c => c.CarrierType == CarrierTypesEnum.LtlPrimary);
+        var ltlCourier = agreement.Carriers.FirstOrDefault(c => c.CarrierType == CarrierType.Ltl);
         if (ltlCourier is not null)
         {
             CourierTxtInputList[2].BindValue = ltlCourier.CarrierName;
@@ -119,6 +118,9 @@
         }
 
         GridDataList[0].GridData = agreement.Sites.Cast<object>().ToList();
-        GridDataList[1].GridData = agreement.Documents is not null ? agreement.Documents.Cast<object>().ToList() : [];
+        if (agreement.Documents is not null)
+        {
+            GridDataList[1].GridData = agreement.Documents.Cast<object>().ToList();
+        }
     }
 }

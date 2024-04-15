@@ -21,7 +21,7 @@
             <CustomerInfo CompanyName="@DataModel!.CustomerName" CustomerNumber="@DataModel!.CustomerNumber" CustomerEmail="@DataModel!.CustomerEmail" CustomerName="@DataModel!.CustomerName" />
         </GridLayoutItem>
         <GridLayoutItem Row="2" Column="3">
-            <StatusInfo Status="@DataModel!.Status" EnvelopeStatus="@DataModel.EnvelopeStatus" MdmTicketNumber="@DataModel!.MdmTicket" AgreementType="@DataModel!.AgreementType" />
+            <StatusInfo Status="@DataModel!.Status.ToString()" EnvelopeStatus="@DataModel.EnvelopeStatus.ToString()" MdmTicketNumber="@DataModel!.MdmTicket" AgreementType="@DataModel!.AgreementType.ToString()" />
         </GridLayoutItem>
         <GridLayoutItem Row="3" Column="1">
             <div class="grid-layout-heading k-text-uppercase k-font-weight-bold k-text-inverse">Sites & Documents</div>
@@ -35,7 +35,7 @@
 @code {
 
     [Parameter]
-    public Agreement? DataModel { get; set; }
+    public GetAgreement? DataModel { get; set; }
 
     private string _agreementType = string.Empty;
 
@@ -44,7 +44,7 @@
     protected override void OnParametersSet()
     {
         if (DataModel is null) return;
-        _agreementType = DataModel.AgreementType;
+        _agreementType = DataModel.AgreementType.ToString();
 
         var sites = new ModalGrid
             {
@@ -57,7 +57,7 @@
                 ]
             };
 
-        DataModel.Documents ??= [];
+        DataModel.Documents ??= new List<Document>();
         var docs = new ModalGrid
             {
                 GridName = "Documents",

@@ -20,4 +20,8 @@
     <Folder Include="wwwroot\img\products\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\ThirdPartyFreight.Application\ThirdPartyFreight.Application.csproj" />
+  </ItemGroup>
+
 </Project>

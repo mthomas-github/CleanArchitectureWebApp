@@ -20,7 +20,7 @@ else
     private bool ShowWizard { get; set; } = true;
     private int StartingStep { get; set; } = 0;
 
-    private static Agreement? _dataModel = null;
+    private static GetAgreement? _dataModel = null;
     private List<UiStep>? _contentUiSteps;
 
     protected override void OnAfterRender(bool firstRender)
@@ -31,17 +31,17 @@ else
         };
     }
 
-    public void OnStepFinish(WizardStepChangeEventArgs args, Agreement agreement)
+    public void OnStepFinish(WizardStepChangeEventArgs args, GetAgreement getAgreement)
     {
-        _dataModel = agreement;
+        _dataModel = getAgreement;
 
         if (args.TargetIndex != 3) return;
-        agreement.CreatedBy = "admin";
-        agreement.CsrName = "admin";
-        HandleDataModelChanged(agreement);
+        getAgreement.CreatedBy = "admin";
+        getAgreement.CsrName = "admin";
+        HandleDataModelChanged(getAgreement);
     }
 
-    private static void HandleDataModelChanged(Agreement newDataModel)
+    private static void HandleDataModelChanged(GetAgreement newDataModel)
     {
         _dataModel = newDataModel;
     }
@@ -67,7 +67,7 @@ else
                     // Render your component here
                     return builder =>
                     {
-                        builder.OpenComponent(0, typeof(AgreementTypeStep));
+                        builder.OpenComponent(0, typeof(AgreementTypeInfo));
                         builder.AddAttribute(1, "DataModel", dataModel);
                         builder.CloseComponent();
                     };
@@ -84,7 +84,7 @@ else
                     // Render your component here
                     return builder =>
                     {
-                        builder.OpenComponent(0, typeof(AgreementCustomerInformationStep));
+                        builder.OpenComponent(0, typeof(AgreementCustomerInformation));
                         builder.AddAttribute(1, "DataModel", dataModel);
                         builder.CloseComponent();
                     };
@@ -101,7 +101,7 @@ else
                     // Render your component here
                     return builder =>
                     {
-                        builder.OpenComponent(0, typeof(AgreementSitesStep));
+                        builder.OpenComponent(0, typeof(SitesAndDocuments));
                         builder.AddAttribute(1, "DataModel", dataModel);
                         builder.CloseComponent();
                     };
@@ -118,7 +118,7 @@ else
                     // Render your component here
                     return builder =>
                     {
-                        builder.OpenComponent(0, typeof(AgreementReviewStep));
+                        builder.OpenComponent(0, typeof(AgreementReview));
                         builder.AddAttribute(1, "DataModel", dataModel);
                         builder.CloseComponent();
                     };

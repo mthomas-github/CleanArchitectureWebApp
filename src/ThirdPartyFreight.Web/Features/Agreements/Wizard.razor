@@ -27,16 +27,5 @@
     [Parameter] public EventCallback OnFinish { get; set; }
     [Parameter] public int StartingStep { get; set; }
 
-    private Agreement DataModel { get; set; } = new()
-    {
-        DocuSignEnvelope = new AgreementEnvelope()
-        {
-            EnvelopeStatus = DocuSignStatusEnum.DRAFT
-        },
-        Detail = new AgreementDetail(),
-        AgreementType = AgreementTypesEnum.Creating,
-        AgreementStatus = AgreementStatusEnum.Creating,
-        SiteType = SitesTypesEnum.Creating,
-        Sites = new List<AgreementSite>(),
-    };
+    private GetAgreement DataModel { get; set; } = new();
 }

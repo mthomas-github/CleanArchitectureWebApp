@@ -5,7 +5,7 @@
                 <TelerikTextBox FillMode="@FillMode" Rounded="@Rounded" Size="@Size" ReadOnly="@ReadOnly" @bind-Value="@Status"></TelerikTextBox>
             </div>
         </TelerikFloatingLabel>
-        <TelerikFloatingLabel Text="Agreement Type:" Class="custom-label">
+        <TelerikFloatingLabel Text="GetAgreement Type:" Class="custom-label">
             <div class="k-form-field-wrap txt-margin-bottom">
                 <TelerikTextBox FillMode="@FillMode" Rounded="@Rounded" Size="@Size" ReadOnly="@ReadOnly" @bind-Value="@AgreementType"></TelerikTextBox>
             </div>
@@ -24,9 +24,9 @@
 </TelerikCard>
 
 @code {
-    [Parameter] public required string Status { get; set; } = string.Empty;
-    [Parameter] public required string AgreementType { get; set; } = string.Empty;
-    [Parameter] public string? EnvelopeStatus { get; set; } = string.Empty;
+    [Parameter] public string? Status { get; set; }
+    [Parameter] public string? AgreementType { get; set; }
+    [Parameter] public string? EnvelopeStatus { get; set; }
     [Parameter] public string? MdmTicketNumber { get; set; } = string.Empty;
 
     private string FillMode { get; set; } = ThemeConstants.TextBox.FillMode.Flat;

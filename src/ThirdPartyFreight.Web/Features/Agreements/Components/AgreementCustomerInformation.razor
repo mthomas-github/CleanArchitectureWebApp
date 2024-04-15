@@ -16,7 +16,7 @@ else
                                      Id="customer-select"
                                      class="customer-select-au"
                                      Data="@Customers"
-                                     ValueField="@(nameof(GetCustomersDto.CustomerNumber))"
+                                     ValueField="@(nameof(Customer.CustomerNumber))"
                                      Width="100%"
                                      Filterable="true"
                                      PageSize="10"
@@ -64,19 +64,19 @@ else
 
 @code {
 
-    IEnumerable<GetCustomersDto>? Customers { get; set; }
+    IEnumerable<Customer>? Customers { get; set; }
 
     private string _customerNumber = string.Empty;
     private string _businessName = string.Empty;
     bool _isLoading = true;
 
     [Parameter]
-    public Agreement? DataModel { get; set; }
+    public GetAgreement? DataModel { get; set; }
 
     [Parameter]
-    public EventCallback<Agreement> DataModelChanged { get; set; }
+    public EventCallback<GetAgreement> DataModelChanged { get; set; }
 
-    private async Task UpdateDataModel(Agreement newDataModel)
+    private async Task UpdateDataModel(GetAgreement newDataModel)
     {
         // Update the DataModel
         DataModel = newDataModel;
@@ -88,7 +88,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        Customers = await Http.GetFromJsonAsync<IEnumerable<GetCustomersDto>>("api/Customers");
+        Customers = await Http.GetFromJsonAsync<IEnumerable<Customer>>("api/Customers");
         _isLoading = false;
     }
 
@@ -106,8 +106,8 @@ else
             if (customer != null && DataModel is not null)
             {
                 _businessName = customer.CustomerName;
-                DataModel.Detail.CustomerNumber = int.Parse(_customerNumber);
-                DataModel.Detail.CompanyName = _businessName;
+                DataModel.CustomerNumber = _customerNumber;
+                DataModel.CustomerName = _businessName;
             }
             else
             {

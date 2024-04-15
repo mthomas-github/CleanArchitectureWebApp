@@ -29,24 +29,24 @@
             <GridPagerSettings InputType="@InputType" PageSizes="@PageSizes" ButtonCount="@ButtonCount" Position="@PagerPosition" />
         </GridSettings>
         <GridColumns>
-            <GridColumn Field="Id" Title="Agreement Id" VisibleInColumnChooser="true" Visible="false" Width="20px" />
+            <GridColumn Field="Id" Title="GetGetAgreement Id" VisibleInColumnChooser="true" Visible="false" Width="20px" />
             <GridColumn Field="CustomerNumber" Title="Customer Number" VisibleInColumnChooser="true" Width="25px" />
             <GridColumn Field="CustomerName" Title="Customer Name" VisibleInColumnChooser="true" Width="40px" />
-            <GridColumn Field="AgreementStatus" Title="Status" VisibleInColumnChooser="true" Width="40px" />
-            <GridColumn Field="AgreementType" Title="Agreement Type" VisibleInColumnChooser="true" Width="40px" />
+            <GridColumn Field="GetGetAgreementStatus" Title="Status" VisibleInColumnChooser="true" Width="40px" />
+            <GridColumn Field="GetGetAgreementType" Title="GetGetAgreement Type" VisibleInColumnChooser="true" Width="40px" />
             <GridColumn Field="SiteType" Title="Site Type" VisibleInColumnChooser="true" Visible="false" Width="40px" />
             <GridColumn Field="EnvelopeStatus" Title="DocuSign Status" VisibleInColumnChooser="true" Visible="false" Width="40px" />
 
             <GridCommandColumn Width="30px">
-                <GridCommandButton OnClick="@((args)=> ToggleWindow(args.Item as Agreement))" Icon="@SvgIcon.InfoSolid"></GridCommandButton>
+                <GridCommandButton OnClick="@((args)=> ToggleWindow(args.Item as GetAgreement))" Icon="@SvgIcon.InfoSolid"></GridCommandButton>
                 <GridCommandButton Command="Delete" Icon="@SvgIcon.Trash"></GridCommandButton>
             </GridCommandColumn>
         </GridColumns>
         <GridToolBarTemplate>
-            <GridCommandButton OnClick="@(()=> ToggleOnCreate())" Icon="@SvgIcon.Plus">Add Agreement</GridCommandButton>
+            <GridCommandButton OnClick="@(()=> ToggleOnCreate())" Icon="@SvgIcon.Plus">Add GetGetAgreement</GridCommandButton>
         </GridToolBarTemplate>
     </TelerikGrid>
-    <ModelInfo @bind-WindowIsVisible="@Visible" Data="@Agreement"></ModelInfo>
+    <ModalInfo @bind-WindowIsVisible="@Visible" Data="@Agreement"></ModalInfo>
     <TelerikNotification @ref="NotificationComponent"
                          Class="demo-notification"
                          HorizontalPosition="@NotificationHorizontalPosition.Right"
@@ -54,9 +54,9 @@
 </div>
 @code {
     private TelerikNotification NotificationComponent { get; set; } = default!;
-    private ObservableCollection<Agreement> GridData { get; set; } = [];
-    private IEnumerable<Agreement>? AllData { get; set; } = [];
-    private Agreement? Agreement { get; set; }
+    private ObservableCollection<GetAgreement> GridData { get; set; } = [];
+    private IEnumerable<GetAgreement>? AllData { get; set; } = [];
+    private GetAgreement? Agreement { get; set; }
     private const int PageSize = 20;
     private const string Height = "100%";
     private const int ButtonCount = 5;
@@ -71,21 +71,21 @@
     {
         if (IsInitialDataLoadComplete == false)
         {
-            AllData = await Http.GetFromJsonAsync<IEnumerable<Agreement>>("api/Agreements");
+            AllData = await Http.GetFromJsonAsync<IEnumerable<GetAgreement>>("api/Agreements");
         }
 
         if (AllData is not null)
         {
-            GridData = new ObservableCollection<Agreement>(AllData);
+            GridData = new ObservableCollection<GetAgreement>(AllData);
             IsInitialDataLoadComplete = true;
         }
     }
 
-    async Task ToggleWindow(Agreement? item)
+    async Task ToggleWindow(GetAgreement? item)
     {
         if (item is not null)
         {
-            Agreement = await Http.GetFromJsonAsync<Agreement>($"api/Agreements/{item.Id}");
+            Agreement = await Http.GetFromJsonAsync<GetAgreement>($"api/Agreements/{item.AgreementId}");
         }
 
         Visible = !Visible;
@@ -94,7 +94,7 @@
 
     private void ToggleOnCreate()
     {
-        NavigationManager.NavigateTo("./new-agreement");
+        NavigationManager.NavigateTo("./new-getAgreement");
     }
 
     private static void DeleteItem(GridCommandEventArgs args)

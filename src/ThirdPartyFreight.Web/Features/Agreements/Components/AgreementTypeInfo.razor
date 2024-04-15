@@ -15,21 +15,21 @@
 @code {
 
     [Parameter]
-    public Agreement? DataModel { get; set; }
+    public GetAgreement? DataModel { get; set; }
 
     [Parameter]
-    public EventCallback<Agreement> DataModelChanged { get; set; }
+    public EventCallback<GetAgreement> DataModelChanged { get; set; }
 
     private readonly List<AgreementButton> _agreementButtons =
     [
-        new AgreementButton { BtnLabel = "Add", IsActive = false, AgreementType = AgreementTypesEnum.Add},
-    new AgreementButton { BtnLabel = "Remove", IsActive = false, AgreementType = AgreementTypesEnum.Removal},
-    new AgreementButton { BtnLabel = "Update", IsActive = false, AgreementType = AgreementTypesEnum.Update }
+        new AgreementButton { BtnLabel = "Add", IsActive = false, AgreementType = AgreementType.Add},
+        new AgreementButton { BtnLabel = "Remove", IsActive = false, AgreementType = AgreementType.Removal},
+        new AgreementButton { BtnLabel = "Update", IsActive = false, AgreementType = AgreementType.Update }
     ];
 
     private class AgreementButton
     {
-        public AgreementTypesEnum AgreementType { get; init; }
+        public AgreementType AgreementType { get; init; }
         public string BtnLabel { get; init; } = string.Empty;
         public string BtnClass { get; set; } = "agreementTypeBtn";
         public string BtnFillMode { get; set; } = ThemeConstants.Button.FillMode.Solid;
