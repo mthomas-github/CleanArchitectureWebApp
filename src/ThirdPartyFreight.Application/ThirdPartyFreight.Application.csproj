@@ -19,6 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Approvals\GetApprovals\" />
     <Folder Include="Envelopes\UpdateEnvelope\" />
     <Folder Include="WorkflowTasks\AddWorkFlowTask\" />
   </ItemGroup>

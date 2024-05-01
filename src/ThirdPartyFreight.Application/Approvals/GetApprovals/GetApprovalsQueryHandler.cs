@@ -1,23 +1,22 @@
-﻿using System.Data;
-using ThirdPartyFreight.Domain.Abstractions;
-using ThirdPartyFreight.Domain.Approvals;
+﻿using System.Collections;
+using System.Data;
 using Dapper;
 using ThirdPartyFreight.Application.Abstractions.Data;
 using ThirdPartyFreight.Application.Abstractions.Messaging;
 using ThirdPartyFreight.Application.Shared;
+using ThirdPartyFreight.Domain.Abstractions;
 
-namespace ThirdPartyFreight.Application.Approvals.GetApproval;
+namespace ThirdPartyFreight.Application.Approvals.GetApprovals;
 
-internal sealed class GetApprovalQueryHandler : IQueryHandler<GetApprovalQuery, ApprovalResponse>
+internal sealed class GetApprovalsQueryHandler : IQueryHandler<GetApprovalsQuery, IReadOnlyList<ApprovalResponse>>
 {
     private readonly ISqlConnectionFactory _sqlConnectionFactory;
 
-    public GetApprovalQueryHandler(ISqlConnectionFactory sqlConnectionFactory)
+    public GetApprovalsQueryHandler(ISqlConnectionFactory sqlConnectionFactory)
     {
         _sqlConnectionFactory = sqlConnectionFactory;
     }
-
-    public async Task<Result<ApprovalResponse>> Handle(GetApprovalQuery request, CancellationToken cancellationToken)
+    public async Task<Result<IReadOnlyList<ApprovalResponse>>> Handle(GetApprovalsQuery request, CancellationToken cancellationToken)
     {
         using IDbConnection connection = _sqlConnectionFactory.CreateConnection();
 
@@ -34,13 +33,11 @@ internal sealed class GetApprovalQueryHandler : IQueryHandler<GetApprovalQuery, 
                                 ThirdApprovalEndUtc,
                                 CompletedOn
                            FROM
-                            TPF_Approvals
-                           WHERE
-                            Id = @ApprovalId;
+                            TPF_Approvals;
                            """;
 
-        ApprovalResponse? result = await connection.QueryFirstOrDefaultAsync<ApprovalResponse>(sql, new { request.ApprovalId });
+        IEnumerable<ApprovalResponse> result = await connection.QueryAsync<ApprovalResponse>(sql);
+        return result.ToList();
 
-        return result ?? Result.Failure<ApprovalResponse>(ApprovalErrors.NotFound);
     }
 }

@@ -4,16 +4,14 @@ using ThirdPartyFreight.Domain.WorkflowTask;
 
 namespace ThirdPartyFreight.Application.WorkflowTasks.UpdateWorkFlowTask;
 
-internal sealed class UpdateWorkFlowTaskCommandHandler : ICommandHandler<UpdateWorkFlowTaskCommand>
+internal sealed class UpdateWorkFlowTaskCommandHandler(IWorkFlowTaskRepository workFlowTaskRepository, IUnitOfWork unitOfWork) : ICommandHandler<UpdateWorkFlowTaskCommand>
 {
-    private readonly IWorkFlowTaskRepository _workFlowTaskRepository;
-    private readonly IUnitOfWork _unitOfWork;
     public async Task<Result> Handle(UpdateWorkFlowTaskCommand request, CancellationToken cancellationToken)
     {
         try
         {
             WorkFlowTask? existingWorkFlowTask =
-                await _workFlowTaskRepository.GetByIdAsync(request.WorkFlowTaskId, cancellationToken);
+                await workFlowTaskRepository.GetByIdAsync(request.WorkFlowTaskId, cancellationToken);
 
             if (existingWorkFlowTask is null)
             {
@@ -28,9 +26,9 @@ internal sealed class UpdateWorkFlowTaskCommandHandler : ICommandHandler<UpdateW
                 request.WorkflowTask.Description,
                 request.WorkflowTask.AgreementId);
 
-            _workFlowTaskRepository.Update(updated);
+            workFlowTaskRepository.Update(updated);
 
-            await _unitOfWork.SaveChangesAsync(cancellationToken);
+            await unitOfWork.SaveChangesAsync(cancellationToken);
 
             return Result.Success();
         }

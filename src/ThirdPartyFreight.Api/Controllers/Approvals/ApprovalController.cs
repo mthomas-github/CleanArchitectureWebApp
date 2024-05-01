@@ -4,7 +4,9 @@ using ThirdPartyFreight.Application.Approvals.GetApproval;
 using ThirdPartyFreight.Domain.Abstractions;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using ThirdPartyFreight.Application.Approvals.GetApprovals;
 using ThirdPartyFreight.Application.Approvals.UpdateApproval;
+using ThirdPartyFreight.Application.Shared;
 
 namespace ThirdPartyFreight.Api.Controllers.Approvals;
 [ApiController]
@@ -21,6 +23,16 @@ public class ApprovalController(ISender sender) : ControllerBase
         Result result = await sender.Send(command, cancellationToken);
         
         return result.IsSuccess ? Ok() : BadRequest(result.Error);
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> GetApprovals(CancellationToken cancellationToken)
+    {
+        var query = new GetApprovalsQuery();
+
+        Result<IReadOnlyList<ApprovalResponse>> result = await sender.Send(query, cancellationToken);
+
+        return result.IsSuccess ? Ok(result.Value) : NotFound(result.Error);
     }
 
     [HttpGet("{id}")]
