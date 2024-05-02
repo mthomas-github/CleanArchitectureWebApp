@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using Newtonsoft.Json;
 
 namespace ThirdPartyFreight.Domain.Abstractions;
 
@@ -36,7 +37,16 @@ public class Result<TValue> : Result
 {
     private readonly TValue? _value;
 
-    protected internal Result(TValue? value, bool isSuccess, Error error)
+
+    [JsonConstructor]
+    public Result(TValue? value, bool isSuccess, Error error)
+        : base(isSuccess, error)
+    {
+        _value = value;
+    }
+
+    // Renamed the existing constructor
+    protected internal Result(TValue? value, bool isSuccess, Error error, bool dummy)
         : base(isSuccess, error)
     {
         _value = value;
@@ -45,7 +55,7 @@ public class Result<TValue> : Result
     [NotNull]
     public TValue Value => IsSuccess
         ? _value!
-        : throw new InvalidOperationException("The value of a failure result can not be accessed.");
+        : throw new InvalidOperationException("The value of a failure result cannot be accessed.");
 
     public static implicit operator Result<TValue>(TValue? value) => Create(value);
 }

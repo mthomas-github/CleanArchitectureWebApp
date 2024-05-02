@@ -29,13 +29,12 @@
             <GridPagerSettings InputType="@InputType" PageSizes="@PageSizes" ButtonCount="@ButtonCount" Position="@PagerPosition" />
         </GridSettings>
         <GridColumns>
-            <GridColumn Field="Id" Title="GetGetAgreement Id" VisibleInColumnChooser="true" Visible="false" Width="20px" />
+            <GridColumn Field="Id" Title="id" VisibleInColumnChooser="true" Visible="false" Width="20px" />
             <GridColumn Field="CustomerNumber" Title="Customer Number" VisibleInColumnChooser="true" Width="25px" />
-            <GridColumn Field="CustomerName" Title="Customer Name" VisibleInColumnChooser="true" Width="40px" />
-            <GridColumn Field="GetGetAgreementStatus" Title="Status" VisibleInColumnChooser="true" Width="40px" />
-            <GridColumn Field="GetGetAgreementType" Title="GetGetAgreement Type" VisibleInColumnChooser="true" Width="40px" />
+            <GridColumn Field="BusinessName" Title="Customer Name" VisibleInColumnChooser="true" Width="40px" />
+            <GridColumn Field="Status" Title="Status" VisibleInColumnChooser="true" Width="40px" />
+            <GridColumn Field="AgreementType" Title="GetGetAgreement Type" VisibleInColumnChooser="true" Width="40px" />
             <GridColumn Field="SiteType" Title="Site Type" VisibleInColumnChooser="true" Visible="false" Width="40px" />
-            <GridColumn Field="EnvelopeStatus" Title="DocuSign Status" VisibleInColumnChooser="true" Visible="false" Width="40px" />
 
             <GridCommandColumn Width="30px">
                 <GridCommandButton OnClick="@((args)=> ToggleWindow(args.Item as AgreementResponse))" Icon="@SvgIcon.InfoSolid"></GridCommandButton>

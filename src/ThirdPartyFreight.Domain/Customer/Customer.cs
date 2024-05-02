@@ -11,6 +11,8 @@ public sealed class Customer : Entity
     {
         CustomerInfo = customerInfo;
     }
+
+    private Customer() { } // EF Core
     public CustomerInfo CustomerInfo { get; private set; }
 
     public static Customer Create(

@@ -1,7 +1,7 @@
-﻿using System.Buffers;
-using System.Text.Json;
-using ThirdPartyFreight.Application.Abstractions.Caching;
+﻿using ThirdPartyFreight.Application.Abstractions.Caching;
 using Microsoft.Extensions.Caching.Distributed;
+using Newtonsoft.Json;
+
 
 namespace ThirdPartyFreight.Infrastructure.Caching;
 
@@ -16,14 +16,14 @@ internal sealed class CacheService : ICacheService
 
     public async Task<T?> GetAsync<T>(string cacheKey, CancellationToken cancellationToken = default)
     {
-       byte[]? bytes = await _cache.GetAsync(cacheKey, cancellationToken);
+        string? jsonString = await _cache.GetStringAsync(cacheKey, cancellationToken);
 
-       return bytes is null ? default : Deserialize<T>(bytes);
+        return jsonString is null ? default : Deserialize<T>(jsonString);
     }
 
-    private static T Deserialize<T>(byte[] bytes)
+    private static T Deserialize<T>(string jsonString)
     {
-        return JsonSerializer.Deserialize<T>(bytes)!;
+        return JsonConvert.DeserializeObject<T>(jsonString);
     }
 
     public Task SetAsync<T>(
@@ -32,20 +32,14 @@ internal sealed class CacheService : ICacheService
         TimeSpan? expiration = null, 
         CancellationToken cancellationToken = default)
     {
-        byte[] bytes = Serialize(value);
+        string jsonString = Serialize(value);
 
-        return _cache.SetAsync(cacheKey, bytes,CacheOptions.Create(expiration), cancellationToken);
+        return _cache.SetStringAsync(cacheKey, jsonString, CacheOptions.Create(expiration), cancellationToken);
     }
 
-    private static byte[] Serialize<T>(T value)
+    private static string Serialize<T>(T value)
     {
-        var buffer = new ArrayBufferWriter<byte>();
-
-        using var writer = new Utf8JsonWriter(buffer);
-
-        JsonSerializer.Serialize(writer, value);
-
-        return buffer.WrittenSpan.ToArray();
+        return JsonConvert.SerializeObject(value);
     }
 
     public Task RemoveAsync(string cacheKey, CancellationToken cancellationToken = default)

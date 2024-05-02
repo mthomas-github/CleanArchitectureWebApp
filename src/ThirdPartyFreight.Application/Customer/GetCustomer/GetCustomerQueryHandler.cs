@@ -25,7 +25,7 @@ internal sealed class GetCustomerQueryHandler : IQueryHandler<GetCustomerQuery, 
                              CustomerNumber,
                              CustomerName
                            FROM
-                             DIM_CustomerMaster
+                             View_TPFCustomerMaster
                            WHERE
                              CustomerNumber = @CustomerNumber;
                            """;

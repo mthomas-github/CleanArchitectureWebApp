@@ -34,7 +34,7 @@ else
                     </TelerikFloatingLabel>
                     <TelerikFloatingLabel Text="Customer Name:" Class="custom-label">
                         <div class="k-form-field-wrap txt-margin-bottom">
-                            <TelerikTextBox @bind-Value="@DataModel!.BusinessName"></TelerikTextBox>
+                            <TelerikTextBox @bind-Value="@DataModel!.ContactName"></TelerikTextBox>
                         </div>
                     </TelerikFloatingLabel>
                     <TelerikFloatingLabel Text="Customer Email:" Class="custom-label">
@@ -88,7 +88,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        Customers = await Http.GetFromJsonAsync<IEnumerable<CustomerResponse>>("api/Customers");
+        Customers = await Http.GetFromJsonAsync<IEnumerable<CustomerResponse>>("api/v1.0/customers");
         _isLoading = false;
     }
 
