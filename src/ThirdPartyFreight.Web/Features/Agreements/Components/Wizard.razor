@@ -4,9 +4,9 @@
         {
             if (step.OnChange is not null)
             {
-                <WizardStep Label="@step.StepLabel" OnChange="@(args => step.OnChange(args, DataModel))">
+                <WizardStep Valid="@step.IsValidStep" Label="@step.StepLabel" OnChange="@(args => step.OnChange(args, DataModel))">
                     <Content>
-                        @step.ChildContent?.Invoke(DataModel)
+                            @step.ChildContent?.Invoke(DataModel)
                     </Content>
                 </WizardStep>
             }

@@ -1,16 +1,37 @@
-﻿<TelerikStackLayout Orientation="StackLayoutOrientation.Vertical" Spacing="15px">
-    <TelerikCard>
+﻿<div class="align-self-center">
+    <TelerikCard Width="100%">
+        <CardHeader>
+            <CardTitle>Agreement Types</CardTitle>
+            <CardSubTitle>Please select appropriate request</CardSubTitle>
+        </CardHeader>
         <CardBody>
-            <div class="button-container">
+            <div class="table-responsive">
+            <table class="table table-md table-bordered">
+                <thead>
+                <tr>
+                    <th scope="col">Type</th>
+                    <th scope="col">Description</th>
+                </tr>
+                </thead>
+                <tbody>
                 @foreach (var btn in _agreementButtons)
                 {
-                    <TelerikButton @onclick="@(() => SetActiveButton(btn))" Class="@btn.BtnClass" FillMode="@(btn.BtnFillMode)"
-                                   ThemeColor="@GetButtonThemeColor(btn)">@btn.BtnLabel</TelerikButton>
+                    <tr scope="row">
+                        <th>
+                            <TelerikButton @onclick="@(() => SetActiveButton(btn))" FillMode="@(btn.BtnFillMode)"
+                                                   ThemeColor="@GetButtonThemeColor(btn)" ButtonType="@ButtonType.Button" class="same-size">@btn.BtnLabel</TelerikButton>
+                        </th>
+                        <th>
+                            @btn.Description
+                        </th>
+                    </tr>
                 }
+                </tbody>
+            </table>
             </div>
         </CardBody>
     </TelerikCard>
-</TelerikStackLayout>
+</div>
 
 @code {
 
@@ -22,9 +43,9 @@
 
     private readonly List<AgreementButton> _agreementButtons =
     [
-        new AgreementButton { BtnLabel = "Add", IsActive = false, AgreementType = AgreementType.Add},
-        new AgreementButton { BtnLabel = "Remove", IsActive = false, AgreementType = AgreementType.Removal},
-        new AgreementButton { BtnLabel = "Update", IsActive = false, AgreementType = AgreementType.Update }
+        new AgreementButton { BtnLabel = "Add", IsActive = false, AgreementType = AgreementType.Add, Description = "When customer request to add a new ship to site to there agreement or adding for the first time."},
+        new AgreementButton { BtnLabel = "Remove", IsActive = false, AgreementType = AgreementType.Removal, Description = "When customer request to remove a site from agreement, or if an internal request comes in with invalid information."},
+        new AgreementButton { BtnLabel = "Update", IsActive = false, AgreementType = AgreementType.Update, Description = "Use this when we are going to be updating information, for example: Carrier information Needs to be updated."}
     ];
 
     private class AgreementButton
@@ -35,6 +56,7 @@
         public string BtnFillMode { get; set; } = ThemeConstants.Button.FillMode.Solid;
         public string BtnThemeColor { get; set; } = ThemeConstants.Button.ThemeColor.Primary;
         public bool IsActive { get; set; }
+        public string Description { get; set; } = string.Empty;
     }
 
     // Method to set the active button

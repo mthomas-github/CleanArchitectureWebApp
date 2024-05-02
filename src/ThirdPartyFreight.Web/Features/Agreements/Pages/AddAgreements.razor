@@ -48,7 +48,7 @@ else
     private async Task OnFinish()
     {
         var result = await
-            Http.PostAsJsonAsync("api/Agreements", _dataModel);
+            Http.PostAsJsonAsync("api/v1.0/agreements", _dataModel);
         var msg = await result.Content.ReadFromJsonAsync<int>();
         ShowWizard = false;
         StateHasChanged();
@@ -61,6 +61,7 @@ else
             new UiStep
             {
                 StepLabel = "Agreement AgreementType",
+                IsValidStep = false,
                 ChildContent = (dataModel) =>
                 {
                     // Render your component here
@@ -78,6 +79,7 @@ else
         new UiStep
             {
                 StepLabel = "Customer Information",
+                IsValidStep = false,
                 ChildContent = (dataModel) =>
                 {
                     // Render your component here
@@ -95,6 +97,7 @@ else
         new UiStep
             {
                 StepLabel = "Sites Information",
+                IsValidStep = false,
                 ChildContent = (dataModel) =>
                 {
                     // Render your component here
@@ -112,6 +115,7 @@ else
         new UiStep
             {
                 StepLabel = "Review",
+                IsValidStep = false,
                 ChildContent = (dataModel) =>
                 {
                     // Render your component here

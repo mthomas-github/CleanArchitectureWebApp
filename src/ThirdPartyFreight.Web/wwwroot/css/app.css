@@ -829,3 +829,15 @@ span.k-dropdownlist .k-input-inner {
     .blazor-error-boundary::after {
         content: "An error has occurred."
     }
+
+.k-wizard .k-wizard-content {
+    box-sizing: border-box;
+    overflow-y: auto;
+    align-self: center !important;
+}
+
+.same-size {
+    width: 100px; /* Set width to desired size */
+    height: 50px; /* Set height to desired size */
+}
+

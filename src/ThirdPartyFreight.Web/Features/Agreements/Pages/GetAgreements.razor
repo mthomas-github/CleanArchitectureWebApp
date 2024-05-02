@@ -42,7 +42,7 @@
             </GridCommandColumn>
         </GridColumns>
         <GridToolBarTemplate>
-            <GridCommandButton OnClick="@(()=> ToggleOnCreate())" Icon="@SvgIcon.Plus">Add GetGetAgreement</GridCommandButton>
+            <GridCommandButton OnClick="@(()=> ToggleOnCreate())" Icon="@SvgIcon.Plus">Add Agreement</GridCommandButton>
         </GridToolBarTemplate>
     </TelerikGrid>
     <ModalInfo @bind-WindowIsVisible="@Visible" Data="@Agreement"></ModalInfo>
@@ -93,7 +93,7 @@
 
     private void ToggleOnCreate()
     {
-        NavigationManager.NavigateTo("./new-getAgreement");
+        NavigationManager.NavigateTo("./new-agreement");
     }
 
     private static void DeleteItem(GridCommandEventArgs args)
