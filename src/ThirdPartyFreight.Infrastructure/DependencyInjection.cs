@@ -22,7 +22,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using ThirdPartyFreight.Application.Shared;
 using ThirdPartyFreight.Domain.Customer;
 using ThirdPartyFreight.Domain.WorkflowTask;
 using ThirdPartyFreight.Infrastructure.Authentication;
