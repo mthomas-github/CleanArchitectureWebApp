@@ -23,15 +23,15 @@ public class CarrierController(ISender sender) : ControllerBase
         return result.IsSuccess ? Ok(result.Value) : NotFound(result.Error);
     }
 
-    [HttpPost]
-    public async Task<IActionResult> AddCarrier(AddCarrierRequest request, CancellationToken cancellationToken)
-    {
-        var command = new AddCarrierCommand(request.AgreementId, request.CarrierName, request.CarrierAccount, request.CarrierType);
+    //[HttpPost]
+    //public async Task<IActionResult> AddCarrier(AddCarrierRequest request, CancellationToken cancellationToken)
+    //{
+    //    var command = new AddCarrierCommand(request.AgreementId, request.CarrierName, request.CarrierAccount, request.CarrierType);
 
-        Result result = await sender.Send(command, cancellationToken);
+    //    Result result = await sender.Send(command, cancellationToken);
 
-        return result.IsSuccess ? Ok() : BadRequest(result.Error);
-    }
+    //    return result.IsSuccess ? Ok() : BadRequest(result.Error);
+    //}
 
 
 }

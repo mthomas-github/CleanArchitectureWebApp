@@ -1,6 +1,7 @@
-﻿<TelerikWindow Class="demo-window" Width="1260px" Height="968px" Centered="true" Visible="@WindowIsVisible" VisibleChanged="@WindowIsVisibleChanged" Modal="true" FooterLayoutAlign="WindowFooterLayoutAlign.Center">
+﻿
+<TelerikWindow Class="demo-window" Width="1260px" Height="968px" Centered="true" Visible="@WindowIsVisible" VisibleChanged="@WindowIsVisibleChanged" Modal="true" FooterLayoutAlign="WindowFooterLayoutAlign.Center">
     <WindowTitle>
-        <strong>GetGetAgreement Request @Data!.AgreementId</strong>
+        <strong>GetGetAgreement Request @Data!.Id</strong>
     </WindowTitle>
     <WindowActions>
         <WindowAction Name="Close" />
@@ -26,11 +27,11 @@
                     <div class="grid-layout-heading k-text-uppercase k-font-weight-bold k-text-inverse">Status Information</div>
                 </GridLayoutItem>
                 <GridLayoutItem Row="2" Column="1">
-                    <CustomerInfo CompanyName="@Data!.CustomerName" CustomerNumber="@Data.CustomerNumber" CustomerEmail="@Data.CustomerEmail" CustomerName="@Data.CustomerName" />
+                    <CustomerInfo CompanyName="@Data!.BusinessName" CustomerNumber="@Data.CustomerNumber.ToString()" CustomerEmail="@Data.ContactEmail" CustomerName="@Data.ContactName" />
                 </GridLayoutItem>
-                <GridLayoutItem Row="2" Column="3">
+               @*  <GridLayoutItem Row="2" Column="3">
                     <StatusInfo Status="@Data!.Status.ToString()" EnvelopeStatus="@Data.EnvelopeStatus.ToString()" MdmTicketNumber="@Data.MdmTicket" AgreementType="@Data.AgreementType.ToString()" />
-                </GridLayoutItem>
+                </GridLayoutItem> *@
                 <GridLayoutItem Row="3" Column="1">
                     <div class="grid-layout-heading k-text-uppercase k-font-weight-bold k-text-inverse">Carrier Information</div>
                 </GridLayoutItem>
@@ -62,7 +63,7 @@
     public EventCallback<bool> WindowIsVisibleChanged { get; set; }
 
     [Parameter]
-    public GetAgreement? Data { get; set; }
+    public AgreementResponse? Data { get; set; }
 
     private List<StripTab> CourierStripTabList { get; set; } =
     [
@@ -108,8 +109,7 @@
         {
             CourierTxtInputList[2].BindValue = ltlCourier.CarrierName;
             CourierTxtInputList[3].BindValue = ltlCourier.CarrierAccount;
-            if(ltlCourier.CarrierAddress is not null)
-                CourierTxtInputList[4].BindValue = ltlCourier.CarrierAddress.HasValue() ? ltlCourier.CarrierAddress : "";
+            CourierTxtInputList[4].BindValue = ltlCourier.CarrierAddress.HasValue() ? ltlCourier.CarrierAddress : "";
         }
         else
         {

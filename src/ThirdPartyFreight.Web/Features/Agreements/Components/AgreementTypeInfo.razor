@@ -15,10 +15,10 @@
 @code {
 
     [Parameter]
-    public GetAgreement? DataModel { get; set; }
+    public AgreementResponse? DataModel { get; set; }
 
     [Parameter]
-    public EventCallback<GetAgreement> DataModelChanged { get; set; }
+    public EventCallback<AgreementResponse> DataModelChanged { get; set; }
 
     private readonly List<AgreementButton> _agreementButtons =
     [

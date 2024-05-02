@@ -22,6 +22,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using ThirdPartyFreight.Domain.Customer;
+using ThirdPartyFreight.Domain.WorkflowTask;
 using ThirdPartyFreight.Infrastructure.Authentication;
 using ThirdPartyFreight.Infrastructure.Authorization;
 using ThirdPartyFreight.Infrastructure.Caching;
@@ -35,9 +37,6 @@ using AuthenticationService = ThirdPartyFreight.Infrastructure.Authentication.Au
 using IAuthenticationService = ThirdPartyFreight.Application.Abstractions.Authentication.IAuthenticationService;
 
 namespace ThirdPartyFreight.Infrastructure;
-
-using AuthenticationOptions = Authentication.AuthenticationOptions;
-using AuthenticationService = Authentication.AuthenticationService;
 
 public static class DependencyInjection
 {
@@ -83,6 +82,10 @@ public static class DependencyInjection
         services.AddScoped<IAuditRepository, AuditRepository>();
 
         services.AddScoped<IApprovalRepository, ApprovalRepository>();
+
+        services.AddScoped<IWorkFlowTaskRepository, WorkFlowTaskRepository>();
+
+        services.AddScoped<ICustomerRepository, CustomerRepository>();
 
         services.AddScoped<IUnitOfWork>(sp => sp.GetRequiredService<ApplicationDbContext>());
 

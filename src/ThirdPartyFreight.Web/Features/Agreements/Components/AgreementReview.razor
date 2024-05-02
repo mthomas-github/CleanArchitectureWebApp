@@ -18,11 +18,11 @@
             <div class="grid-layout-heading k-text-uppercase k-font-weight-bold k-text-inverse">Status Information</div>
         </GridLayoutItem>
         <GridLayoutItem Row="2" Column="1" ColumnSpan="2">
-            <CustomerInfo CompanyName="@DataModel!.CustomerName" CustomerNumber="@DataModel!.CustomerNumber" CustomerEmail="@DataModel!.CustomerEmail" CustomerName="@DataModel!.CustomerName" />
+            <CustomerInfo CompanyName="@DataModel!.BusinessName" CustomerNumber="@DataModel!.CustomerNumber.ToString()" CustomerEmail="@DataModel!.ContactEmail" CustomerName="@DataModel!.ContactName" />
         </GridLayoutItem>
-        <GridLayoutItem Row="2" Column="3">
-            <StatusInfo Status="@DataModel!.Status.ToString()" EnvelopeStatus="@DataModel.EnvelopeStatus.ToString()" MdmTicketNumber="@DataModel!.MdmTicket" AgreementType="@DataModel!.AgreementType.ToString()" />
-        </GridLayoutItem>
+       @*  <GridLayoutItem Row="2" Column="3">
+            <StatusInfo Status="@DataModel!.Status.ToString()" EnvelopeStatus="@DataModel.Envelopes..ToString()" MdmTicketNumber="@DataModel!.MdmTicket" AgreementType="@DataModel!.AgreementType.ToString()" />
+        </GridLayoutItem> *@
         <GridLayoutItem Row="3" Column="1">
             <div class="grid-layout-heading k-text-uppercase k-font-weight-bold k-text-inverse">Sites & Documents</div>
         </GridLayoutItem>
@@ -35,7 +35,7 @@
 @code {
 
     [Parameter]
-    public GetAgreement? DataModel { get; set; }
+    public AgreementResponse? DataModel { get; set; }
 
     private string _agreementType = string.Empty;
 
@@ -57,7 +57,7 @@
                 ]
             };
 
-        DataModel.Documents ??= new List<Document>();
+        DataModel.Documents ??= new List<DocumentResponse>();
         var docs = new ModalGrid
             {
                 GridName = "Documents",

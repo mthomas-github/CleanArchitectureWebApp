@@ -16,7 +16,7 @@ else
                                      Id="customer-select"
                                      class="customer-select-au"
                                      Data="@Customers"
-                                     ValueField="@(nameof(Customer.CustomerNumber))"
+                                     ValueField="@(nameof(CustomerResponse.CustomerNumber))"
                                      Width="100%"
                                      Filterable="true"
                                      PageSize="10"
@@ -34,12 +34,12 @@ else
                     </TelerikFloatingLabel>
                     <TelerikFloatingLabel Text="Customer Name:" Class="custom-label">
                         <div class="k-form-field-wrap txt-margin-bottom">
-                            <TelerikTextBox @bind-Value="@DataModel!.CustomerName"></TelerikTextBox>
+                            <TelerikTextBox @bind-Value="@DataModel!.BusinessName"></TelerikTextBox>
                         </div>
                     </TelerikFloatingLabel>
                     <TelerikFloatingLabel Text="Customer Email:" Class="custom-label">
                         <div class="k-form-field-wrap">
-                            <TelerikTextBox InputMode="email" @bind-Value="@DataModel!.CustomerEmail"></TelerikTextBox>
+                            <TelerikTextBox InputMode="email" @bind-Value="@DataModel!.ContactEmail"></TelerikTextBox>
                         </div>
                     </TelerikFloatingLabel>
                 </div>
@@ -64,19 +64,19 @@ else
 
 @code {
 
-    IEnumerable<Customer>? Customers { get; set; }
+    IEnumerable<CustomerResponse>? Customers { get; set; }
 
     private string _customerNumber = string.Empty;
     private string _businessName = string.Empty;
     bool _isLoading = true;
 
     [Parameter]
-    public GetAgreement? DataModel { get; set; }
+    public AgreementResponse? DataModel { get; set; }
 
     [Parameter]
-    public EventCallback<GetAgreement> DataModelChanged { get; set; }
+    public EventCallback<AgreementResponse> DataModelChanged { get; set; }
 
-    private async Task UpdateDataModel(GetAgreement newDataModel)
+    private async Task UpdateDataModel(AgreementResponse newDataModel)
     {
         // Update the DataModel
         DataModel = newDataModel;
@@ -88,7 +88,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        Customers = await Http.GetFromJsonAsync<IEnumerable<Customer>>("api/Customers");
+        Customers = await Http.GetFromJsonAsync<IEnumerable<CustomerResponse>>("api/Customers");
         _isLoading = false;
     }
 
@@ -102,12 +102,12 @@ else
                 return;
             }
 
-            var customer = Customers.FirstOrDefault(x => x.CustomerNumber == _customerNumber);
+            var customer = Customers.FirstOrDefault(x => x.CustomerNumber.ToString() == _customerNumber);
             if (customer != null && DataModel is not null)
             {
                 _businessName = customer.CustomerName;
-                DataModel.CustomerNumber = _customerNumber;
-                DataModel.CustomerName = _businessName;
+                DataModel.CustomerNumber = int.Parse(_customerNumber);
+                DataModel.BusinessName = _businessName;
             }
             else
             {

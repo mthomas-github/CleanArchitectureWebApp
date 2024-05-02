@@ -1,10 +1,10 @@
 ﻿using ThirdPartyFreight.Domain.Documents;
 
-namespace ThirdPartyFreight.Web.Features.Agreements;
+namespace ThirdPartyFreight.Web.Features.Agreements.Models;
 
-public class Document
+public sealed class DocumentResponse
 {
-    public Guid AgreementId { get; set; }
+    public Guid DocumentId { get; set; }
     public string DocumentName { get; set; }
     public string DocumentData { get; set; }
     public DocumentType DocumentType { get; set; }

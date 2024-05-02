@@ -1,4 +1,4 @@
-﻿namespace ThirdPartyFreight.Web.Features.Agreements;
+﻿namespace ThirdPartyFreight.Web.Features.Agreements.Models;
 
 public sealed class ModalGrid
 {

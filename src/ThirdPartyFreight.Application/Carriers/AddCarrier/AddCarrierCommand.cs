@@ -7,4 +7,5 @@ public sealed record AddCarrierCommand(
     Guid AgreementId,
     string CarrierName,
     string CarrierAccount,
+    string CarrierAddress,
     CarrierType CarrierType) : ICommand;

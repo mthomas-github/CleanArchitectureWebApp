@@ -14,7 +14,7 @@ builder.Host.UseSerilog((context, configuration) =>
 
 
 builder.Services.AddControllers();
-
+builder.Services.AddCors();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -44,6 +44,11 @@ if (app.Environment.IsDevelopment())
 
     app.SeedData();
 }
+
+app.UseCors(options => options
+    .AllowAnyOrigin()
+    .AllowAnyMethod()
+    .AllowAnyHeader());
 
 app.UseHttpsRedirection();
 

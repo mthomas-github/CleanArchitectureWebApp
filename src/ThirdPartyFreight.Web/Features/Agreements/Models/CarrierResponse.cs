@@ -1,12 +1,12 @@
 ﻿using ThirdPartyFreight.Domain.Carriers;
 
-namespace ThirdPartyFreight.Web.Features.Agreements;
+namespace ThirdPartyFreight.Web.Features.Agreements.Models;
 
-public class Carrier
+public sealed class CarrierResponse
 {
-    public Guid AgreementId { get; set; }
+    public Guid CarrierId { get; set; }
     public string CarrierName { get; set; }
     public string CarrierAccount { get; set; }
-    public string? CarrierAddress { get; set; }
+    public string CarrierAddress { get; set; }
     public CarrierType CarrierType { get; set; }
 }

@@ -13,10 +13,10 @@ namespace ThirdPartyFreight.Api.Controllers.Documents;
 
 public class DocumentController(ISender sender) : ControllerBase
 {
-    [HttpGet("{Id}")]
-    public async Task<IActionResult> GetDocument(Guid Id, CancellationToken cancellationToken)
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetDocument(Guid id, CancellationToken cancellationToken)
     {
-        var query = new GetDocumentQuery(Id);
+        var query = new GetDocumentQuery(id);
 
         Result<DocumentResponse> result = await sender.Send(query, cancellationToken);
 

@@ -13,7 +13,7 @@ internal sealed class AddCarrierCommandHandler(ICarrierRepository carrierReposit
         {
             var carrier = Carrier.Create(
                 request.AgreementId,
-                new CarrierInfo(request.CarrierName, request.CarrierAccount, request.CarrierType));
+                new CarrierInfo(request.CarrierName, request.CarrierAccount, request.CarrierAddress, request.CarrierType));
 
             carrierRepository.Add(carrier);
 

@@ -20,7 +20,7 @@ else
     private bool ShowWizard { get; set; } = true;
     private int StartingStep { get; set; } = 0;
 
-    private static GetAgreement? _dataModel = null;
+    private static AgreementResponse? _dataModel = null;
     private List<UiStep>? _contentUiSteps;
 
     protected override void OnAfterRender(bool firstRender)
@@ -31,17 +31,16 @@ else
         };
     }
 
-    public void OnStepFinish(WizardStepChangeEventArgs args, GetAgreement getAgreement)
+    public void OnStepFinish(WizardStepChangeEventArgs args, AgreementResponse agreementResponse)
     {
-        _dataModel = getAgreement;
+        _dataModel = agreementResponse;
 
         if (args.TargetIndex != 3) return;
-        getAgreement.CreatedBy = "admin";
-        getAgreement.CsrName = "admin";
-        HandleDataModelChanged(getAgreement);
+        agreementResponse.CreatedBy = "Test User";
+        HandleDataModelChanged(agreementResponse);
     }
 
-    private static void HandleDataModelChanged(GetAgreement newDataModel)
+    private static void HandleDataModelChanged(AgreementResponse newDataModel)
     {
         _dataModel = newDataModel;
     }
