@@ -18,7 +18,7 @@
                 {
                     <tr scope="row">
                         <th>
-                            <TelerikButton @onclick="@(() => SetActiveButton(btn))" FillMode="@(btn.BtnFillMode)"
+                            <TelerikButton @onclick="@(() => SetActiveButton(btn))" FillMode="@(AgreementButton.BtnFillMode)"
                                                    ThemeColor="@GetButtonThemeColor(btn)" ButtonType="@ButtonType.Button" class="same-size">@btn.BtnLabel</TelerikButton>
                         </th>
                         <th>
@@ -52,11 +52,9 @@
     {
         public AgreementType AgreementType { get; init; }
         public string BtnLabel { get; init; } = string.Empty;
-        public string BtnClass { get; set; } = "agreementTypeBtn";
-        public string BtnFillMode { get; set; } = ThemeConstants.Button.FillMode.Solid;
-        public string BtnThemeColor { get; set; } = ThemeConstants.Button.ThemeColor.Primary;
+        public static string BtnFillMode => ThemeConstants.Button.FillMode.Solid;
         public bool IsActive { get; set; }
-        public string Description { get; set; } = string.Empty;
+        public string Description { get; init; } = string.Empty;
     }
 
     // Method to set the active button
