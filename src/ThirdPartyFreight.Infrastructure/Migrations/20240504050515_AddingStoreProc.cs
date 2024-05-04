@@ -98,7 +98,7 @@ namespace ThirdPartyFreight.Infrastructure.Migrations
 
             migrationBuilder.Sql(@"CREATE VIEW [dbo].[View_TPFCustomerMaster]
                                     AS
-                                    SELECT CUSTOMER_NUMBER AS CustomerNumber, CUSTOMER_NAME AS CustomerName
+                                    SELECT DISTINCT CUSTOMER_NUMBER AS CustomerNumber, CUSTOMER_NAME AS CustomerName
                                     FROM   dbo.DIM_CustomerMaster
                                     WHERE (CUST_STATUS = 'A') AND (CUSTOMER_TYPE = 'R') AND (ORG_ID IN (782)) AND (SITE_USE_CODE = 'BILL_TO') AND (SITE_USE_STATUS = 'A')
                                     GO");
