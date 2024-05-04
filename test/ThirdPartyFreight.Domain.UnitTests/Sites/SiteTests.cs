@@ -28,7 +28,7 @@ public class SiteTests : BaseTest
         var site = Site.Create(SiteData.AgreementId, SiteData.SiteNumber, SiteData.SiteAddress);
 
         // Assert
-        var domainEvents = AssertDomainEventWasPublished<SiteCreatedDomainEvent>(site);
+        SiteCreatedDomainEvent domainEvents = AssertDomainEventWasPublished<SiteCreatedDomainEvent>(site);
 
         domainEvents.SiteId.Should().Be(site.Id);
 

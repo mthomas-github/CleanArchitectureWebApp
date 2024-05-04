@@ -18,10 +18,10 @@
             <div class="grid-layout-heading k-text-uppercase k-font-weight-bold k-text-inverse">Status Information</div>
         </GridLayoutItem>
         <GridLayoutItem Row="2" Column="1" ColumnSpan="2">
-            <CustomerInfo CompanyName="@DataModel!.BusinessName" CustomerNumber="@DataModel!.CustomerNumber.ToString()" CustomerEmail="@DataModel!.ContactEmail" CustomerName="@DataModel!.ContactName" />
+            <CustomerInfo CompanyName="@_businessName" CustomerNumber="@_customerNumber" CustomerEmail="@_contactEmail" CustomerName="@_contactName" />
         </GridLayoutItem>
         <GridLayoutItem Row="2" Column="3">
-            <StatusInfo Status="@DataModel!.Status.ToString()" EnvelopeStatus="@DataModel.Envelopes!.EnvelopeStatus.ToString()" MdmTicketNumber="@DataModel!.TicketNumber" AgreementType="@DataModel!.AgreementType.ToString()" />
+            <StatusInfo Status="@_status)" EnvelopeStatus="@_envelopeStatus" MdmTicketNumber="@_mdmTicketNumber" AgreementType="@_agreementType" />
         </GridLayoutItem>
         <GridLayoutItem Row="3" Column="1">
             <div class="grid-layout-heading k-text-uppercase k-font-weight-bold k-text-inverse">Sites & Documents</div>
@@ -37,14 +37,28 @@
     [Parameter]
     public AgreementResponse? DataModel { get; set; }
 
-    private string _agreementType = string.Empty;
-
     private List<ModalGrid> GridDataList { get; set; } = [];
+
+    string? _status;
+    string? _agreementType;
+    string? _envelopeStatus = string.Empty;
+    readonly string? _mdmTicketNumber = string.Empty;
+    string? _businessName;
+    string? _customerNumber;
+    string? _contactEmail;
+    string? _contactName;
 
     protected override void OnParametersSet()
     {
         if (DataModel is null) return;
+        _status = DataModel.Status.ToString();
         _agreementType = DataModel.AgreementType.ToString();
+        _envelopeStatus = DataModel.Envelope!.EnvelopeStatus.ToString();
+        _businessName = DataModel.BusinessName;
+        _customerNumber = DataModel.CustomerNumber.ToString();
+        _contactEmail = DataModel.ContactEmail;
+        _contactName = DataModel.ContactName;
+
 
         var sites = new ModalGrid
             {

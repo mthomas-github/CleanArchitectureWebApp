@@ -1,7 +1,7 @@
 ﻿
 <TelerikWindow Class="demo-window" Width="1260px" Height="968px" Centered="true" Visible="@WindowIsVisible" VisibleChanged="@WindowIsVisibleChanged" Modal="true" FooterLayoutAlign="WindowFooterLayoutAlign.Center">
     <WindowTitle>
-        <strong>GetGetAgreement Request @Data!.Id</strong>
+        <strong>Agreement Request @Data!.Id</strong>
     </WindowTitle>
     <WindowActions>
         <WindowAction Name="Close" />
@@ -26,12 +26,12 @@
                 <GridLayoutItem Row="1" Column="3">
                     <div class="grid-layout-heading k-text-uppercase k-font-weight-bold k-text-inverse">Status Information</div>
                 </GridLayoutItem>
-                <GridLayoutItem Row="2" Column="1">
-                    <CustomerInfo CompanyName="@Data!.BusinessName" CustomerNumber="@Data.CustomerNumber.ToString()" CustomerEmail="@Data.ContactEmail" CustomerName="@Data.ContactName" />
+                <GridLayoutItem Row="2" Column="1" ColumnSpan="2">
+                    <CustomerInfo CompanyName="@_businessName" CustomerNumber="@_customerNumber" CustomerEmail="@_contactEmail" CustomerName="@_contactName" />
                 </GridLayoutItem>
-               @*  <GridLayoutItem Row="2" Column="3">
-                    <StatusInfo Status="@Data!.Status.ToString()" EnvelopeStatus="@Data.EnvelopeStatus.ToString()" MdmTicketNumber="@Data.MdmTicket" AgreementType="@Data.AgreementType.ToString()" />
-                </GridLayoutItem> *@
+                <GridLayoutItem Row="2" Column="3" ColumnSpan="2">
+                    <StatusInfo Status="@_status" EnvelopeStatus="@_envelopeStatus" MdmTicketNumber="@_mdmTicketNumber" AgreementType="@_agreementType" />
+                </GridLayoutItem>
                 <GridLayoutItem Row="3" Column="1">
                     <div class="grid-layout-heading k-text-uppercase k-font-weight-bold k-text-inverse">Carrier Information</div>
                 </GridLayoutItem>
@@ -42,7 +42,7 @@
                     <div class="grid-layout-heading k-text-uppercase k-font-weight-bold k-text-inverse">Sites & Documents</div>
                 </GridLayoutItem>
                 <GridLayoutItem Row="4" Column="3" ColumnSpan="2">
-                    <SitesAndDocuments GridList="@GridDataList" />
+                    <SitesAndDocuments GridList="@GridDataList" LoadData="false" />
                 </GridLayoutItem>
             </GridLayoutItems>
         </TelerikGridLayout>
@@ -63,7 +63,7 @@
     public EventCallback<bool> WindowIsVisibleChanged { get; set; }
 
     [Parameter]
-    public AgreementResponse? Data { get; set; }
+    public required AgreementResponse? Data { get; set; }
 
     private List<StripTab> CourierStripTabList { get; set; } =
     [
@@ -82,45 +82,66 @@
 
     private List<ModalGrid> GridDataList { get; set; } =
     [
-        new ModalGrid { GridName = "Sites", GridData = null, Columns = [ new ModalGridColumn() { Field = "SiteNumber", Title = "Site #" }, new ModalGridColumn() {Field = "SiteAddress", Title = "Site Address"} ]},
-        new ModalGrid { GridName = "Documents", GridData = null, Columns = [new ModalGridColumn() { Field = "DocumentType", Title = "Document AgreementType" }]}
+        new ModalGrid { GridName = "Sites", GridData = null, Columns = [ new ModalGridColumn() { Field = "SiteNumber", Title = "Site #" }, new ModalGridColumn() {Field = "FullAddress", Title = "Site Address"} ]},
+        new ModalGrid { GridName = "Documents", GridData = null, Columns = [new ModalGridColumn() { Field = "DocumentName", Title = "Document Name" }]}
     ];
+
+    string? _status;
+    string? _agreementType;
+    string? _envelopeStatus = string.Empty;
+    string? _mdmTicketNumber;
+    string? _businessName;
+    string? _customerNumber;
+    string? _contactEmail;
+    string? _contactName;
 
     protected override void OnParametersSet()
     {
+        //Console.WriteLine(Data.ToString());
+        //if (agreement.Envelope is not null) _envelopeStatus = agreement.Envelope.EnvelopeStatus.ToString();
         if (Data is null) return;
-        var agreement = Data!;
-        if (agreement.Carriers is null) return;
-        var primaryCourier = agreement.Carriers.FirstOrDefault(c => c.CarrierType == CarrierType.Parcel);
+        _status = Data.Status.ToString();
+        _agreementType = Data.AgreementType.ToString();
+        _mdmTicketNumber = Data.TicketNumber.HasValue() ? Data.TicketNumber : "Pending";
+        _businessName = Data.BusinessName.HasValue() ? Data.BusinessName : "";
+        _customerNumber = Data.CustomerNumber.ToString();
+        _contactEmail = Data.ContactEmail.HasValue() ? Data.ContactEmail : "";
+        _contactName = Data.ContactName.HasValue() ? Data.ContactName : "";
+        if (Data.Envelope is not null) _envelopeStatus = Data.Envelope.EnvelopeStatus.ToString();
+        if (Data.Carriers != null && Data.Carriers.Any())
+        {
 
-        if (primaryCourier is not null)
-        {
-            CourierTxtInputList[0].BindValue = primaryCourier.CarrierName;
-            CourierTxtInputList[1].BindValue = primaryCourier.CarrierAccount;
-        }
-        else
-        {
-            CourierTxtInputList[0].BindValue = "";
-            CourierTxtInputList[1].BindValue = "";
+            var primaryCourier = Data.Carriers.FirstOrDefault(c => c.CarrierType == CarrierType.Parcel);
+
+            if (primaryCourier is not null)
+            {
+                CourierTxtInputList[0].BindValue = primaryCourier.CarrierName;
+                CourierTxtInputList[1].BindValue = primaryCourier.CarrierAccount;
+            }
+            else
+            {
+                CourierTxtInputList[0].BindValue = "";
+                CourierTxtInputList[1].BindValue = "";
+            }
+
+            var ltlCourier = Data.Carriers.FirstOrDefault(c => c.CarrierType == CarrierType.Ltl);
+            if (ltlCourier is not null)
+            {
+                CourierTxtInputList[2].BindValue = ltlCourier.CarrierName;
+                CourierTxtInputList[3].BindValue = ltlCourier.CarrierAccount;
+                CourierTxtInputList[4].BindValue = ltlCourier.CarrierAddress.HasValue() ? ltlCourier.CarrierAddress : "";
+            }
+            else
+            {
+                CourierTxtInputList[2].BindValue = "";
+                CourierTxtInputList[3].BindValue = "";
+            }
         }
 
-        var ltlCourier = agreement.Carriers.FirstOrDefault(c => c.CarrierType == CarrierType.Ltl);
-        if (ltlCourier is not null)
-        {
-            CourierTxtInputList[2].BindValue = ltlCourier.CarrierName;
-            CourierTxtInputList[3].BindValue = ltlCourier.CarrierAccount;
-            CourierTxtInputList[4].BindValue = ltlCourier.CarrierAddress.HasValue() ? ltlCourier.CarrierAddress : "";
-        }
-        else
-        {
-            CourierTxtInputList[2].BindValue = "";
-            CourierTxtInputList[3].BindValue = "";
-        }
+        GridDataList[0].GridData = Data.Sites.Cast<object>().ToList();
+        
+        GridDataList[1].GridData = Data.Documents is not null ? Data.Documents.Cast<object>().ToList() : [];
 
-        GridDataList[0].GridData = agreement.Sites.Cast<object>().ToList();
-        if (agreement.Documents is not null)
-        {
-            GridDataList[1].GridData = agreement.Documents.Cast<object>().ToList();
-        }
+
     }
 }

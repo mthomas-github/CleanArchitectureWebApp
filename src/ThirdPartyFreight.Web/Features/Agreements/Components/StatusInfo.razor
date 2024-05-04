@@ -1,36 +1,49 @@
 ﻿<TelerikCard Class="select-customer-card">
     <CardBody>
-        <TelerikFloatingLabel Text="Current Status:" Class="custom-label">
+       <TelerikFloatingLabel Text="Current Status:" Class="custom-label">
             <div class="k-form-field-wrap txt-margin-bottom">
-                <TelerikTextBox FillMode="@FillMode" Rounded="@Rounded" Size="@Size" ReadOnly="@ReadOnly" @bind-Value="@Status"></TelerikTextBox>
+                <TelerikTextBox FillMode="@FillMode" Rounded="@Rounded" Size="@Size" ReadOnly="@ReadOnly" @bind-Value="@_status"></TelerikTextBox>
             </div>
         </TelerikFloatingLabel>
         <TelerikFloatingLabel Text="Agreement Type:" Class="custom-label">
             <div class="k-form-field-wrap txt-margin-bottom">
-                <TelerikTextBox FillMode="@FillMode" Rounded="@Rounded" Size="@Size" ReadOnly="@ReadOnly" @bind-Value="@AgreementType"></TelerikTextBox>
+                <TelerikTextBox FillMode="@FillMode" Rounded="@Rounded" Size="@Size" ReadOnly="@ReadOnly" @bind-Value="@_agreementType"></TelerikTextBox>
             </div>
         </TelerikFloatingLabel>
         <TelerikFloatingLabel Text="Envelope Status:" Class="custom-label">
             <div class="k-form-field-wrap txt-margin-bottom">
-                <TelerikTextBox FillMode="@FillMode" Rounded="@Rounded" Size="@Size" ReadOnly="@ReadOnly" @bind-Value="@EnvelopeStatus"></TelerikTextBox>
+                <TelerikTextBox FillMode="@FillMode" Rounded="@Rounded" Size="@Size" ReadOnly="@ReadOnly" @bind-Value="@_envelopeStatus"></TelerikTextBox>
             </div>
         </TelerikFloatingLabel>
         <TelerikFloatingLabel Text="MDM Ticket#:" Class="custom-label">
             <div class="k-form-field-wrap txt-margin-bottom">
-                <TelerikTextBox FillMode="@FillMode" Rounded="@Rounded" Size="@Size" ReadOnly="@ReadOnly" @bind-Value="@MdmTicketNumber"></TelerikTextBox>
+                <TelerikTextBox FillMode="@FillMode" Rounded="@Rounded" Size="@Size" ReadOnly="@ReadOnly" @bind-Value="@_mdmTicketNumber"></TelerikTextBox>
             </div>
         </TelerikFloatingLabel>
     </CardBody>
 </TelerikCard>
 
 @code {
-    [Parameter] public string? Status { get; set; }
-    [Parameter] public string? AgreementType { get; set; }
-    [Parameter] public string? EnvelopeStatus { get; set; }
+    [Parameter] public string? Status { get; set; } = string.Empty;
+    [Parameter] public string? AgreementType { get; set; } = string.Empty;
+    [Parameter] public string? EnvelopeStatus { get; set; } = string.Empty;
     [Parameter] public string? MdmTicketNumber { get; set; } = string.Empty;
 
     private string FillMode { get; set; } = ThemeConstants.TextBox.FillMode.Flat;
     private string Rounded { get; set; } = ThemeConstants.TextBox.Rounded.Large;
     private string Size { get; set; } = ThemeConstants.TextBox.Size.Large;
     private bool ReadOnly { get; set; } = true;
+
+    private string? _status;
+    private string? _agreementType;
+    private string? _envelopeStatus;
+    private string? _mdmTicketNumber;
+
+    protected override void OnParametersSet()
+    {
+        _status = Status;
+        _agreementType = AgreementType;
+        _envelopeStatus = EnvelopeStatus;
+        _mdmTicketNumber = MdmTicketNumber;
+    }
 }

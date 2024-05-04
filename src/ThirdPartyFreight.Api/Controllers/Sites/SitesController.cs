@@ -5,6 +5,7 @@ using ThirdPartyFreight.Application.Sites.GetSite;
 using ThirdPartyFreight.Domain.Abstractions;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using ThirdPartyFreight.Application.Sites.AddSites;
 
 namespace ThirdPartyFreight.Api.Controllers.Sites;
 [ApiController]
@@ -24,10 +25,20 @@ public class SitesController(ISender sender) : ControllerBase
 
     }
 
-    [HttpPost]
+    [HttpPost("AddSite")]
     public async Task<IActionResult> AddSite(AddSiteRequest request, CancellationToken cancellationToken)
     {
         var command = new AddSiteCommand(request.AgreementId, request.SiteNumber, request.Street, request.City, request.State, request.ZipCode);
+
+        Result result = await sender.Send(command, cancellationToken);
+
+        return result.IsSuccess ? Ok() : BadRequest(result.Error);
+    }
+
+    [HttpPost("AddSites")]
+    public async Task<IActionResult> AddSites(AddSitesRequest request, CancellationToken cancellationToken)
+    {
+        var command = new AddSitesCommand(request.AgreementId, request.Sites);
 
         Result result = await sender.Send(command, cancellationToken);
 

@@ -54,64 +54,44 @@ else
     {
         if (_dataModel is null) return;
         // Create Agreement, Wait Until Success Get Guid
-        var agreementRequest = new AgreementRequest
-            {
-                CustomerNumber = _dataModel.CustomerNumber,
-                CustomerName = _dataModel.BusinessName,
-                ContactEmail = _dataModel.ContactEmail,
-                ContactName = _dataModel.ContactName,
-                AgreementType = _dataModel.AgreementType,
-                SiteType = SiteType.Normal,
-                Status = _dataModel.Status,
-                CreatedBy = _dataModel.CreatedBy,
-            };
-
+        var agreementRequest = new AddAgreementRequest(
+            _dataModel.CustomerNumber, 
+            _dataModel.BusinessName, 
+            _dataModel.ContactName, 
+            _dataModel.ContactEmail, 
+            _dataModel.Status,
+            _dataModel.AgreementType, 
+            SiteType.Normal, 
+            _dataModel.CreatedBy);
+           
         var result = await
             Http.PostAsJsonAsync("api/v1.0/agreements", agreementRequest);
 
 
-        // Call Sites, Envelopes, Documents
+        // Call Sites, Envelope, Documents
 
         var guidString = await result.Content.ReadAsStringAsync();
         var agreementId = guidString.Trim('"');
 
         if (result.IsSuccessStatusCode)
         {
-            var siteRequest = _dataModel.Sites.Select(site => new SiteRequest
-                {
-                    AgreementId = agreementId,
-                    SiteNumber = site.SiteNumber.ToString(),
-                    Street = site.Street,
-                    City = site.City,
-                    State = site.State,
-                    ZipCode = site.ZipCode,
-                })
-                .ToList();
-            var siteResult = await Http.PostAsJsonAsync("api/v1.0/sites", siteRequest);
+            var sites = _dataModel.Sites.Select(ste => new SiteDetail(ste.SiteNumber.ToString(), ste.Street, ste.City, ste.State, ste.ZipCode)).ToList();
+            var siteRequest = new AddSitesRequest(agreementId, sites);
 
-            if (_dataModel.Envelopes != null)
+            await Http.PostAsJsonAsync("api/v1.0/sites/AddSites", siteRequest);
+
+            if (_dataModel.Envelope != null)
             {
-                var envelopeRequest = new EnvelopeRequest
-                {
-                        AgreementId = agreementId,
-                    EnvelopeStatus = _dataModel.Envelopes.EnvelopeStatus,
-                };
-
-                var envelopeResult = await Http.PostAsJsonAsync("api/v1.0/envelopes", envelopeRequest);
+                var envelopeRequest = new AddEnvelopeRequest(_dataModel.Envelope.EnvelopeStatus, agreementId);
+                   
+                await Http.PostAsJsonAsync("api/v1.0/envelopes", envelopeRequest);
             }
 
-            if (_dataModel.Documents is { Count: > 0 })
+            if (_dataModel.Documents is { Count: > 0 and 1 })
             {
-                var documentRequest = _dataModel.Documents.Select(document => new DocumentRequest
-                    {
-                        AgreementId = agreementId,
-                        DocumentType = document.DocumentType,
-                        DocumentData = document.DocumentData,
-                        DocumentName = document.DocumentName,
-                    })
-                    .ToList();
+                var documentRequest = new AddDocumentRequest(agreementId, _dataModel.Documents[0].DocumentName, _dataModel.Documents[0].DocumentData, _dataModel.Documents[0].DocumentType);
 
-                var documentResult = await Http.PostAsJsonAsync("api/v1.0/documents", documentRequest);
+                await Http.PostAsJsonAsync("api/v1.0/documents", documentRequest);
             }
         }
         ShowWizard = false;

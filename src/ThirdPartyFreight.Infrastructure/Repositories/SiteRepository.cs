@@ -8,4 +8,9 @@ internal sealed class SiteRepository : Repository<Site>, ISiteRepository
         : base(dbContext)
     {
     }
+
+    public void Add(IEnumerable<Site> sites)
+    {
+        DbContext.AddRangeAsync(sites);
+    }
 }

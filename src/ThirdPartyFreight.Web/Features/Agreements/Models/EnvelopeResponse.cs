@@ -5,7 +5,6 @@ namespace ThirdPartyFreight.Web.Features.Agreements.Models;
 public sealed class EnvelopeResponse
 {
     public Guid? EnvelopeId { get; set; }
-    public Guid? AgreementId { get; set; }
     public EnvelopeStatus EnvelopeStatus { get; set; }
     public Guid? DocuSignId { get; set; }
     public DateTime CreatedOn { get; set; }
