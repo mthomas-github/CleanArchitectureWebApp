@@ -7,6 +7,9 @@ services:
     build:
       context: .
       dockerfile: src/ThirdPartyFreight.Api/Dockerfile
+    ports:
+        - 28080:8080
+        - 28081:8081
   csdtpfblazorwebapp-db:
     image: mcr.microsoft.com/mssql/server:2022-latest
     container_name: CSDTPFBlazorWebApp.Db
@@ -39,4 +42,4 @@ services:
     image: redis:latest
     container_name: CSDTPFBlazorWebApp.Redis
     ports:
-        - 6379:6379  
+        - 6379:6379

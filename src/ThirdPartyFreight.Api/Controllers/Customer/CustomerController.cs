@@ -14,11 +14,11 @@ namespace ThirdPartyFreight.Api.Controllers.Customer;
 public class CustomerController(ISender sender) : ControllerBase
 {
     [HttpGet("{customerNumber}")]
-    public async Task<IActionResult> GetCustomer(int customerNumber, CancellationToken cancellationToken)
+    public async Task<IActionResult> GetCustomer(string customerNumber, CancellationToken cancellationToken)
     {
         var query = new GetCustomerQuery(customerNumber);
 
-        Result<CustomerResponse> result = await sender.Send(query, cancellationToken);
+        Result<CustomerSiteResponse> result = await sender.Send(query, cancellationToken);
 
         return result.IsSuccess ? Ok(result.Value) : NotFound(result.Error);
     }

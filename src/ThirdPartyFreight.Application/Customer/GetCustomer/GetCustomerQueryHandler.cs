@@ -1,5 +1,6 @@
 ﻿using System.Data;
 using Dapper;
+using Newtonsoft.Json;
 using ThirdPartyFreight.Application.Abstractions.Data;
 using ThirdPartyFreight.Application.Abstractions.Messaging;
 using ThirdPartyFreight.Application.Shared;
@@ -8,7 +9,7 @@ using ThirdPartyFreight.Domain.Customer;
 
 namespace ThirdPartyFreight.Application.Customer.GetCustomer;
 
-internal sealed class GetCustomerQueryHandler : IQueryHandler<GetCustomerQuery, CustomerResponse>
+internal sealed class GetCustomerQueryHandler : IQueryHandler<GetCustomerQuery, CustomerSiteResponse>
 {
     private readonly ISqlConnectionFactory _sqlConnectionFactory;
 
@@ -16,22 +17,18 @@ internal sealed class GetCustomerQueryHandler : IQueryHandler<GetCustomerQuery, 
     {
         _sqlConnectionFactory = sqlConnectionFactory;
     }
-    public async Task<Result<CustomerResponse>> Handle(GetCustomerQuery request, CancellationToken cancellationToken)
+    public async Task<Result<CustomerSiteResponse>> Handle(GetCustomerQuery request, CancellationToken cancellationToken)
     {
         using IDbConnection connection = _sqlConnectionFactory.CreateConnection();
 
-        const string sql = """
-                           SELECT
-                             CustomerNumber,
-                             CustomerName
-                           FROM
-                             View_TPFCustomerMaster
-                           WHERE
-                             CustomerNumber = @CustomerNumber;
-                           """;
+        const string storedProcedureName = "TPF_GetCustomerActiveSites";
 
-        CustomerResponse? result = await connection.QueryFirstOrDefaultAsync<CustomerResponse>(sql, new { request.CustomerNumber });
+        string? jsonResponse = await connection.QueryFirstOrDefaultAsync<string>(storedProcedureName,
+            new { request.CustomerNumber },
+            commandType: CommandType.StoredProcedure);
 
-        return result ?? Result.Failure<CustomerResponse>(CustomerErrors.NotFound);
+        CustomerSiteResponse? result = JsonConvert.DeserializeObject<CustomerSiteResponse>(jsonResponse ?? string.Empty);
+
+        return result ?? Result.Failure<CustomerSiteResponse>(CustomerErrors.NotFound);
     }
 }

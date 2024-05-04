@@ -1,4 +1,5 @@
-﻿<div class="align-self-center">
+﻿@using Envelope = Telerik.SvgIcons.Envelope
+<div class="align-self-center">
     <TelerikCard Width="100%">
         <CardHeader>
             <CardTitle>Agreement Types</CardTitle>
@@ -48,6 +49,7 @@
         new AgreementButton { BtnLabel = "Update", IsActive = false, AgreementType = AgreementType.Update, Description = "Use this when we are going to be updating information, for example: Carrier information Needs to be updated."}
     ];
 
+    protected 
     private class AgreementButton
     {
         public AgreementType AgreementType { get; init; }
@@ -66,11 +68,14 @@
         }
 
         button.IsActive = true;
-        if (DataModel is not null)
+        if (DataModel is null) return;
+        var envelope = new EnvelopeResponse
         {
-            DataModel.AgreementType = button.AgreementType;
-            DataModelChanged.InvokeAsync(DataModel);
-        }
+            EnvelopeStatus = button.AgreementType is AgreementType.Add or AgreementType.Update ? EnvelopeStatus.Draft : EnvelopeStatus.NotRequired
+        DatV GBHNaModel.AgreementType = button.AgreementType;
+        DataModel.Status = Status.Creating;
+        DataModel.Envelopes = envelope;
+        DataModelChanged.InvokeAsync(DataModel);
     }
 
     private static string GetButtonThemeColor(AgreementButton button)

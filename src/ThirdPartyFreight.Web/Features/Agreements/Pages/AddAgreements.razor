@@ -23,6 +23,11 @@ else
     private static AgreementResponse? _dataModel = null;
     private List<UiStep>? _contentUiSteps;
 
+    public bool IsStep1Disabled { get; set; } = false;
+    public bool IsStep2Disabled { get; set; } = true;
+    public bool IsStep3Disabled { get; set; } = true;
+    public bool IsStep4Disabled { get; set; } = true;
+
     protected override void OnAfterRender(bool firstRender)
     {
         if (!ShowWizard && !firstRender)
@@ -76,7 +81,7 @@ else
             },
 
 
-        new UiStep
+    new UiStep
             {
                 StepLabel = "Customer Information",
                 IsValidStep = false,
@@ -94,7 +99,7 @@ else
             },
 
 
-        new UiStep
+    new UiStep
             {
                 StepLabel = "Sites Information",
                 IsValidStep = false,
@@ -112,7 +117,7 @@ else
             },
 
 
-        new UiStep
+    new UiStep
             {
                 StepLabel = "Review",
                 IsValidStep = false,

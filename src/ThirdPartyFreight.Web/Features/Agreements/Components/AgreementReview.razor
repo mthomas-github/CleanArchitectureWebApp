@@ -20,9 +20,9 @@
         <GridLayoutItem Row="2" Column="1" ColumnSpan="2">
             <CustomerInfo CompanyName="@DataModel!.BusinessName" CustomerNumber="@DataModel!.CustomerNumber.ToString()" CustomerEmail="@DataModel!.ContactEmail" CustomerName="@DataModel!.ContactName" />
         </GridLayoutItem>
-       @*  <GridLayoutItem Row="2" Column="3">
-            <StatusInfo Status="@DataModel!.Status.ToString()" EnvelopeStatus="@DataModel.Envelopes..ToString()" MdmTicketNumber="@DataModel!.MdmTicket" AgreementType="@DataModel!.AgreementType.ToString()" />
-        </GridLayoutItem> *@
+        <GridLayoutItem Row="2" Column="3">
+            <StatusInfo Status="@DataModel!.Status.ToString()" EnvelopeStatus="@DataModel.Envelopes!.EnvelopeStatus.ToString()" MdmTicketNumber="@DataModel!.TicketNumber" AgreementType="@DataModel!.AgreementType.ToString()" />
+        </GridLayoutItem>
         <GridLayoutItem Row="3" Column="1">
             <div class="grid-layout-heading k-text-uppercase k-font-weight-bold k-text-inverse">Sites & Documents</div>
         </GridLayoutItem>
@@ -34,8 +34,8 @@
 
 @code {
 
-    [Parameter]
-    public AgreementResponse? DataModel { get; set; }
+        [Parameter]
+        public AgreementResponse? DataModel { get; set; }
 
     private string _agreementType = string.Empty;
 
@@ -46,30 +46,39 @@
         if (DataModel is null) return;
         _agreementType = DataModel.AgreementType.ToString();
 
+
+        if (DataModel.Envelopes is null)
+        {
+            var envelope = new EnvelopeResponse
+            {
+                EnvelopeStatus = DataModel.AgreementType is AgreementType.Add or AgreementType.Update ? EnvelopeStatus.Draft : EnvelopeStatus.NotRequired
+            };
+        }
+
         var sites = new ModalGrid
-            {
-                GridName = "Sites",
-                GridData = DataModel.Sites.Cast<object>().ToList(),
-                Columns =
-                [
-                    new ModalGridColumn() { Field = "SiteNumber", Title = "Site #" },
-                new ModalGridColumn() { Field = "SiteAddress", Title = "Site Address" }
-                ]
-            };
+                {
+                    GridName = "Sites",
+                    GridData = DataModel.Sites.Cast<object>().ToList(),
+                    Columns =
+                        [
+                            new ModalGridColumn() { Field = "SiteNumber", Title = "Site #" },
+                    new ModalGridColumn() { Field = "SiteAddress", Title = "Site Address" }
+                        ]
+                };
 
-        DataModel.Documents ??= new List<DocumentResponse>();
-        var docs = new ModalGrid
-            {
-                GridName = "Documents",
-                GridData = DataModel.Documents.Cast<object>().ToList(),
-                Columns =
-                [
-                    new ModalGridColumn() { Field = "DocumentType", Title = "Document AgreementType" }
-                ]
-            };
+            DataModel.Documents ??= new List<DocumentResponse>();
+            var docs = new ModalGrid
+                {
+                    GridName = "Documents",
+                    GridData = DataModel.Documents.Cast<object>().ToList(),
+                    Columns =
+                        [
+                            new ModalGridColumn() { Field = "DocumentType", Title = "Document AgreementType" }
+                        ]
+                };
 
-        if (GridDataList.Any()) return;
-        GridDataList.Add(sites);
-        GridDataList.Add(docs);
+            if (GridDataList.Any()) return;
+            GridDataList.Add(sites);
+            GridDataList.Add(docs);
+        }
     }
-}

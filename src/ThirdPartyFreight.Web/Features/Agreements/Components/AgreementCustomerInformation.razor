@@ -76,16 +76,6 @@ else
     [Parameter]
     public EventCallback<AgreementResponse> DataModelChanged { get; set; }
 
-    private async Task UpdateDataModel(AgreementResponse newDataModel)
-    {
-        // Update the DataModel
-        DataModel = newDataModel;
-
-        // Notify the parent component (Wizard) about the change in DataModel
-        await DataModelChanged.InvokeAsync(DataModel);
-    }
-
-
     protected override async Task OnInitializedAsync()
     {
         Customers = await Http.GetFromJsonAsync<IEnumerable<CustomerResponse>>("api/v1.0/customers");
