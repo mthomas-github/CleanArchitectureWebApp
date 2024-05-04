@@ -29,4 +29,8 @@
     <ProjectReference Include="..\ThirdPartyFreight.Infrastructure\ThirdPartyFreight.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="PrivateKeys\" />
+  </ItemGroup>
+
 </Project>

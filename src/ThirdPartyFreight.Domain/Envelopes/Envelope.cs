@@ -55,4 +55,44 @@ public sealed class Envelope : Entity
 
         return envelope;
     }
+
+    public static Envelope Update(
+        Guid id,
+        EnvelopeStatus envelopeStatus,
+        Guid agreementId,
+        DateTime createdOnUtc,
+        Guid? envelopeId,
+        DateTime? LastModifiedDateTime,
+        DateTime? InitialSentDateTime,
+        DateTime? SentDateTime,
+        DateTime? LastStatusChangedDateTime,
+        DateTime? CompletedDateTime,
+        DateTime? DeliveredDateTime,
+        DateTime? ExpiringDateTime,
+        DateTime? VoidedDateTime,
+        VoidReason? voidReason,
+        AutoRespondReason? autoRespondReason
+        )
+    {
+        var envelope = new Envelope
+        {
+            Id = id,
+            EnvelopeStatus = envelopeStatus,
+            AgreementId = agreementId,
+            CreatedOnUtc = createdOnUtc,
+            EnvelopeId = envelopeId,
+            LastModifiedOnUtc = LastModifiedDateTime,
+            InitialSentOnUtc = InitialSentDateTime,
+            SentOnUtc = SentDateTime,
+            LastStatusChangedOnUtc = LastStatusChangedDateTime,
+            CompletedOnUtc = CompletedDateTime,
+            DeliveredOnUtc = DeliveredDateTime,
+            ExpiringOnUtc = ExpiringDateTime,
+            VoidedOnUtc = VoidedDateTime,
+            VoidReason = voidReason,
+            AutoRespondReason = autoRespondReason
+        };
+
+        return envelope;
+    }
 }

@@ -9,4 +9,9 @@ internal sealed class AgreementRepository : Repository<Agreement>, IAgreementRep
         : base(dbContext)
     {
     }
+
+    public void Update(Agreement agreement)
+    {
+        DbContext.Set<Agreement>().Update(agreement);
+    }
 }
