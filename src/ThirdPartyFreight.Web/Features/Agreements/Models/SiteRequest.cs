@@ -1,12 +1,12 @@
 ﻿namespace ThirdPartyFreight.Web.Features.Agreements.Models;
 
-public sealed class SiteResponse
+public sealed class SiteRequest
 {
-    public Guid SiteId { get; set; }
-    public int SiteNumber { get; set; }
+    public string AgreementId { get; set; }
+    public string SiteNumber { get; set; }
     public string Street { get; set; }
     public string City { get; set; }
     public string State { get; set; }
     public string ZipCode { get; set; }
-    public string FullAddress => $"{Street}, {City}, {State} {ZipCode}";
+
 }

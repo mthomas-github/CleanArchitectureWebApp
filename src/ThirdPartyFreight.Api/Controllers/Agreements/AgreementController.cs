@@ -51,11 +51,6 @@ public class AgreementController(ISender sender) : ControllerBase
 
         Result<Guid> result = await sender.Send(command, cancellationToken);
 
-        if (result.IsFailure)
-        {
-            return BadRequest(result.Error);
-        }
-
-        return CreatedAtAction(nameof(GetAgreement), new { id = result.Value }, result.Value);
+        return result.IsSuccess ? Ok(result.Value) : BadRequest(result.Error);
     }
 }

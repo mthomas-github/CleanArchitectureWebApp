@@ -19,7 +19,7 @@ else
                                      ValueField="@(nameof(CustomerResponse.CustomerNumber))"
                                      Width="100%"
                                      Filterable="true"
-                                     PageSize="10"
+                                     PageSize="50"
                                      ItemHeight="35"
                                      Placeholder="Start Typing Customer #..."
                                      FilterOperator="@StringFilterOperator.StartsWith"
@@ -34,12 +34,12 @@ else
                     </TelerikFloatingLabel>
                     <TelerikFloatingLabel Text="Customer Name:" Class="custom-label">
                         <div class="k-form-field-wrap txt-margin-bottom">
-                            <TelerikTextBox @bind-Value="@DataModel!.ContactName"></TelerikTextBox>
+                            <TelerikTextBox Value="@DataModel!.ContactName" ValueChanged="@SetContractName"></TelerikTextBox>
                         </div>
                     </TelerikFloatingLabel>
                     <TelerikFloatingLabel Text="Customer Email:" Class="custom-label">
                         <div class="k-form-field-wrap">
-                            <TelerikTextBox InputMode="email" @bind-Value="@DataModel!.ContactEmail"></TelerikTextBox>
+                            <TelerikTextBox InputMode="email" Value="@DataModel!.ContactEmail" ValueChanged="@SetContractEmail"></TelerikTextBox>
                         </div>
                     </TelerikFloatingLabel>
                 </div>
@@ -109,4 +109,8 @@ else
             Console.WriteLine("Error setting business name: " + ex.Message);
         }
     }
+
+    private void SetContractName(object userInput) => DataModel!.ContactName = (string)userInput;
+
+    private void SetContractEmail(object userInput) => DataModel!.ContactEmail = (string)userInput;
 }

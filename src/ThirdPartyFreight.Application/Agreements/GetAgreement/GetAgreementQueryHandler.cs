@@ -59,12 +59,7 @@ internal sealed class GetAgreementQueryHandler(ISqlConnectionFactory sqlConnecti
                 }
 
                 // Add unique envelopes
-                if (existingAgreement.Envelopes != null
-                    && envelope?.EnvelopeId != null
-                    && existingAgreement.Envelopes.TrueForAll(e => e.EnvelopeId != envelope.EnvelopeId))
-                {
-                    existingAgreement.Envelopes.Add(envelope);
-                }
+                existingAgreement.Envelope = envelope;
 
                 // Add unique notes
                 if (existingAgreement.Notes != null

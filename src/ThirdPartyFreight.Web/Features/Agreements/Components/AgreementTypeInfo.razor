@@ -72,7 +72,9 @@
         var envelope = new EnvelopeResponse
         {
             EnvelopeStatus = button.AgreementType is AgreementType.Add or AgreementType.Update ? EnvelopeStatus.Draft : EnvelopeStatus.NotRequired
-        DatV GBHNaModel.AgreementType = button.AgreementType;
+        };
+
+        DataModel.AgreementType = button.AgreementType;
         DataModel.Status = Status.Creating;
         DataModel.Envelopes = envelope;
         DataModelChanged.InvokeAsync(DataModel);

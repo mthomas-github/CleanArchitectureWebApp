@@ -1,6 +1,33 @@
 ﻿@inject HttpClient Http
 
+@if (GridList.Count >= 1)
+{
+    <TelerikTabStrip @bind-ActiveTabIndex="@ActiveTabIndex">
 
+        @foreach (var grid in GridList)
+        {
+            <TabStripTab Title="@grid.GridName">
+                <TelerikGrid Data="@grid.GridData"
+                             Height="@Height"
+                             Class="grid-no-scroll"
+                             Pageable="true"
+                             PageSize="5"
+                             Sortable="true"
+                             SortMode="SortMode.Single"
+                             Resizable="true">
+                    <GridColumns>
+                        @foreach (var col in grid.Columns)
+                        {
+                            <GridColumn Field="@col.Field" Title="@col.Title" />
+                        }
+                    </GridColumns>
+                </TelerikGrid>
+            </TabStripTab>
+        }
+    </TelerikTabStrip>
+}
+else
+{
     <TelerikLoaderContainer OverlayThemeColor="light"
                             Visible="@(!IsInitialDataLoadComplete)"
                             Text="@null"
@@ -21,22 +48,33 @@
                  Resizable="true"
                  SelectionMode="@SelectionMode"
                  SelectedItems="@SelectedSites"
-                 SelectedItemsChanged="@((IEnumerable<CustomerSite> siteList) => OnSelect(siteList))"
-                 >
+                 SelectedItemsChanged="@((IEnumerable<CustomerSite> siteList) => OnSelect(siteList))">
+        <GridToolBarTemplate>
+            <span>Search for any sites or address by typing in the box to the right.</span>
+            <span class="k-toolbar-spacer"></span>
+            <GridSearchBox Placeholder="@Placeholder"
+                           Width="@(SearchBoxWidth >= 100 ? SearchBoxWidth + "px" : "100px")"
+                           DebounceDelay="@DebounceDelay">
+            </GridSearchBox>
+        </GridToolBarTemplate>
         <GridSettings>
             <GridPagerSettings InputType="@InputType" PageSizes="@PageSizes" ButtonCount="@ButtonCount" Position="@PagerPosition" />
         </GridSettings>
         <GridColumns>
             <GridCheckboxColumn SelectAll="@ShowSelectAll" Width="2px" ShowColumnMenu="false"></GridCheckboxColumn>
-            <GridColumn Field="Site" Title="Site #" VisibleInColumnChooser="true" Visible="true" Width="8px"/>
-            <GridColumn Field="FullAddress" Title="Site Address" VisibleInColumnChooser="true" Width="35px"/>
+            <GridColumn Field="Site" Title="Site #" VisibleInColumnChooser="true" Visible="true" Width="8px" />
+            <GridColumn Field="FullAddress" Title="Site Address" VisibleInColumnChooser="true" Width="35px" />
         </GridColumns>
     </TelerikGrid>
+}
+
 
 @code {
 
     [Parameter] public AgreementResponse? DataModel { get; set; }
     [Parameter] public EventCallback<AgreementResponse> DataModelChanged { get; set; }
+    [Parameter] public List<ModalGrid> GridList { get; set; } = [];
+    [Parameter] public bool LoadData { get; set; } = true;
     GridSelectionMode SelectionMode { get; set; } = GridSelectionMode.Multiple;
     bool ShowSelectAll => SelectionMode == GridSelectionMode.Multiple;
     public IEnumerable<CustomerSite> SelectedSites { get; set; } = new List<CustomerSite>();
@@ -50,30 +88,29 @@
     PagerInputType InputType { get; set; } = PagerInputType.Buttons;
     PagerPosition PagerPosition { get; set; } = PagerPosition.Bottom;
     static List<int?> PageSizes => [20, 30, 40, 50, null];
-
+    int? SearchBoxWidth { get; set; } = 200;
+    int DebounceDelay { get; set; } = 200;
+    string Placeholder { get; set; } = "Search...";
+    List<SiteResponse> _selectedSites = [];
     protected override async Task OnInitializedAsync()
     {
-        if (IsInitialDataLoadComplete == false)
+        if (IsInitialDataLoadComplete == false && LoadData)
         {
             var response = await Http.GetFromJsonAsync<CustomerSiteResponse>($"api/v1/customers/{DataModel?.CustomerNumber.ToString()}");
             AllData = response?.Sites;
-        }
-
-        if (AllData is not null)
-        {
-            GridData = new ObservableCollection<CustomerSite>(AllData);
+            if (AllData is not null)
+            {
+                GridData = new ObservableCollection<CustomerSite>(AllData);
+            }
             IsInitialDataLoadComplete = true;
         }
     }
 
-    void OnSelect(IEnumerable<CustomerSite> siteList)
+    void OnSelect(IEnumerable<CustomerSite> site)
     {
-        List<SiteResponse> selectedSites = [];
-        selectedSites.AddRange(siteList.Select(site => new SiteResponse { SiteNumber = int.Parse(site.Site), Street = site.SiteAddress, City = site.City, State = site.State, ZipCode = site.ZipCode }));
+        _selectedSites.AddRange(site.Select(customerSite => new SiteResponse { SiteNumber = int.Parse(customerSite.Site), Street = customerSite.SiteAddress, City = customerSite.City, State = customerSite.State, ZipCode = customerSite.ZipCode }));
 
-        if (DataModel != null) DataModel.Sites = selectedSites;
+        if (DataModel != null) DataModel.Sites = _selectedSites;
     }
-
-
 
 }

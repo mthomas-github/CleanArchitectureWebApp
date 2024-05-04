@@ -52,9 +52,68 @@ else
 
     private async Task OnFinish()
     {
+        if (_dataModel is null) return;
+        // Create Agreement, Wait Until Success Get Guid
+        var agreementRequest = new AgreementRequest
+            {
+                CustomerNumber = _dataModel.CustomerNumber,
+                CustomerName = _dataModel.BusinessName,
+                ContactEmail = _dataModel.ContactEmail,
+                ContactName = _dataModel.ContactName,
+                AgreementType = _dataModel.AgreementType,
+                SiteType = SiteType.Normal,
+                Status = _dataModel.Status,
+                CreatedBy = _dataModel.CreatedBy,
+            };
+
         var result = await
-            Http.PostAsJsonAsync("api/v1.0/agreements", _dataModel);
-        var msg = await result.Content.ReadFromJsonAsync<int>();
+            Http.PostAsJsonAsync("api/v1.0/agreements", agreementRequest);
+
+
+        // Call Sites, Envelopes, Documents
+
+        var guidString = await result.Content.ReadAsStringAsync();
+        var agreementId = guidString.Trim('"');
+
+        if (result.IsSuccessStatusCode)
+        {
+            var siteRequest = _dataModel.Sites.Select(site => new SiteRequest
+                {
+                    AgreementId = agreementId,
+                    SiteNumber = site.SiteNumber.ToString(),
+                    Street = site.Street,
+                    City = site.City,
+                    State = site.State,
+                    ZipCode = site.ZipCode,
+                })
+                .ToList();
+            var siteResult = await Http.PostAsJsonAsync("api/v1.0/sites", siteRequest);
+
+            if (_dataModel.Envelopes != null)
+            {
+                var envelopeRequest = new EnvelopeRequest
+                {
+                        AgreementId = agreementId,
+                    EnvelopeStatus = _dataModel.Envelopes.EnvelopeStatus,
+                };
+
+                var envelopeResult = await Http.PostAsJsonAsync("api/v1.0/envelopes", envelopeRequest);
+            }
+
+            if (_dataModel.Documents is { Count: > 0 })
+            {
+                var documentRequest = _dataModel.Documents.Select(document => new DocumentRequest
+                    {
+                        AgreementId = agreementId,
+                        DocumentType = document.DocumentType,
+                        DocumentData = document.DocumentData,
+                        DocumentName = document.DocumentName,
+                    })
+                    .ToList();
+
+                var documentResult = await Http.PostAsJsonAsync("api/v1.0/documents", documentRequest);
+            }
+        }
         ShowWizard = false;
         StateHasChanged();
     }

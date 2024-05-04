@@ -20,6 +20,6 @@ public sealed class AgreementResponse
     public List<SiteResponse> Sites { get; init; } = [];
     public List<DocumentResponse>? Documents { get; init; } = [];
     public List<CarrierResponse>? Carriers { get; init; } = [];
-    public List<EnvelopeResponse>? Envelopes { get; init; } = [];
+    public EnvelopeResponse? Envelope { get; set; }
     public List<NoteResponse>? Notes { get; init; } = [];
 }
