@@ -361,3 +361,7 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+/src/ThirdPartyFreight.Api/PrivateKeys/dev.pem
+/src/ThirdPartyFreight.Api/PrivateKeys/dev.ppk
+/src/ThirdPartyFreight.Api/PrivateKeys/devlocal.pem
+/src/ThirdPartyFreight.Api/PrivateKeys/id_rsa.pem
