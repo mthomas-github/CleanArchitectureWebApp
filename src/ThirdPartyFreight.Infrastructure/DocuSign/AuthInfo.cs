@@ -1,8 +1,17 @@
-﻿namespace ThirdPartyFreight.Infrastructure.DocuSign;
+﻿using Newtonsoft.Json;
 
-public sealed class AuthInfo(string authToken, string accountId, Uri baseUrl)
+namespace ThirdPartyFreight.Infrastructure.DocuSign;
+
+public class AuthInfo
 {
-    public string AuthToken { get; init; } = authToken;
-    public string AccountId { get; init; } = accountId;
-    public Uri BaseUrl { get; init; } = baseUrl;
+    [JsonProperty("account_id")]
+    public string AccountId { get; set; }
+    [JsonProperty("is_default")]
+    public string IsDefault { get; set; }
+    [JsonProperty("account_name")]
+    public string AccountName { get; set; }
+    public string AuthToken { get; set; }
+    [JsonProperty("base_uri")]
+    public Uri BaseUrl { get; set; }
+
 }

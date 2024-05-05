@@ -149,7 +149,6 @@ internal sealed class DocuSignService(
             Account? account = await GetAccountInformation(newAccessToken);
 
             await cache.SetAsync("DocuSignAccessToken", newAccessToken, TimeSpan.FromMinutes(60));
-            await cache.SetAsync("DocuSignAccountInfo", account, TimeSpan.FromMinutes(60));
 
             if (account == null)
             {
@@ -157,12 +156,17 @@ internal sealed class DocuSignService(
                 throw new NullReferenceException("Error retrieving docusign account information");
             }
 
-            var response = new AuthInfo(newAccessToken, account.AccountId, new Uri(account.BaseUri));
+            var response = new AuthInfo
+            {
+                AccountId = account.AccountId,
+                AuthToken = newAccessToken,
+                BaseUrl = new Uri(account.BaseUri)
+            };
             
             return response;
         }
 
-        var authInfo = new AuthInfo(accessToken, accountInfo.AccountId, accountInfo.BaseUrl);
+        var authInfo = new AuthInfo{ AuthToken = accessToken, AccountId = accountInfo.AccountId, BaseUrl = accountInfo.BaseUrl};
 
         return authInfo;
     }
@@ -229,7 +233,7 @@ internal sealed class DocuSignService(
                 ? userInfo.Accounts.FirstOrDefault()
                 : userInfo.Accounts.LastOrDefault();
 
-            await cache.SetAsync("DocuSignAccountInfo", accountInfo, TimeSpan.FromSeconds(86400));
+            await cache.SetAsync("DocuSignAccountInfo", accountInfo, TimeSpan.FromMinutes(60));
 
             return accountInfo;
         }

@@ -29,7 +29,7 @@ services:
     command:
         - start-dev
     ports:
-        - 18080:8080 
+        - 18080:8080
   csdtpfblazorwebapp-seq:
     image: datalust/seq:latest
     container_name: CSDTPFBlazorWebApp.Seq

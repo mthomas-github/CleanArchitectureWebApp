@@ -6,8 +6,6 @@ using ThirdPartyFreight.Infrastructure;
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Serilog;
-using ThirdPartyFreight.Api;
-using ThirdPartyFreight.Application.Abstractions.DocuSign;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 

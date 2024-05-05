@@ -18,17 +18,16 @@ internal sealed class UpdateApprovalCommandHandler(IApprovalRepository approvalR
                 return Result.Failure(ApprovalErrors.NotFound);
             }
 
-            var updatedApproval = Approval.Update(
-                request.ApprovalId, 
+            Approval.Update(
+                existingApproval,
                 request.Approval.FirstApprovalOnUtc, 
                 request.Approval.FirstApprovalEndUtc, 
                 request.Approval.SecondApprovalOnUtc, 
                 request.Approval.SecondApprovalEndUtc, 
                 request.Approval.ThirdApprovalOnUtc, 
                 request.Approval.ThirdApprovalEndUtc,
-                request.Approval.CompletedOn);
-
-            approvalRepository.Update(updatedApproval);
+                request.Approval.CompletedOn
+                );
 
             await unitOfWork.SaveChangesAsync(cancellationToken);
 

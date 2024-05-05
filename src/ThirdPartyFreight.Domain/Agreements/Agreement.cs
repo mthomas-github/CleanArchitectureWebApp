@@ -73,4 +73,17 @@ public sealed class Agreement : Entity
         return Result.Success();
     }
 
+    public static void Update(
+        Agreement agreement,
+        Status status,
+        Ticket? mdmTicket,
+        ModifiedBy modifiedBy,
+        DateTime utcNow)
+    {
+        agreement.Status = status;
+        agreement.ModifiedBy = modifiedBy;
+        agreement.ModifiedOnUtc = utcNow;
+        agreement.Ticket = mdmTicket;
+    }
+
 }

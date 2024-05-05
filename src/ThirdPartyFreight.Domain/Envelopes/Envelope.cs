@@ -56,43 +56,32 @@ public sealed class Envelope : Entity
         return envelope;
     }
 
-    public static Envelope Update(
-        Guid id,
+    public static void Update(
+        Envelope envelope,
         EnvelopeStatus envelopeStatus,
-        Guid agreementId,
-        DateTime createdOnUtc,
         Guid? envelopeId,
-        DateTime? LastModifiedDateTime,
-        DateTime? InitialSentDateTime,
-        DateTime? SentDateTime,
-        DateTime? LastStatusChangedDateTime,
-        DateTime? CompletedDateTime,
-        DateTime? DeliveredDateTime,
-        DateTime? ExpiringDateTime,
-        DateTime? VoidedDateTime,
+        DateTime? lastModifiedDateTime,
+        DateTime? initialSentDateTime,
+        DateTime? sentDateTime,
+        DateTime? lastStatusChangedDateTime,
+        DateTime? completedDateTime,
+        DateTime? deliveredDateTime,
+        DateTime? expiringDateTime,
+        DateTime? voidedDateTime,
         VoidReason? voidReason,
-        AutoRespondReason? autoRespondReason
-        )
+        AutoRespondReason? autoRespondReason)
     {
-        var envelope = new Envelope
-        {
-            Id = id,
-            EnvelopeStatus = envelopeStatus,
-            AgreementId = agreementId,
-            CreatedOnUtc = createdOnUtc,
-            EnvelopeId = envelopeId,
-            LastModifiedOnUtc = LastModifiedDateTime,
-            InitialSentOnUtc = InitialSentDateTime,
-            SentOnUtc = SentDateTime,
-            LastStatusChangedOnUtc = LastStatusChangedDateTime,
-            CompletedOnUtc = CompletedDateTime,
-            DeliveredOnUtc = DeliveredDateTime,
-            ExpiringOnUtc = ExpiringDateTime,
-            VoidedOnUtc = VoidedDateTime,
-            VoidReason = voidReason,
-            AutoRespondReason = autoRespondReason
-        };
-
-        return envelope;
+        envelope.EnvelopeStatus = envelopeStatus;
+        envelope.EnvelopeId = envelopeId;
+        envelope.LastModifiedOnUtc = lastModifiedDateTime;
+        envelope.InitialSentOnUtc = initialSentDateTime;
+        envelope.SentOnUtc = sentDateTime;
+        envelope.LastStatusChangedOnUtc = lastStatusChangedDateTime;
+        envelope.CompletedOnUtc = completedDateTime;
+        envelope.DeliveredOnUtc = deliveredDateTime;
+        envelope.ExpiringOnUtc = expiringDateTime;
+        envelope.VoidedOnUtc = voidedDateTime;
+        envelope.VoidReason = voidReason;
+        envelope.AutoRespondReason = autoRespondReason;
     }
 }

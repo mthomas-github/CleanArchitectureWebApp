@@ -3,6 +3,7 @@ using DocuSign.eSign.Model;
 using ThirdPartyFreight.Domain.Agreements.Events;
 using MediatR;
 using Microsoft.Extensions.Logging;
+using ThirdPartyFreight.Application.Abstractions.Clock;
 using ThirdPartyFreight.Application.Abstractions.DocuSign;
 using ThirdPartyFreight.Domain.Abstractions;
 using ThirdPartyFreight.Domain.Agreements;
@@ -18,7 +19,8 @@ internal sealed class AddAgreementDomainEventHandler(
     ISiteRepository siteRepository,
     ILogger<AddAgreementDomainEventHandler> logger,
     IUnitOfWork unitOfWork,
-    IEnvelopeRepository envelopeRepository)
+    IEnvelopeRepository envelopeRepository,
+    IDateTimeProvider dateTimeProvider)
     : INotificationHandler<AgreementCreatedDomainEvent>
 {
     public async Task Handle(AgreementCreatedDomainEvent notification, CancellationToken cancellationToken)
@@ -32,7 +34,7 @@ internal sealed class AddAgreementDomainEventHandler(
             logger.LogInformation("Getting Sites for AgreementId: {AgreementId}", result.Id);
             IEnumerable<Site> sites =
                 await siteRepository.GetSitesAsyncByAgreementId(notification.AgreementId, cancellationToken);
-            string siteString = string.Join(", ", sites.Select(s => s.SiteNumber));
+            string siteString = string.Join(", ", sites.Select(s => s.SiteNumber.Value));
             string customerNum = result.ContactInfo.CustomerNumber.ToString(CultureInfo.CurrentCulture);
             // Step 3 Call DocuSign
             logger.LogInformation("Calling DocuSign for AgreementId: {AgreementId}", result.Id);
@@ -45,21 +47,31 @@ internal sealed class AddAgreementDomainEventHandler(
                 logger.LogInformation("Calling DocuSign for AgreementId: {AgreementId}", result.Id);
                 string? envelopeId = response.EnvelopeId;
                 string? sentDate = response.StatusDateTime;
+                
                 Envelope envelope = await envelopeRepository.GetEnvelopeAsyncByAgreementId(result.Id, cancellationToken);
 
-                var newEnvelope = Envelope.Update(
-                    envelope.Id,
+                Envelope.Update(
+                    envelope,
                     EnvelopeStatus.Sent,
-                    result.Id,
-                    envelope.CreatedOnUtc,
                     Guid.Parse(response.EnvelopeId),
-                    DateTime.Parse(response.StatusDateTime, CultureInfo.InvariantCulture),
-                    DateTime.Parse(response.StatusDateTime, CultureInfo.InvariantCulture),
-                    DateTime.Parse(response.StatusDateTime, CultureInfo.InvariantCulture),
-                    DateTime.Parse(response.StatusDateTime, CultureInfo.InvariantCulture),
-                    null, null, null, null, null, null);
+                    DateTime.Parse(response.StatusDateTime, CultureInfo.CurrentCulture),
+                    DateTime.Parse(response.StatusDateTime, CultureInfo.CurrentCulture),
+                    DateTime.Parse(response.StatusDateTime, CultureInfo.CurrentCulture),
+                    DateTime.Parse(response.StatusDateTime, CultureInfo.CurrentCulture),
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null);
 
-                envelopeRepository.Update(newEnvelope);
+                Agreement.Update(
+                    result,
+                    Status.CustomerSignature,
+                    new ModifiedBy("System"),
+                    dateTimeProvider.UtcNow
+                );
+
                 await unitOfWork.SaveChangesAsync(cancellationToken);
             }
             else

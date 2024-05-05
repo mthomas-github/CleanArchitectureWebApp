@@ -61,8 +61,8 @@ public sealed class Approval : Entity
         return approval;
     }
 
-    public static Approval Update(
-        Guid id,
+    public static void Update(
+        Approval approval,
         DateTime? firstApprovalOnUtc,
         DateTime? firstApprovalEndUtc,
         DateTime? secondApprovalOnUtc,
@@ -71,20 +71,14 @@ public sealed class Approval : Entity
         DateTime? thirdApprovalEndUtc,
         DateTime? completedOn)
     {
-        var approval = new Approval(
-                       id,
-                                  Guid.Empty,
-                                  DateTime.MinValue,
-                                  firstApprovalOnUtc,
-                                  firstApprovalEndUtc,
-                                  secondApprovalOnUtc,
-                                  secondApprovalEndUtc,
-                                  thirdApprovalOnUtc,
-                                  thirdApprovalEndUtc,
-                                  completedOn
-                              );
+        approval.FirstApprovalOnUtc = firstApprovalOnUtc;
+        approval.FirstApprovalEndUtc = firstApprovalEndUtc;
+        approval.SecondApprovalOnUtc = secondApprovalOnUtc;
+        approval.SecondApprovalEndUtc = secondApprovalEndUtc;
+        approval.ThirdApprovalOnUtc = thirdApprovalOnUtc;
+        approval.ThirdApprovalEndUtc = thirdApprovalEndUtc;
+        approval.CompletedOn = completedOn;
 
         approval.RaiseDomainEvent(new ApprovalUpdatedDomainEvent(approval.Id));
-        return approval;
     }
 }
