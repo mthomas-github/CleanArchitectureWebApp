@@ -5,6 +5,7 @@ using DocuSign.eSign.Client.Auth;
 using DocuSign.eSign.Model;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using ThirdPartyFreight.Application.Abstractions.DocuSign;
 using static DocuSign.eSign.Client.Auth.OAuth.UserInfo;
 using UserInfo = DocuSign.eSign.Client.Auth.OAuth.UserInfo;
 

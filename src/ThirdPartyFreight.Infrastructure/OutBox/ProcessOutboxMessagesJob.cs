@@ -5,6 +5,7 @@ using ThirdPartyFreight.Domain.Abstractions;
 using Dapper;
 using MediatR;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Quartz;
 using Newtonsoft.Json;
 
@@ -24,13 +25,13 @@ internal sealed class ProcessOutboxMessagesJob : IJob
     private readonly OutboxOptions _outboxOptions;
     private readonly ILogger<ProcessOutboxMessagesJob> _logger;
 
-    public ProcessOutboxMessagesJob(ISqlConnectionFactory sqlConnectionFactory, IPublisher publisher, IDateTimeProvider dateTimeProvider, OutboxOptions outboxOptions, ILogger<ProcessOutboxMessagesJob> logger)
+    public ProcessOutboxMessagesJob(ISqlConnectionFactory sqlConnectionFactory, IPublisher publisher, IDateTimeProvider dateTimeProvider, IOptions<OutboxOptions> outboxOptions, ILogger<ProcessOutboxMessagesJob> logger)
     {
         _sqlConnectionFactory = sqlConnectionFactory;
         _publisher = publisher;
         _dateTimeProvider = dateTimeProvider;
-        _outboxOptions = outboxOptions;
         _logger = logger;
+        _outboxOptions = outboxOptions.Value;
     }
 
     public async Task Execute(IJobExecutionContext context)
@@ -77,12 +78,10 @@ internal sealed class ProcessOutboxMessagesJob : IJob
         IDbTransaction transaction)
     {
         string sql = $"""
-                      SELECT Id, Content
-                      FROM TPF_OutboxMessages
+                      SELECT TOP {_outboxOptions.BatchSize} Id, Content
+                      FROM TPF_OutboxMessages WITH (UPDLOCK, ROWLOCK)
                       WHERE ProcessedOnUtc IS NULL
                       ORDER BY OccurredOnUtc
-                      LIMIT {_outboxOptions.BatchSize}
-                      FOR UPDATE
                       """;
 
         IEnumerable<OutboxMessageResponse> outboxMessages = await connection.QueryAsync<OutboxMessageResponse>(

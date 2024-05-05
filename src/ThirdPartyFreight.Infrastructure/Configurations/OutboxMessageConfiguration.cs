@@ -14,6 +14,6 @@ internal sealed class OutboxMessageConfiguration : IEntityTypeConfiguration<Outb
 
         builder
             .Property(outboxMessage => outboxMessage.Content)
-            .HasColumnType("nvarchar");
+            .HasColumnType("nvarchar(max)");
     }
 }

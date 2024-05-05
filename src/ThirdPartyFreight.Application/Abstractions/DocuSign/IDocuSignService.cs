@@ -1,6 +1,6 @@
 ﻿using DocuSign.eSign.Model;
 
-namespace ThirdPartyFreight.Infrastructure.DocuSign;
+namespace ThirdPartyFreight.Application.Abstractions.DocuSign;
 
 public interface IDocuSignService
 {

@@ -22,6 +22,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using Quartz;
+using ThirdPartyFreight.Application.Abstractions.DocuSign;
 using ThirdPartyFreight.Domain.Customer;
 using ThirdPartyFreight.Domain.WorkflowTask;
 using ThirdPartyFreight.Infrastructure.Authentication;
@@ -31,6 +33,7 @@ using ThirdPartyFreight.Infrastructure.Clock;
 using ThirdPartyFreight.Infrastructure.Data;
 using ThirdPartyFreight.Infrastructure.DocuSign;
 using ThirdPartyFreight.Infrastructure.Email;
+using ThirdPartyFreight.Infrastructure.OutBox;
 using ThirdPartyFreight.Infrastructure.Repositories;
 using AuthenticationOptions = ThirdPartyFreight.Infrastructure.Authentication.AuthenticationOptions;
 using AuthenticationService = ThirdPartyFreight.Infrastructure.Authentication.AuthenticationService;
@@ -53,6 +56,7 @@ public static class DependencyInjection
         AddCaching(services, configuration);
         AddHealthChecks(services, configuration);
         AddApiVersioning(services);
+        AddBackgroundJobs(services, configuration);
         AddDocuSign(services, configuration);
 
         return services;
@@ -180,7 +184,19 @@ public static class DependencyInjection
     private static void AddDocuSign(IServiceCollection services, IConfiguration configuration)
     {
         services.AddScoped<IDocuSignService, DocuSignService>();
+
         services.Configure<DocuSignOptions>(configuration.GetSection("DocuSign"));
+    }
+
+    private static void AddBackgroundJobs(IServiceCollection services, IConfiguration configuration)
+    {
+        services.Configure<OutboxOptions>(configuration.GetSection("Outbox"));
+
+        services.AddQuartz();
+
+        services.AddQuartzHostedService(options => options.WaitForJobsToComplete = true);
+
+        services.ConfigureOptions<ProcessOutboxMessagesJobSetup>();
     }
 
 
