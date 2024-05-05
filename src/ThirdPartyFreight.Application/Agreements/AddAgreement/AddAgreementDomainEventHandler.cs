@@ -68,6 +68,7 @@ internal sealed class AddAgreementDomainEventHandler(
                 Agreement.Update(
                     result,
                     Status.CustomerSignature,
+                    null,
                     new ModifiedBy("System"),
                     dateTimeProvider.UtcNow
                 );

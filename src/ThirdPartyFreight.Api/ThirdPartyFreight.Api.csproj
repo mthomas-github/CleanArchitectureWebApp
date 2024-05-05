@@ -29,4 +29,10 @@
     <ProjectReference Include="..\ThirdPartyFreight.Infrastructure\ThirdPartyFreight.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="PrivateKeys\ca_cert.crt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
