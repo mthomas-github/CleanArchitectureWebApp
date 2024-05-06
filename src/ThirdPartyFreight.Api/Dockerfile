@@ -5,12 +5,6 @@ USER app
 WORKDIR /app
 EXPOSE 8080
 EXPOSE 8081
-# Install CA certificates
-
-COPY src/ThirdPartyFreight.Api/PrivateKeys/ca_cert.crt /usr/local/share/ca-certificates/ca_cert.crt
-USER root
-RUN update-ca-certificates
-USER app
 
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
