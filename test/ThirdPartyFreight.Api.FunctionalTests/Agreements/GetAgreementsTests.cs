@@ -15,11 +15,11 @@ public class GetAgreementsTests(FunctionalTestWebAppFactory factory) : BaseFunct
     {
 
         // Act
-        var response = await HttpClient.GetAsync(BaseUrl);
+        HttpResponseMessage? response = await HttpClient.GetAsync(BaseUrl);
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
-        var agreement = await response.Content.ReadFromJsonAsync<List<AgreementResponse>>();
+        List<AgreementResponse>? agreement = await response.Content.ReadFromJsonAsync<List<AgreementResponse>>();
         agreement.Should().NotBeNull();
         agreement!.Count.Should().BeGreaterThan(0);
     }

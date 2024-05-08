@@ -16,7 +16,7 @@ public class AddSiteTests(FunctionalTestWebAppFactory factory) : BaseFunctionalT
     public async Task AddSite_ShouldReturnOK_WhenSiteIsAdded()
     {
         // Act
-        var response = await HttpClient.PostAsJsonAsync(BaseUrl, SiteData.AddSiteRequest);
+        HttpResponseMessage? response = await HttpClient.PostAsJsonAsync(BaseUrl, SiteData.AddSiteRequest);
 
         // Assert
         response.Should().NotBeNull();
@@ -40,7 +40,7 @@ public class AddSiteTests(FunctionalTestWebAppFactory factory) : BaseFunctionalT
         var addSiteRequest = new AddSiteRequest(new Guid(agreementId), siteNumber, siteAddress, siteCity, siteState, siteZipCode);
 
         // Act
-        var response = await HttpClient.PostAsJsonAsync(BaseUrl, addSiteRequest);
+        HttpResponseMessage? response = await HttpClient.PostAsJsonAsync(BaseUrl, addSiteRequest);
 
         // Assert
         response.Should().NotBeNull();

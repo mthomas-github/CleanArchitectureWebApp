@@ -27,7 +27,7 @@ public class NoteTests : BaseTest
         var note = Note.Create(NoteData.AgreementId, NoteData.NoteContent, DateTime.UtcNow, NoteData.NoteType);
 
         // Assert
-        var domainEvents = AssertDomainEventWasPublished< NoteCreatedDomainEvent>(note);
+        NoteCreatedDomainEvent? domainEvents = AssertDomainEventWasPublished< NoteCreatedDomainEvent>(note);
 
         domainEvents.NoteId.Should().Be(note.Id);
 

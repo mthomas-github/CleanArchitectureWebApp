@@ -17,11 +17,11 @@ public class GetSiteTests(FunctionalTestWebAppFactory factory) : BaseFunctionalT
         var siteId = new Guid("EF765A0C-20B1-4D67-A718-1DBBC641047C");
         
         // Act
-        var response = await HttpClient.GetAsync($"{BaseUrl}/{siteId}");
+        HttpResponseMessage? response = await HttpClient.GetAsync($"{BaseUrl}/{siteId}");
         
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
-        var site = await response.Content.ReadFromJsonAsync<SiteResponse>();
+        SiteResponse? site = await response.Content.ReadFromJsonAsync<SiteResponse>();
         site.Should().NotBeNull();
         site!.SiteId.Should().Be(siteId);
     }
@@ -33,7 +33,7 @@ public class GetSiteTests(FunctionalTestWebAppFactory factory) : BaseFunctionalT
         var siteId = Guid.NewGuid();
         
         // Act
-        var response = await HttpClient.GetAsync($"{BaseUrl}/{siteId}");
+        HttpResponseMessage? response = await HttpClient.GetAsync($"{BaseUrl}/{siteId}");
         
         // Assert
         response.Should().NotBeNull();

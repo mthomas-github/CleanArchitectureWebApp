@@ -17,11 +17,11 @@ public class GetNoteTests(FunctionalTestWebAppFactory factory) : BaseFunctionalT
         var noteId = new Guid("2791DFB1-E1AE-4A1B-8421-6624CF9912E9");
         
         // Act
-        var response = await HttpClient.GetAsync($"{BaseUrl}/{noteId}");
+        HttpResponseMessage? response = await HttpClient.GetAsync($"{BaseUrl}/{noteId}");
         
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
-        var note = await response.Content.ReadFromJsonAsync<NoteResponse>();
+        NoteResponse? note = await response.Content.ReadFromJsonAsync<NoteResponse>();
         note.Should().NotBeNull();
         note!.NoteId.Should().Be(noteId);
     }
@@ -33,7 +33,7 @@ public class GetNoteTests(FunctionalTestWebAppFactory factory) : BaseFunctionalT
         var noteId = Guid.NewGuid();
         
         // Act
-        var response = await HttpClient.GetAsync($"{BaseUrl}/{noteId}");
+        HttpResponseMessage? response = await HttpClient.GetAsync($"{BaseUrl}/{noteId}");
         
         // Assert
         response.Should().NotBeNull();

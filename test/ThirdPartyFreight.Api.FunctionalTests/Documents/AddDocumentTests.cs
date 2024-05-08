@@ -29,7 +29,7 @@ public class AddDocumentTests(FunctionalTestWebAppFactory factory) : BaseFunctio
         var addDocumentRequest = new AddDocumentRequest(Guid.Parse(agreementId), documentName, documentData, documentType);
 
         // Act
-        var response = await HttpClient.PostAsJsonAsync(BaseUrl, addDocumentRequest);
+        HttpResponseMessage? response = await HttpClient.PostAsJsonAsync(BaseUrl, addDocumentRequest);
 
         // Assert
         response.Should().NotBeNull();
@@ -40,7 +40,7 @@ public class AddDocumentTests(FunctionalTestWebAppFactory factory) : BaseFunctio
     public async Task AddDocument_ShouldReturnOK_WhenDocumentIsAdded()
     {
         // Act
-        var response = await HttpClient.PostAsJsonAsync(BaseUrl, DocumentData.AddTestDocumentRequest);
+        HttpResponseMessage? response = await HttpClient.PostAsJsonAsync(BaseUrl, DocumentData.AddTestDocumentRequest);
 
         // Assert
         response.Should().NotBeNull();

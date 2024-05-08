@@ -16,7 +16,7 @@ public class AddNoteTests(FunctionalTestWebAppFactory factory) : BaseFunctionalT
     public async Task AddNote_ShouldReturnOK_WhenNoteIsAdded()
     {
         // Act
-        var response = await HttpClient.PostAsJsonAsync(BaseUrl, NoteData.AddNoteRequest);
+        HttpResponseMessage? response = await HttpClient.PostAsJsonAsync(BaseUrl, NoteData.AddNoteRequest);
 
         // Assert
         response.Should().NotBeNull();
@@ -36,7 +36,7 @@ public class AddNoteTests(FunctionalTestWebAppFactory factory) : BaseFunctionalT
         var addNoteRequest = new AddNoteRequest(new Guid(agreementId), noteContent, noteType);
 
         // Act
-        var response = await HttpClient.PostAsJsonAsync(BaseUrl, addNoteRequest);
+        HttpResponseMessage? response = await HttpClient.PostAsJsonAsync(BaseUrl, addNoteRequest);
 
         // Assert
         response.Should().NotBeNull();

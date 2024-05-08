@@ -19,12 +19,12 @@ public class GetDocumentTests(FunctionalTestWebAppFactory factory) : BaseFunctio
         var documentId = Guid.Parse("B2976BC8-D5CB-4827-80AD-12301909B010");
 
         // Act
-        var response = await HttpClient.GetAsync($"{BaseUrl}/{documentId}");
+        HttpResponseMessage? response = await HttpClient.GetAsync($"{BaseUrl}/{documentId}");
 
         // Assert
         response.Should().NotBeNull();
         response.EnsureSuccessStatusCode();
-        var document = await response.Content.ReadFromJsonAsync<DocumentResponse>();
+        DocumentResponse? document = await response.Content.ReadFromJsonAsync<DocumentResponse>();
         document.Should().NotBeNull();
         document!.DocumentId.Should().Be(documentId);
     }
@@ -36,7 +36,7 @@ public class GetDocumentTests(FunctionalTestWebAppFactory factory) : BaseFunctio
         var documentId = Guid.NewGuid();
 
         // Act
-        var response = await HttpClient.GetAsync($"{BaseUrl}/{documentId}");
+        HttpResponseMessage? response = await HttpClient.GetAsync($"{BaseUrl}/{documentId}");
 
         // Assert
         response.Should().NotBeNull();
