@@ -16,7 +16,8 @@ namespace ThirdPartyFreight.Infrastructure.Migrations
                 type: "nvarchar(max)",
                 nullable: false,
                 defaultValue: "");
-
+            migrationBuilder.Sql(
+                @"IF OBJECT_ID('', 'P') IS NOT NULL BEGIN DROP PROCEDURE TPF_GetCustomerActiveSites END GO");
             migrationBuilder.Sql(@"USE [csddevapps]
                                    GO
                                    /****** Object:  StoredProcedure [dbo].[TPF_GetCustomerActiveSites]    Script Date: 5/3/2024 10:06:49 PM ******/
@@ -96,7 +97,13 @@ namespace ThirdPartyFreight.Infrastructure.Migrations
                                    	SELECT @Json AS JsonOutput;
                                    END;");
 
-            migrationBuilder.Sql(@"CREATE VIEW [dbo].[View_TPFCustomerMaster]
+            migrationBuilder.Sql(@"
+                                     IF OBJECT_ID('View_TPFCustomerMaster', 'V') IS NOT NULL
+                                     BEGIN
+                                        DROP VIEW View_TPFCustomerMaster;
+                                     END
+                                     GO
+                                    CREATE VIEW [dbo].[View_TPFCustomerMaster]
                                     AS
                                     SELECT DISTINCT CUSTOMER_NUMBER AS CustomerNumber, CUSTOMER_NAME AS CustomerName
                                     FROM   dbo.DIM_CustomerMaster
