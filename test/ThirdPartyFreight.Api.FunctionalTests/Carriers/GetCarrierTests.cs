@@ -18,11 +18,11 @@ public class GetCarrierTests(FunctionalTestWebAppFactory factory) : BaseFunction
         var carrierId = new Guid("C74AD015-00C1-426F-84D1-5411F5D94D93");
         
         // Act
-        var response = await HttpClient.GetAsync($"{BaseUrl}/{carrierId}");
+        HttpResponseMessage? response = await HttpClient.GetAsync($"{BaseUrl}/{carrierId}");
         
         // Assert
        response.StatusCode.Should().Be(HttpStatusCode.OK);
-       var carrier = await response.Content.ReadFromJsonAsync<CarrierResponse>();
+       CarrierResponse? carrier = await response.Content.ReadFromJsonAsync<CarrierResponse>();
        carrier.Should().NotBeNull();
        carrier!.CarrierId.Should().Be(carrierId);
     }
@@ -34,7 +34,7 @@ public class GetCarrierTests(FunctionalTestWebAppFactory factory) : BaseFunction
         var carrierId = Guid.NewGuid();
         
         // Act
-        var response = await HttpClient.GetAsync($"{BaseUrl}/{carrierId}");
+        HttpResponseMessage? response = await HttpClient.GetAsync($"{BaseUrl}/{carrierId}");
         
         // Assert
         response.Should().NotBeNull();

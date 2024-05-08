@@ -29,7 +29,7 @@ public class EnvelopeTests : BaseTest
         var carrier = Carrier.Create(CarrierData.AgreementId, CarrierData.Carrier);
 
         // Assert
-        var domainEvents = AssertDomainEventWasPublished<CarrierCreatedDomainEvent>(carrier);
+        CarrierCreatedDomainEvent? domainEvents = AssertDomainEventWasPublished<CarrierCreatedDomainEvent>(carrier);
 
         domainEvents.CarrierId.Should().Be(carrier.Id);
 

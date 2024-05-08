@@ -27,7 +27,7 @@ public class DocumentTest : BaseTest
         var document = Document.Create(DocumentData.AgreementId, DocumentData.Document);
 
         // Assert
-        var domainEvents = AssertDomainEventWasPublished<DocumentCreatedDomainEvent>(document);
+        DocumentCreatedDomainEvent domainEvents = AssertDomainEventWasPublished<DocumentCreatedDomainEvent>(document);
 
         domainEvents.DocumentId.Should().Be(document.Id);
 

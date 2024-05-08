@@ -2,29 +2,30 @@
 using ThirdPartyFreight.Domain.Notes;
 using FluentAssertions;
 using ThirdPartyFreight.Application.IntegrationTests.Infrastructure;
+using ThirdPartyFreight.Application.Shared;
+using ThirdPartyFreight.Domain.Abstractions;
 
-namespace ThirdPartyFreight.Application.IntegrationTests.Notes
+namespace ThirdPartyFreight.Application.IntegrationTests.Notes;
+
+public class GetNoteTests : BaseIntegrationTest
 {
-    public class GetNoteTests : BaseIntegrationTest
+    private static readonly Guid NoteId = Guid.NewGuid();
+    public GetNoteTests(IntegrationTestWebAppFactory factory)
+        : base(factory)
     {
-        private static readonly Guid NoteId = Guid.NewGuid();
-        public GetNoteTests(IntegrationTestWebAppFactory factory)
-            : base(factory)
-        {
-        }
+    }
 
-        [Fact]
-        public async Task GetNote_ShouldReturnFailure_WhenAgreementIsNotFound()
-        {
-            // Arrange
-            var query = new GetNoteQuery(NoteId);
+    [Fact]
+    public async Task GetNote_ShouldReturnFailure_WhenAgreementIsNotFound()
+    {
+        // Arrange
+        var query = new GetNoteQuery(NoteId);
 
-            // Act
-            var result = await Sender.Send(query);
+        // Act
+        Result<NoteResponse> result = await Sender.Send(query);
 
-            // Assert
-            result.Error.Should().Be(NoteErrors.NotFound);
-            ;
-        }
+        // Assert
+        result.Error.Should().Be(NoteErrors.NotFound);
+        ;
     }
 }

@@ -16,7 +16,7 @@ public class AddCarrierTests(FunctionalTestWebAppFactory factory) : BaseFunction
     public async Task AddCarrier_ShouldReturnOK_WhenCarrierIsAdded()
     {
       // Act
-      var response = await HttpClient.PostAsJsonAsync(BaseUrl, CarrierData.AddTestCarrierRequest);
+      HttpResponseMessage? response = await HttpClient.PostAsJsonAsync(BaseUrl, CarrierData.AddTestCarrierRequest);
 
         // Assert
         response.Should().NotBeNull();
@@ -44,7 +44,7 @@ public class AddCarrierTests(FunctionalTestWebAppFactory factory) : BaseFunction
         var invalidRequest = new AddCarrierRequest(Guid.Parse(agreementId), carrierName, accountNumber, carrierType);
 
         // Act
-        var response = await HttpClient.PostAsJsonAsync(BaseUrl, invalidRequest);
+        HttpResponseMessage? response = await HttpClient.PostAsJsonAsync(BaseUrl, invalidRequest);
 
         // Assert
         response.Should().NotBeNull();

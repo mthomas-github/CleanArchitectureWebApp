@@ -24,7 +24,7 @@ public class AddEnvelopeTests(FunctionalTestWebAppFactory factory) : BaseFunctio
         var addEnvelopeRequest = new AddEnvelopeRequest(envelopeStatus, Guid.Parse(agreementId));
 
         // Act
-        var response = await HttpClient.PostAsJsonAsync(BaseUrl, addEnvelopeRequest);
+        HttpResponseMessage? response = await HttpClient.PostAsJsonAsync(BaseUrl, addEnvelopeRequest);
 
         // Assert
         response.Should().NotBeNull();
@@ -35,7 +35,7 @@ public class AddEnvelopeTests(FunctionalTestWebAppFactory factory) : BaseFunctio
     public async Task AddEnvelope_ShouldReturnOK_WhenEnvelopeIsAdded()
     {
         // Act
-        var response = await HttpClient.PostAsJsonAsync(BaseUrl, EnvelopeData.AddTestEnvelopeRequest);
+        HttpResponseMessage? response = await HttpClient.PostAsJsonAsync(BaseUrl, EnvelopeData.AddTestEnvelopeRequest);
 
         // Assert
         response.Should().NotBeNull();

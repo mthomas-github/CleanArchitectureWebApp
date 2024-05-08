@@ -16,7 +16,7 @@ public class GetAgreementTest(FunctionalTestWebAppFactory factory) : BaseFunctio
         var agreementId = Guid.NewGuid();
 
         // Act
-        var response = await HttpClient.GetAsync($"{BaseUrl}/{agreementId}");
+        HttpResponseMessage? response = await HttpClient.GetAsync($"{BaseUrl}/{agreementId}");
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
@@ -29,11 +29,11 @@ public class GetAgreementTest(FunctionalTestWebAppFactory factory) : BaseFunctio
         var agreementId = Guid.Parse("BBEA553F-7C2F-4818-9669-650DB74DF39F");
 
         // Act
-        var response = await HttpClient.GetAsync($"{BaseUrl}/{agreementId}");
+        HttpResponseMessage? response = await HttpClient.GetAsync($"{BaseUrl}/{agreementId}");
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
-        var agreement = await response.Content.ReadFromJsonAsync<AgreementResponse>();
+        AgreementResponse? agreement = await response.Content.ReadFromJsonAsync<AgreementResponse>();
         agreement.Should().NotBeNull();
     }
 
@@ -45,11 +45,11 @@ public class GetAgreementTest(FunctionalTestWebAppFactory factory) : BaseFunctio
         const int expectedSiteCount = 2;
 
         // Act
-        var response = await HttpClient.GetAsync($"{BaseUrl}/{agreementId}");
+        HttpResponseMessage? response = await HttpClient.GetAsync($"{BaseUrl}/{agreementId}");
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
-        var agreement = await response.Content.ReadFromJsonAsync<AgreementResponse>();
+        AgreementResponse? agreement = await response.Content.ReadFromJsonAsync<AgreementResponse>();
         agreement.Should().NotBeNull();
         agreement!.Sites.Should().NotBeNullOrEmpty();
         agreement.Sites.Count.Should().Be(expectedSiteCount);

@@ -35,6 +35,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ElsaStudioBlazorServer", "e
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ThirdPartyFreight.Web", "src\ThirdPartyFreight.Web\ThirdPartyFreight.Web.csproj", "{D445C93A-B3AF-4C7F-9AFF-CEFBCA0543AC}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Python", "Python", "{433F74D8-1F4F-4360-8750-9571E8D807F2}"
+	ProjectSection(SolutionItems) = preProject
+		datagen.py = datagen.py
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

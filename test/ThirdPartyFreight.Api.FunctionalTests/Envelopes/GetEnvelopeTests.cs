@@ -17,11 +17,11 @@ public class GetEnvelopeTests(FunctionalTestWebAppFactory factory) : BaseFunctio
         var envelopeId = new Guid("F43FFD1B-DC67-46CC-BE02-D033C65A5395");
         
         // Act
-        var response = await HttpClient.GetAsync($"{BaseUrl}/{envelopeId}");
+        HttpResponseMessage? response = await HttpClient.GetAsync($"{BaseUrl}/{envelopeId}");
         
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
-        var envelope = await response.Content.ReadFromJsonAsync<EnvelopeResponse>();
+        EnvelopeResponse? envelope = await response.Content.ReadFromJsonAsync<EnvelopeResponse>();
         envelope.Should().NotBeNull();
         envelope!.EnvelopeId.Should().Be(envelopeId);
     }
@@ -33,7 +33,7 @@ public class GetEnvelopeTests(FunctionalTestWebAppFactory factory) : BaseFunctio
         var envelopeId = Guid.NewGuid();
         
         // Act
-        var response = await HttpClient.GetAsync($"{BaseUrl}/{envelopeId}");
+        HttpResponseMessage? response = await HttpClient.GetAsync($"{BaseUrl}/{envelopeId}");
         
         // Assert
         response.Should().NotBeNull();
