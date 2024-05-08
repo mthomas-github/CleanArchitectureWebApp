@@ -3,7 +3,7 @@ version: "3.4"
 services:
   thirdpartyfreight.api:
     build:
-      context: "/Users/mthomas/Projects/WorkRepos/CSDTPFWebApp"
+      context: "C:\\Users\\mthomas\\source\\repos\\mthomas-github\\CSDTPFWebApp"
       dockerfile: "src/ThirdPartyFreight.Api/Dockerfile"
       target: "base"
     command: []
@@ -15,7 +15,7 @@ services:
     image: "thirdpartyfreightapi:dev"
     ports: []
     volumes:
-    - "/Users/mthomas/.nuget/packages:/home/app/.nuget/packages"
-    - "/Users/mthomas/Projects/WorkRepos/CSDTPFWebApp/src/ThirdPartyFreight.Api:/app:rw"
-    - "/Users/mthomas/Projects/WorkRepos/CSDTPFWebApp:/src:rw"
+    - "C:\\Users\\mthomas\\.nuget\\packages:/home/app/.nuget/packages"
+    - "C:\\Users\\mthomas\\source\\repos\\mthomas-github\\CSDTPFWebApp\\src\\ThirdPartyFreight.Api:/app:rw"
+    - "C:\\Users\\mthomas\\source\\repos\\mthomas-github\\CSDTPFWebApp:/src:rw"
     working_dir: "/app"
