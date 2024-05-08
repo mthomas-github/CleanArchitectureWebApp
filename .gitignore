@@ -367,3 +367,5 @@ FodyWeavers.xsd
 /src/ThirdPartyFreight.Api/PrivateKeys/id_rsa.pem
 /src/ThirdPartyFreight.Api/ca_cert.crt
 /src/ThirdPartyFreight.Api/PrivateKeys/ca_cert.crt
+
+.idea/*
