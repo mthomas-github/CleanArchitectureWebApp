@@ -23,7 +23,7 @@ public class GetEnvelopeTests(FunctionalTestWebAppFactory factory) : BaseFunctio
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         EnvelopeResponse? envelope = await response.Content.ReadFromJsonAsync<EnvelopeResponse>();
         envelope.Should().NotBeNull();
-        envelope!.EnvelopeId.Should().Be(envelopeId);
+        envelope!.Id.Should().Be(envelopeId);
     }
 
     [Fact]

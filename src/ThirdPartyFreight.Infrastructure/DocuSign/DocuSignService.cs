@@ -137,7 +137,7 @@ internal sealed class DocuSignService(
 
         if (accessToken == null || accountInfo == null)
         {
-            string? newAccessToken = RetrieveAccessToken(configuration.Value.IntegrationId, configuration.Value.ImpersonatedUserId,
+            string? newAccessToken = JwtAuth.RetrieveAccessToken(configuration.Value.IntegrationId, configuration.Value.ImpersonatedUserId,
                 configuration.Value.AuthUrl, configuration.Value.PrivateKeyFilePath);
 
             if (newAccessToken == null)
@@ -170,58 +170,7 @@ internal sealed class DocuSignService(
 
         return authInfo;
     }
-
-    private static string? RetrieveAccessToken(string clientId, string impersonatedUserId, string authUrl,
-        string privateKeyFilePath)
-    {
-        OAuth.OAuthToken? accessTokenObj = null;
-
-        try
-        {
-            accessTokenObj = AuthenticateWithJwt("ESignature", clientId, impersonatedUserId, authUrl,
-                ReadFileContent(privateKeyFilePath));
-        }
-        catch (ApiException apiExp)
-        {
-            if (apiExp.Message.Contains("consent_required"))
-            {
-                return apiExp.Message;
-            }
-        }
-
-        return accessTokenObj!.access_token;
-    }
-
-    private static byte[] ReadFileContent(string path)
-    {
-        return File.ReadAllBytes(path);
-    }
-
-    private static OAuth.OAuthToken? AuthenticateWithJwt(string api, string clientId, string impersonatedUserId,
-        string authServer, byte[] privateKeyBytes)
-    {
-        DocuSignClient docuSignClient = new();
-        ApiType apiType = Enum.Parse<ApiType>(api);
-        List<string> scopes = [];
-
-        if (apiType == ApiType.ESignature)
-        {
-            scopes =
-            [
-                "signature",
-                "impersonation",
-            ];
-        }
-
-        return docuSignClient.RequestJWTUserToken(
-            clientId,
-            impersonatedUserId,
-            authServer,
-            privateKeyBytes,
-            1,
-            scopes);
-    }
-
+    
     private async Task<Account?> GetAccountInformation(string? accessToken)
     {
         DocuSignClient client = new();

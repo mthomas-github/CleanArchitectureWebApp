@@ -4,9 +4,9 @@ namespace ThirdPartyFreight.Application.Shared;
 
 public sealed class EnvelopeResponse
 {
-    public Guid? EnvelopeId { get; init; }
+    public Guid Id { get; init; }
     public EnvelopeStatus? EnvelopeStatus { get; init; }
-    public Guid? DocuSignId { get; init; }
+    public Guid? EnvelopeId { get; init; }
     public DateTime CreatedOn { get; init; }
     public DateTime? LastModifiedOnUtc { get; init; }
     public DateTime? InitialSentOnUtc { get; init; }

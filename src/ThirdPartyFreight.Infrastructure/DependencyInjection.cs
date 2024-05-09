@@ -32,6 +32,7 @@ using ThirdPartyFreight.Infrastructure.Caching;
 using ThirdPartyFreight.Infrastructure.Clock;
 using ThirdPartyFreight.Infrastructure.Data;
 using ThirdPartyFreight.Infrastructure.DocuSign;
+using ThirdPartyFreight.Infrastructure.DocuSign.BackgroundJobs;
 using ThirdPartyFreight.Infrastructure.Email;
 using ThirdPartyFreight.Infrastructure.OutBox;
 using ThirdPartyFreight.Infrastructure.Repositories;
@@ -197,6 +198,7 @@ public static class DependencyInjection
         services.AddQuartzHostedService(options => options.WaitForJobsToComplete = true);
 
         services.ConfigureOptions<ProcessOutboxMessagesJobSetup>();
+        services.ConfigureOptions<ProcessStatusUpdateJobSetup>();
     }
 
 
