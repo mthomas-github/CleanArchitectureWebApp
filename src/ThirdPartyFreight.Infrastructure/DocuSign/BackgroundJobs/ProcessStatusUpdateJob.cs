@@ -56,7 +56,7 @@ internal sealed class ProcessStatusUpdateJob(
                 IncludeInformation: "custom_fields,recipients",
                 OrderBy: "status_changed",
                 FromStatus: "Changed",
-                StatusToInclude: "completed,declined,delivered,sent,signed,timedout,void",
+                StatusToInclude: "completed,declined,delivered,signed,timedout",
                 FromDate: lastQueryDateTime,
                 ToDate: dateTimeProvider.UtcNow.ToString("s"));
 
@@ -66,8 +66,10 @@ internal sealed class ProcessStatusUpdateJob(
             {
                 IEnumerable<UpdatedEnvelope> updatedEnvelope = response.Envelopes.Select(envelope => new UpdatedEnvelope
                 {
-                    EnvelopeStatus = (EnvelopeStatus)Enum.Parse(typeof(EnvelopeStatus), envelope.Status),
-                    VoidedOnUtc = DateTime.Parse(envelope.VoidedDateTime, CultureInfo.InvariantCulture),
+#pragma warning disable CA1304
+                    EnvelopeStatus = (EnvelopeStatus)Enum.Parse(typeof(EnvelopeStatus), char.ToUpper(envelope.Status[0]) + envelope.Status[1..]),
+#pragma warning restore CA1304
+                    VoidedOnUtc = envelope.VoidedDateTime != null ? DateTime.Parse(envelope.VoidedDateTime, CultureInfo.InvariantCulture) : null,
                     VoidReason = envelope.VoidedReason,
                     ExpiringOnUtc = DateTime.Parse(envelope.ExpireDateTime, CultureInfo.InvariantCulture),
                     Id = processingEnvelopeIds.FirstOrDefault(x => x.EnvelopeId.ToString() == envelope.EnvelopeId)!
@@ -76,7 +78,6 @@ internal sealed class ProcessStatusUpdateJob(
 
                 await UpdateEnvelopeAsync(connection, transaction, updatedEnvelope);
             }
-            // Update Envelope Status
         }
 
         transaction.Commit();
@@ -90,7 +91,7 @@ internal sealed class ProcessStatusUpdateJob(
         IDbTransaction transaction)
     {
         string sql = $"""
-                      SELECT TOP ${_docuSignOptions.BatchSize} [Id]
+                      SELECT TOP {_docuSignOptions.BatchSize} [Id]
                             ,[EnvelopeStatus]
                             ,[AgreementId]
                             ,[EnvelopeId]
