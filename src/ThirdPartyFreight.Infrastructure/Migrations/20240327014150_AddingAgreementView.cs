@@ -15,7 +15,6 @@ public partial class AddingAgreementView : Migration
                 BEGIN
                     DROP VIEW View_TPFAgreements;
                 END
-                GO
 
                 CREATE VIEW View_TPFAgreements AS (
                   SELECT

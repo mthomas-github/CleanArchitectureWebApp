@@ -17,7 +17,7 @@ namespace ThirdPartyFreight.Infrastructure.Migrations
                 nullable: false,
                 defaultValue: "");
             migrationBuilder.Sql(
-                @"IF OBJECT_ID('', 'P') IS NOT NULL BEGIN DROP PROCEDURE TPF_GetCustomerActiveSites END GO");
+                @"IF OBJECT_ID('', 'P') IS NOT NULL BEGIN DROP PROCEDURE TPF_GetCustomerActiveSites END");
             migrationBuilder.Sql(@"USE [csddevapps]
                                    GO
                                    /****** Object:  StoredProcedure [dbo].[TPF_GetCustomerActiveSites]    Script Date: 5/3/2024 10:06:49 PM ******/

@@ -1,5 +1,3 @@
-version: '3.4'
-
 services:
   thirdpartyfreight.api:
     environment:
@@ -7,9 +5,10 @@ services:
       - ASPNETCORE_HTTP_PORTS=8080
       - ASPNETCORE_HTTPS_PORTS=8081
       - ASPNETCORE_URLS=https://+:8081;http://+:8080
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/${CertName}
     ports:
       - "8080"
       - "8081"
     volumes:
-      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
-      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+      - ${USERSECRETS}:/home/app/.microsoft/usersecrets:ro
+      - ${ASPHTTPS}:/https:ro
