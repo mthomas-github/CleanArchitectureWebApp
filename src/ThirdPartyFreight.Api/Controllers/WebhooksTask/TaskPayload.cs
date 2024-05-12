@@ -1,3 +1,3 @@
 ﻿namespace ThirdPartyFreight.Api.Controllers.WebhooksTask;
 
-public sealed record TaskPayload(string Description, Guid AgreementId);
+public abstract record TaskPayload(ApprovalPayload Approval, string Description);

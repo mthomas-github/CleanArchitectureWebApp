@@ -48,7 +48,7 @@ builder.Services.AddCors(cors => cors
         .AllowAnyOrigin() // For demo purposes only. Use a specific origin instead.
         .AllowAnyHeader()
         .AllowAnyMethod()
-        .WithExposedHeaders("x-elsa-workflow-instance-id"))); // Required for Elsa Studio in order to support running workflows from the designer. Alternatively, you can use the `*` wildcard to expose all headers.
+        .WithExposedHeaders("*"))); // Required for Elsa Studio in order to support running workflows from the designer. Alternatively, you can use the `*` wildcard to expose all headers.
 
 // Add Health Checks.
 builder.Services.AddHealthChecks();

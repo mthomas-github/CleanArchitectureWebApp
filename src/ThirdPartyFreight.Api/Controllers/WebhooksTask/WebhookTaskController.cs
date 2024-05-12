@@ -1,6 +1,5 @@
 ﻿using Asp.Versioning;
 using MediatR;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ThirdPartyFreight.Application.WorkflowTasks.AddWorkFlowTask;
 using ThirdPartyFreight.Application.WorkflowTasks.GetWorkFlowTask;
@@ -11,32 +10,19 @@ using ThirdPartyFreight.Domain.WorkflowTask;
 namespace ThirdPartyFreight.Api.Controllers.WebhooksTask;
 [ApiController]
 [ApiVersion(ApiVersions.V1)]
-[Route("api/webhooks")]
+[Route("api/v{version:apiVersion}/webhooktasks")]
 
 public class WebhookTaskController(ISender sender) : ControllerBase
 {
-    [HttpPost("run-task")]
-    public async Task<IActionResult> RunTask(WebhookEvent webhook, CancellationToken cancellationToken)
+    [HttpPost]
+    public async Task<IActionResult> RunTask(WebhookEvent webhookEvent, CancellationToken cancellationToken)
     {
-        RunTaskWebhook payload = webhook.Payload;
-        TaskPayload taskPayload = payload.TaskPayload;
-
-        var task = new WebHookTaskRequest
-        {
-            ProcessId = payload.WorkflowInstanceId,
-            ExternalId = payload.TaskId,
-            Name = payload.TaskName,
-            Description = taskPayload.Description,
-            AgreementId = taskPayload.AgreementId,
-            CreatedAt = DateTimeOffset.Now
-        };
-
         var command = new AddWorkFlowTaskCommand(
-                       task.ExternalId,
-                                  task.ProcessId,
-                                  task.Name,
-                                  task.Description,
-                                  task.AgreementId);
+            webhookEvent.Payload.TaskId,
+            webhookEvent.Payload.WorkflowInstanceId,
+                                  webhookEvent.Payload.TaskName,
+            webhookEvent.Payload.TaskPayload.Description,
+                                  Guid.Parse(webhookEvent.Payload.TaskPayload.Approval.AgreementId));
 
         Result<Guid> result = await sender.Send(command, cancellationToken);
 

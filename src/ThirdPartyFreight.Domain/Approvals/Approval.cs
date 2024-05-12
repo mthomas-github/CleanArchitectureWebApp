@@ -42,13 +42,14 @@ public sealed class Approval : Entity
 
     public static Approval Create(
         Guid agreementId,
-        DateTime createdOnUtc)
+        DateTime createdOnUtc
+        )
     {
         var approval = new Approval(
             Guid.NewGuid(),
                 agreementId,
                 createdOnUtc,
-            null,
+                null,
             null,
             null,
             null,

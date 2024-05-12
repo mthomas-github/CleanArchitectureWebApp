@@ -83,5 +83,8 @@ public sealed class Envelope : Entity
         envelope.VoidedOnUtc = voidedDateTime;
         envelope.VoidReason = voidReason;
         envelope.AutoRespondReason = autoRespondReason;
+        
+        envelope.RaiseDomainEvent(new EnvelopeUpdatedDomainEvent(envelope.Id));
+        
     }
 }
