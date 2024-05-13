@@ -49,3 +49,10 @@ services:
       - ELSASERVER__URL=https://localhost:5001/elsa/api
     ports:
       - "14000:8080"
+  thirdpartyfreight.web:
+    container_name: ThirdPartyFreight.Web
+    build:
+      context: .
+      dockerfile: src/ThirdPartyFreight.Web/Dockerfile
+    ports:
+      - "18000:80"
