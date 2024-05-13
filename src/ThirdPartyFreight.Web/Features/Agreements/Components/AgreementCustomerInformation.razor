@@ -78,7 +78,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        Customers = await Http.GetFromJsonAsync<IEnumerable<CustomerResponse>>("api/v1.0/customers");
+        Customers = await Http.GetFromJsonAsync<IEnumerable<CustomerResponse>>(getCustomersEndPoint);
         _isLoading = false;
     }
 

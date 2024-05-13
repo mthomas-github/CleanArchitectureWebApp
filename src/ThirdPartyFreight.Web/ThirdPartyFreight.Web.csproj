@@ -17,6 +17,8 @@
 
   <ItemGroup>
     <Folder Include="Assets\" />
+    <Folder Include="Features\Approvals\Componets\" />
+    <Folder Include="Features\Approvals\Models\" />
     <Folder Include="wwwroot\img\country-flags\" />
     <Folder Include="wwwroot\img\employees\" />
     <Folder Include="wwwroot\img\products\" />

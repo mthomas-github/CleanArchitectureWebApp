@@ -1,0 +1,78 @@
+﻿@page "/approvals"
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+
+<PageTitle>Approvals</PageTitle>
+
+<div style="position: relative; width: 100%; min-height: 100%;">
+    <TelerikLoaderContainer
+        OverlayThemeColor="light"
+        Visible="@(!IsInitialDataLoadComplete)"
+        Text="@null"
+        Class="initial-data-loader">
+        <Template>
+            <TelerikLoader Size="@ThemeConstants.Loader.Size.Large" Type="LoaderType.InfiniteSpinner" />
+        </Template>
+    </TelerikLoaderContainer>
+    <TelerikGrid
+        Data="@GridData"
+        Height="@Height"
+        FilterMode="GridFilterMode.FilterMenu"
+        FilterMenuType="FilterMenuType.CheckBoxList"
+        Pageable="true"
+        PageSize="@PageSize"
+        Sortable="true"
+        SortMode="SortMode.Single"
+        ShowColumnMenu="true"
+        Resizable="true">
+        <GridSettings>
+            <GridPagerSettings
+                InputType="@InputType"
+                PageSizes="@PageSizes"
+                ButtonCount="@ButtonCount"
+                Position="@PagePosition" />
+        </GridSettings>
+        <GridColumns>
+            <GridColumn Field="Id" Title="Id" VisibleInColumnChooser="true" Visible="false" Width="20px" />
+            <GridColumn Field="Approver" Title="Approver" VisibleInColumnChooser="true" Visible="true" Width="30px" />
+            <GridCommandColumn Width="10px">
+                <GridCommandButton OnClick="@((args) => ToggleWindow(args.Item as string))" Icon="@SvgIcon.InfoSolid"/>
+            </GridCommandColumn>
+            <GridCommandColumn Width="30px">
+                <GridCommandButton>Approval</GridCommandButton>
+                <GridCommandButton>Decline</GridCommandButton>
+            </GridCommandColumn>
+        </GridColumns>
+    </TelerikGrid>
+</div>
+
+@code {
+    private ObservableCollection<object> GridData { get; set; } = [];
+    private IEnumerable<object>? AllData { get; set; } = [];
+    private const int PageSize = 20;
+    private const string Height = "100%";
+    private const int ButtonCount = 5;
+    bool IsInitialDataLoadComplete { get; set; }
+    PagerInputType InputType { get; set; } = PagerInputType.Buttons;
+    PagerPosition PagePosition { get; set; } = PagerPosition.Bottom;
+    static List<int?> PageSizes => [20, 30, 40, 50, null];
+    bool Visible { get; set; }
+    
+    protected override void OnInitialized()
+    {
+        if (IsInitialDataLoadComplete == false) {}
+        
+        if (AllData is not null) {}
+    }
+
+    void ToggleWindow(string? item)
+    {
+        if (item is not null)
+        {
+            
+        }
+
+        Visible = !Visible;
+    }
+}
+

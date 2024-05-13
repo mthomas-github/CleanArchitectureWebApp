@@ -70,7 +70,7 @@
     {
         if (IsInitialDataLoadComplete == false)
         {
-            AllData = await Http.GetFromJsonAsync<IEnumerable<AgreementResponse>>("api/v1/Agreements");
+            AllData = await Http.GetFromJsonAsync<IEnumerable<AgreementResponse>>(getAgreementsEndPoint);
         }
 
         if (AllData is not null)
@@ -84,7 +84,7 @@
     {
         if (item is not null)
         {
-            Agreement = await Http.GetFromJsonAsync<AgreementResponse>($"api/v1/Agreements/{item.Id}");
+            Agreement = await Http.GetFromJsonAsync<AgreementResponse>($"{getAgreementEndPoint}{item.Id}");
         }
 
         Visible = !Visible;
@@ -93,7 +93,7 @@
 
     private void ToggleOnCreate()
     {
-        NavigationManager.NavigateTo("./new-agreement");
+        NavigationManager.NavigateTo(NewAgreementNavigation);
     }
 
     private static void DeleteItem(GridCommandEventArgs args)
