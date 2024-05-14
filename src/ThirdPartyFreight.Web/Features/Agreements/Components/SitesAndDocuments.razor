@@ -96,7 +96,7 @@ else
     {
         if (IsInitialDataLoadComplete == false && LoadData)
         {
-            var response = await Http.GetFromJsonAsync<CustomerSiteResponse>($"{getCustomersEndPoint}/{DataModel?.CustomerNumber.ToString()}");
+            var response = await Http.GetFromJsonAsync<CustomerSiteResponse>($"{GetCustomersEndPoint}/{DataModel?.CustomerNumber.ToString()}");
             AllData = response?.Sites;
             if (AllData is not null)
             {

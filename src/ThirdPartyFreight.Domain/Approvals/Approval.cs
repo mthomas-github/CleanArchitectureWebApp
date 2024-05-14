@@ -31,6 +31,8 @@ public sealed class Approval : Entity
 
     private Approval() { }
     public Guid AgreementId { get; private set; }
+    
+    public Guid? WorkFlowId { get; private set; }
     public DateTime CreatedOnUtc { get; private set; }
     public DateTime? FirstApprovalOnUtc { get; private set; }
     public DateTime? FirstApprovalEndUtc { get; private set; }
@@ -64,6 +66,7 @@ public sealed class Approval : Entity
 
     public static void Update(
         Approval approval,
+        Guid? workFlowId,
         DateTime? firstApprovalOnUtc,
         DateTime? firstApprovalEndUtc,
         DateTime? secondApprovalOnUtc,
@@ -79,6 +82,7 @@ public sealed class Approval : Entity
         approval.ThirdApprovalOnUtc = thirdApprovalOnUtc;
         approval.ThirdApprovalEndUtc = thirdApprovalEndUtc;
         approval.CompletedOn = completedOn;
+        approval.WorkFlowId = workFlowId;
 
         approval.RaiseDomainEvent(new ApprovalUpdatedDomainEvent(approval.Id));
     }

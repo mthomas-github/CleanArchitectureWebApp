@@ -20,6 +20,7 @@ internal sealed class UpdateApprovalCommandHandler(IApprovalRepository approvalR
 
             Approval.Update(
                 existingApproval,
+                request.Approval.WorkFlowId,
                 request.Approval.FirstApprovalOnUtc, 
                 request.Approval.FirstApprovalEndUtc, 
                 request.Approval.SecondApprovalOnUtc, 

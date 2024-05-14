@@ -1,5 +1,6 @@
 body {
-    font-family: "Roboto"
+    font-family: "Roboto", serif;
+    background-color: rgb(208,208,226);
 }
 
 h1 {
@@ -125,7 +126,7 @@ a {
 
 .k-drawer-container {
     background-color: #d8d9e8;
-    height: auto
+    height: 100%
 }
 
     .k-drawer-container .k-drawer {
@@ -439,12 +440,14 @@ a {
 }
 
 html body {
-    overflow-y: scroll;
+    overflow-y: hidden;
     overflow-x: auto
+    
 }
 
 .k-drawer-content {
-    overflow: hidden
+    overflow: hidden;
+    height: auto;
 }
 
 .employee-photo {
@@ -468,9 +471,9 @@ html body {
 }
 
 html, body, app {
-    height: 100%;
     margin: 0;
-    padding: 0
+    padding: 0;
+    height: 100%;
 }
 
 .k-grid-content .k-rating-container .k-rating-item {
@@ -839,4 +842,18 @@ span.k-dropdownlist .k-input-inner {
 .same-size {
     width: 100px; /* Set width to desired size */
     height: 50px; /* Set height to desired size */
+}
+
+.grid-no-scroll .k-grid-content {
+    overflow-y: auto;
+}
+
+.grid-no-scroll .k-grid-header,
+.grid-no-scroll .k-grid-footer {
+    padding-right: 0; /* version 2.26 and older requires !important here */
+}
+
+.grid-no-scroll .k-grid-header-wrap,
+.grid-no-scroll .k-grid-footer-wrap {
+    border-right-width: 0;
 }

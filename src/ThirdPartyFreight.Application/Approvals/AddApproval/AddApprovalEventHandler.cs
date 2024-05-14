@@ -5,11 +5,13 @@ using ThirdPartyFreight.Application.Abstractions.Clock;
 using ThirdPartyFreight.Domain.Abstractions;
 using ThirdPartyFreight.Domain.Approvals;
 using ThirdPartyFreight.Domain.Approvals.Events;
+using ThirdPartyFreight.Domain.WorkflowTask;
 
 namespace ThirdPartyFreight.Application.Approvals.AddApproval;
 
 internal sealed class AddApprovalEventHandler(
-    IApprovalRepository approvalRepository, 
+    IApprovalRepository approvalRepository,
+    IWorkFlowTaskRepository workFlowTaskRepository,
     IDateTimeProvider dateTimeProvider,
     IUnitOfWork unitOfWork,
     ILogger<AddApprovalEventHandler> logger) : INotificationHandler<ApprovalCreatedDomainEvent>
@@ -44,10 +46,16 @@ internal sealed class AddApprovalEventHandler(
         
         if (httpResponse.IsSuccessStatusCode)
         {
+            
             // Update Approval Record
+            IEnumerable<WorkFlowTask> workFlow =
+                await workFlowTaskRepository.GetWorkFlowTaskAsyncByAgreementId(response.AgreementId, cancellationToken);
+            Guid workflowId = workFlow.FirstOrDefault(x => x.AgreementId == response.Id)!.Id;
             logger.LogInformation("Updating Approval Record {ApprovalId}", notification.ApprovalId);
+            
             Approval.Update(
                 response,
+                workflowId,
                 dateTimeProvider.UtcNow,
                 null,
                 null,

@@ -65,7 +65,7 @@ else
             _dataModel.CreatedBy);
            
         var result = await
-            Http.PostAsJsonAsync(createAgreementEndPoint, agreementRequest);
+            Http.PostAsJsonAsync(CreateAgreementEndPoint, agreementRequest);
 
 
         // Call Sites, Envelope, Documents
@@ -78,20 +78,20 @@ else
             var sites = _dataModel.Sites.Select(ste => new SiteDetail(ste.SiteNumber.ToString(), ste.Street, ste.City, ste.State, ste.ZipCode)).ToList();
             var siteRequest = new AddSitesRequest(agreementId, sites);
 
-            await Http.PostAsJsonAsync(addSiteEndPoint, siteRequest);
+            await Http.PostAsJsonAsync(AddSiteEndPoint, siteRequest);
 
             if (_dataModel.Envelope != null)
             {
                 var envelopeRequest = new AddEnvelopeRequest(_dataModel.Envelope.EnvelopeStatus, agreementId);
                    
-                await Http.PostAsJsonAsync(addEnvelopesEndPoint, envelopeRequest);
+                await Http.PostAsJsonAsync(AddEnvelopesEndPoint, envelopeRequest);
             }
 
             if (_dataModel.Documents is { Count: > 0 and 1 })
             {
                 var documentRequest = new AddDocumentRequest(agreementId, _dataModel.Documents[0].DocumentName, _dataModel.Documents[0].DocumentData, _dataModel.Documents[0].DocumentType);
 
-                await Http.PostAsJsonAsync(addDocumentEndPoint, documentRequest);
+                await Http.PostAsJsonAsync(AddDocumentEndPoint, documentRequest);
             }
         }
         ShowWizard = false;

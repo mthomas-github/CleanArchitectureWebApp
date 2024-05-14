@@ -10,12 +10,12 @@
             <div class="title">
                 <h1>CSD Third Party Freight Request Tool</h1>
             </div>
-            @{
-                if (!WindowWidthSmall)
-                {
-                    <HeaderSettings></HeaderSettings>
-                }
-            }
+            @* @{ *@
+            @*     if (!WindowWidthSmall) *@
+            @*     { *@
+            @*         <HeaderSettings></HeaderSettings> *@
+            @*     } *@
+            @* } *@
         </div>
     </div>
     <TelerikDrawer @ref="MenuDrawer"
@@ -43,8 +43,7 @@
             new() { Text = "Home", Icon = SvgIcon.Grid, Url="/"},
             new() { Text = "Dashboard", Icon = SvgIcon.ChartLineMarkers, Url="/user/dashboard"},
             new() { Text = "Agreements", Icon = SvgIcon.DocumentManager, Url=AgreementsNavigation},
-            new() { Separator = true},
-            new() { Text = "Team Metrics", Icon = SvgIcon.ChartRadar, Url="/team/dashboard"}
+            new() { Text = "Approvals", Icon = SvgIcon.Clipboard, Url=ApprovalsNavigation},
         };
 
     async Task ToggleMenuDrawer()

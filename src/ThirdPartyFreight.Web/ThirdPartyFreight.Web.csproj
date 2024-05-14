@@ -5,6 +5,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <PublishTrimmed>true</PublishTrimmed>
   </PropertyGroup>
 
   <ItemGroup>
@@ -18,14 +19,9 @@
   <ItemGroup>
     <Folder Include="Assets\" />
     <Folder Include="Features\Approvals\Componets\" />
-    <Folder Include="Features\Approvals\Models\" />
     <Folder Include="wwwroot\img\country-flags\" />
     <Folder Include="wwwroot\img\employees\" />
     <Folder Include="wwwroot\img\products\" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\ThirdPartyFreight.Application\ThirdPartyFreight.Application.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -33,6 +29,10 @@
       <Link>.dockerignore</Link>
     </Content>
     <Content Include="Assets\Telerik5.1.1\.DS_Store" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ThirdPartyFreight.Domain\ThirdPartyFreight.Domain.csproj" />
   </ItemGroup>
 
 </Project>
