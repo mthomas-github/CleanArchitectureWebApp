@@ -12,3 +12,9 @@ services:
     volumes:
       - ${USERSECRETS}:/home/app/.microsoft/usersecrets:ro
       - ${ASPHTTPS}:/https:ro
+  thirdpartyfreight.web:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    volumes:
+      - ./.nginx/conf/nginx.conf:/etc/nginx/nginx.conf
+      - ./.nginx/certs:/etc/nginx/certs

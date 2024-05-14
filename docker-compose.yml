@@ -55,4 +55,5 @@ services:
       context: .
       dockerfile: src/ThirdPartyFreight.Web/Dockerfile
     ports:
-      - "18000:80"
+      - "80:80"
+      - "443:443"

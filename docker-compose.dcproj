@@ -10,10 +10,16 @@
     <DockerServiceName>thirdpartyfreight.api</DockerServiceName>
   </PropertyGroup>
   <ItemGroup>
+    <None Include=".nginx\conf\nginx.conf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="docker-compose.override.yml">
       <DependentUpon>docker-compose.yml</DependentUpon>
     </None>
     <None Include="docker-compose.yml" />
     <None Include=".dockerignore" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include=".nginx\certs\" />
   </ItemGroup>
 </Project>
