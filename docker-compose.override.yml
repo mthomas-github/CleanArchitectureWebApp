@@ -5,13 +5,15 @@ services:
       - ASPNETCORE_HTTP_PORTS=8080
       - ASPNETCORE_HTTPS_PORTS=8081
       - ASPNETCORE_URLS=https://+:8081;http://+:8080
-      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/${CertName}
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=password123
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnet.pfx
     ports:
       - "8080"
       - "8081"
     volumes:
       - ${USERSECRETS}:/home/app/.microsoft/usersecrets:ro
       - ${ASPHTTPS}:/https:ro
+      - .privatekeys/:/home/app/.aspnet:ro
   thirdpartyfreight.web:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development

@@ -13,6 +13,7 @@
     <None Include=".nginx\conf\nginx.conf">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include=".privatekeys\privatekeydocusign.pem" />
     <None Include="docker-compose.override.yml">
       <DependentUpon>docker-compose.yml</DependentUpon>
     </None>
