@@ -10,10 +10,6 @@ public partial class AddingAgreementView : Migration
     /// <inheritdoc />
     protected override void Up(MigrationBuilder migrationBuilder)
     {
-        migrationBuilder.Sql(@"   IF OBJECT_ID('View_TPFAgreements', 'V') IS NOT NULL
-                BEGIN
-                    DROP VIEW View_TPFAgreements;
-                END");
         migrationBuilder.Sql(@"
             
                 CREATE VIEW View_TPFAgreements AS (

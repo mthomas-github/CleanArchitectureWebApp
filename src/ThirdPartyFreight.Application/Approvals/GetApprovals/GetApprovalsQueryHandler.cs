@@ -21,7 +21,6 @@ internal sealed class GetApprovalsQueryHandler : IQueryHandler<GetApprovalsQuery
         using IDbConnection connection = _sqlConnectionFactory.CreateConnection();
 
         const string sql = """
-                           CREATE VIEW View_TPFApprovals AS
                            SELECT
                                ApprovalId,
                                TaskId,
