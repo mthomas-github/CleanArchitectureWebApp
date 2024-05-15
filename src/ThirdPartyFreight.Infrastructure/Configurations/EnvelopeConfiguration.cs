@@ -10,8 +10,7 @@ public sealed class EnvelopeConfiguration : IEntityTypeConfiguration<Envelope>
 {
     public void Configure(EntityTypeBuilder<Envelope> builder)
     {
-        builder.ToTable("TPF_Envelopes");
-
+        builder.ToTable("TPF_Envelopes", tb => tb.HasTrigger("Updated_EnvelopeStatus_Trigger"));
         builder.HasKey(envelope => envelope.Id);
 
         builder.Property(envelope => envelope.VoidReason)

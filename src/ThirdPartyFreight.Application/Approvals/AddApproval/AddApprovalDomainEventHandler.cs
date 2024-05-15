@@ -9,12 +9,12 @@ using ThirdPartyFreight.Domain.WorkflowTask;
 
 namespace ThirdPartyFreight.Application.Approvals.AddApproval;
 
-internal sealed class AddApprovalEventHandler(
+internal sealed class AddApprovalDomainEventHandler(
     IApprovalRepository approvalRepository,
     IWorkFlowTaskRepository workFlowTaskRepository,
     IDateTimeProvider dateTimeProvider,
     IUnitOfWork unitOfWork,
-    ILogger<AddApprovalEventHandler> logger) : INotificationHandler<ApprovalCreatedDomainEvent>
+    ILogger<AddApprovalDomainEventHandler> logger) : INotificationHandler<ApprovalCreatedDomainEvent>
 {
     public async Task Handle(ApprovalCreatedDomainEvent notification, CancellationToken cancellationToken)
     {

@@ -81,8 +81,10 @@ internal sealed class AddAgreementDomainEventHandler(
             }
             logger.LogInformation("Finished handling AgreementCreatedDomainEvent for AgreementId: {AgreementId}", notification.AgreementId);
         }
-
-        // Step 2 Get Sites.
-        logger.LogError("Agreement with id: {AgreementId} not found", notification.AgreementId);
+        else
+        {
+            // Step 2 Get Sites.
+            logger.LogError("Agreement with id: {AgreementId} not found", notification.AgreementId);   
+        }
     }
 }
