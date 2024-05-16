@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ThirdPartyFreight.Infrastructure;
 
@@ -11,9 +12,11 @@ using ThirdPartyFreight.Infrastructure;
 namespace ThirdPartyFreight.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240516013140_ChangedToTaskId")]
+    partial class ChangedToTaskId
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -103,8 +106,8 @@ namespace ThirdPartyFreight.Infrastructure.Migrations
                     b.Property<DateTime?>("SecondApprovalOnUtc")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("TaskId")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<long?>("TaskId")
+                        .HasColumnType("bigint");
 
                     b.Property<DateTime?>("ThirdApprovalEndUtc")
                         .HasColumnType("datetime2");

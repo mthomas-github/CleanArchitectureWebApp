@@ -8,6 +8,7 @@ public sealed class Approval : Entity
     private Approval(
         Guid id,
         Guid agreementId,
+        string? taskId,
         DateTime createdOnUtc,
         DateTime? firstApprovalOnUtc,
         DateTime? firstApprovalEndUtc,
@@ -19,6 +20,7 @@ public sealed class Approval : Entity
         : base(id)
     {
         AgreementId = agreementId;
+        TaskId = taskId;
         CreatedOnUtc = createdOnUtc;
         FirstApprovalOnUtc = firstApprovalOnUtc;
         FirstApprovalEndUtc = firstApprovalEndUtc;
@@ -31,8 +33,7 @@ public sealed class Approval : Entity
 
     private Approval() { }
     public Guid AgreementId { get; private set; }
-    
-    public Guid? WorkFlowId { get; private set; }
+    public string? TaskId { get; private set; }
     public DateTime CreatedOnUtc { get; private set; }
     public DateTime? FirstApprovalOnUtc { get; private set; }
     public DateTime? FirstApprovalEndUtc { get; private set; }
@@ -50,6 +51,7 @@ public sealed class Approval : Entity
         var approval = new Approval(
             Guid.NewGuid(),
                 agreementId,
+                null,
                 createdOnUtc,
                 null,
             null,
@@ -66,7 +68,7 @@ public sealed class Approval : Entity
 
     public static void Update(
         Approval approval,
-        Guid? workFlowId,
+        string? taskId,
         DateTime? firstApprovalOnUtc,
         DateTime? firstApprovalEndUtc,
         DateTime? secondApprovalOnUtc,
@@ -82,7 +84,7 @@ public sealed class Approval : Entity
         approval.ThirdApprovalOnUtc = thirdApprovalOnUtc;
         approval.ThirdApprovalEndUtc = thirdApprovalEndUtc;
         approval.CompletedOn = completedOn;
-        approval.WorkFlowId = workFlowId;
+        approval.TaskId = taskId;
 
         approval.RaiseDomainEvent(new ApprovalUpdatedDomainEvent(approval.Id));
     }

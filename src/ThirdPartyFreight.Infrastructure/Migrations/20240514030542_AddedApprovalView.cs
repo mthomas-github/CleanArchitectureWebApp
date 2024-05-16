@@ -10,9 +10,9 @@ namespace ThirdPartyFreight.Infrastructure.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.Sql(@"IF OBJECT_ID('View_TPFAgreements', 'V') IS NOT NULL
+            migrationBuilder.Sql(@"IF OBJECT_ID('View_TPFApprovals', 'V') IS NOT NULL
                                     BEGIN
-                                        DROP VIEW View_TPFAgreements;
+                                        DROP VIEW View_TPFApprovals;
                                     END");
             migrationBuilder.Sql(@"
                     CREATE VIEW View_TPFApprovals AS
@@ -31,13 +31,13 @@ namespace ThirdPartyFreight.Infrastructure.Migrations
                     FROM
                         TPF_Approvals a
                         JOIN TPF_WorkflowTasks wft
-                        ON a.WorkFlowId = wft.Id;");
+                        ON a.TaskId = wft.ExternalId;");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.Sql(@"DROP VIEW View_TPFAgreements;");
+            migrationBuilder.Sql(@"DROP VIEW View_TPFApprovals;");
         }
     }
 }

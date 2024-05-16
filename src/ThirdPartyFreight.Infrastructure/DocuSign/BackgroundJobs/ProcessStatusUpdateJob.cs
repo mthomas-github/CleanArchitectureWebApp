@@ -11,7 +11,8 @@ using ThirdPartyFreight.Application.Abstractions.Data;
 using ThirdPartyFreight.Application.Abstractions.DocuSign;
 using ThirdPartyFreight.Application.Shared;
 using ThirdPartyFreight.Domain.Envelopes;
-using Envelope = DocuSign.eSign.Model.Envelope;
+using Envelope = ThirdPartyFreight.Domain.Envelopes.Envelope;
+
 
 namespace ThirdPartyFreight.Infrastructure.DocuSign.BackgroundJobs;
 
@@ -22,6 +23,7 @@ internal sealed class ProcessStatusUpdateJob(
     ILogger<ProcessStatusUpdateJob> logger,
     IDocuSignService docuSignService,
     ICacheService cacheService,
+    IEnvelopeRepository  envelopeRepository,
     IDateTimeProvider dateTimeProvider) : IJob
 {
 
@@ -109,13 +111,24 @@ internal sealed class ProcessStatusUpdateJob(
         return envelopeResponses.ToList();
     }
 
-    private static async Task UpdateEnvelopeAsync(
+    private async Task UpdateEnvelopeAsync(
         IDbConnection connection,
         IDbTransaction transaction,
         IEnumerable<UpdatedEnvelope> updatedEnvelope)
     {
-        
-        const string sql = """
+        foreach (UpdatedEnvelope envelope in updatedEnvelope)
+        {
+            Envelope? envRecord = await envelopeRepository.GetByIdAsync(envelope.Id);
+            if (envRecord is not null)
+            {
+                Envelope.Update(
+                    envRecord, 
+                    envelope.EnvelopeStatus, 
+                    envRecord.EnvelopeId
+                    );
+            }
+        }
+        /*const string sql = """
                            UPDATE[csddevapps].[dbo].[TPF_Envelopes]
                            SET EnvelopeStatus = @EnvelopeStatus,
                                VoidedOnUTC =
@@ -132,8 +145,8 @@ internal sealed class ProcessStatusUpdateJob(
                                   END
                            WHERE Id = @Id
                            """;
-
-        await connection.ExecuteAsync(sql, updatedEnvelope, transaction: transaction);
+        
+        await connection.ExecuteAsync(sql, updatedEnvelope, transaction: transaction);*/
     }
 
     private class UpdatedEnvelope
