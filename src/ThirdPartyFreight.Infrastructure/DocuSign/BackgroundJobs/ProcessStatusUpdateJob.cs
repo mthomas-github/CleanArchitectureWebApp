@@ -10,6 +10,7 @@ using ThirdPartyFreight.Application.Abstractions.Clock;
 using ThirdPartyFreight.Application.Abstractions.Data;
 using ThirdPartyFreight.Application.Abstractions.DocuSign;
 using ThirdPartyFreight.Application.Shared;
+using ThirdPartyFreight.Domain.Abstractions;
 using ThirdPartyFreight.Domain.Envelopes;
 using Envelope = ThirdPartyFreight.Domain.Envelopes.Envelope;
 
@@ -24,6 +25,7 @@ internal sealed class ProcessStatusUpdateJob(
     IDocuSignService docuSignService,
     ICacheService cacheService,
     IEnvelopeRepository  envelopeRepository,
+    IUnitOfWork unitOfWork,
     IDateTimeProvider dateTimeProvider) : IJob
 {
 
@@ -64,24 +66,80 @@ internal sealed class ProcessStatusUpdateJob(
 
             EnvelopesInformation response = await docuSignService.GetEnvelopesInformation(request);
             string resultSize = response.ResultSetSize;
+            
             if (int.Parse(resultSize, CultureInfo.InvariantCulture) > 0)
             {
-                IEnumerable<UpdatedEnvelope> updatedEnvelope = response.Envelopes.Select(envelope => new UpdatedEnvelope
+                if (response.Envelopes is null)
                 {
+                    logger.LogWarning("Got Null Response From DocuSign no Envelopes returned");
+                    return;
+                }
+                
+                IEnumerable<UpdatedEnvelope> updatedEnvelope = response.Envelopes.Select(envelope =>
+                {
+                    EnvelopeResponse? envDbRecord =
+                        processingEnvelopeIds.FirstOrDefault(e => e.EnvelopeId.ToString() == envelope.EnvelopeId);
+                    
+                    if (envDbRecord is null)
+                    {
+                        logger.LogWarning("Unable To Pull Envelope Record For {EnvelopeId}", envelope.EnvelopeId);
+                        throw new NullReferenceException("Unable To Pull Envelope Record");
+                    }
+
+                    if (envelope is not null)
+                    {
+                        return new UpdatedEnvelope
+                        {
+                            Id = envDbRecord.Id,
+                            EnvelopeStatus = (EnvelopeStatus)Enum.Parse(typeof(EnvelopeStatus),
 #pragma warning disable CA1304
-                    EnvelopeStatus = (EnvelopeStatus)Enum.Parse(typeof(EnvelopeStatus), char.ToUpper(envelope.Status[0]) + envelope.Status[1..]),
+                                char.ToUpper(envelope.Status[0]) + envelope.Status[1..]),
 #pragma warning restore CA1304
-                    VoidedOnUtc = envelope.VoidedDateTime != null ? DateTime.Parse(envelope.VoidedDateTime, CultureInfo.InvariantCulture) : null,
-                    VoidReason = envelope.VoidedReason,
-                    ExpiringOnUtc = DateTime.Parse(envelope.ExpireDateTime, CultureInfo.InvariantCulture),
-                    Id = processingEnvelopeIds.FirstOrDefault(x => x.EnvelopeId.ToString() == envelope.EnvelopeId)!
-                        .Id
+                            AgreementId = envDbRecord.AgreementId,
+                            EnvelopeId = envDbRecord.EnvelopeId,
+                            CreatedOn = envDbRecord.CreatedOn,
+                            LastModifiedOnUtc =
+                                DateTime.TryParse(envelope.LastModifiedDateTime, out DateTime dtLastModified)
+                                    ? dtLastModified
+                                    : null,
+                            InitialSentOnUtc =
+                                DateTime.TryParse(envelope.InitialSentDateTime, out DateTime dtInitialSent)
+                                    ? dtInitialSent
+                                    : null,
+                            SentOnUtc = DateTime.TryParse(envelope.SentDateTime, out DateTime dtSent) ? dtSent : null,
+                            LastStatusChangedOnUtc =
+                                DateTime.TryParse(envelope.LastModifiedDateTime, out DateTime dtLastStatus)
+                                    ? dtLastStatus
+                                    : null,
+                            CompletedOnUtc = DateTime.TryParse(envelope.CompletedDateTime, out DateTime dtCompleted)
+                                ? dtCompleted
+                                : null,
+                            DeliveredOnUtc = DateTime.TryParse(envelope.DeliveredDateTime, out DateTime dtDelivered)
+                                ? dtDelivered
+                                : null,
+                            ExpiringOnUtc = DateTime.TryParse(envelope.ExpireDateTime, out DateTime dtExpiring)
+                                ? dtExpiring
+                                : null,
+                            VoidedOnUtc = DateTime.TryParse(envelope.VoidedDateTime, out DateTime dtVoided)
+                                ? dtVoided
+                                : null,
+                            VoidReason = string.IsNullOrEmpty(envelope.VoidedReason)
+                                ? null
+                                : new VoidReason(envelope.VoidedReason),
+                            AutoRespondReason = new AutoRespondReason("")
+                        };
+                    }
+
+                    logger.LogWarning("Envelope returned Null, Unable To Process");
+                    throw new NullReferenceException();
+
                 });
 
-                await UpdateEnvelopeAsync(connection, transaction, updatedEnvelope);
+                await UpdateEnvelopeAsync(updatedEnvelope);
             }
         }
 
+        await unitOfWork.SaveChangesAsync();
         transaction.Commit();
         await cacheService.SetAsync("LastQueryDateTime", dateTimeProvider.UtcNow.ToString("s"),
             TimeSpan.FromHours(_docuSignOptions.ExpireInHoursCache));
@@ -94,11 +152,21 @@ internal sealed class ProcessStatusUpdateJob(
     {
         string sql = $"""
                       SELECT TOP {_docuSignOptions.BatchSize} [Id]
-                            ,[EnvelopeStatus]
-                            ,[AgreementId]
-                            ,[EnvelopeId]
-                            ,[LastStatusChangedOnUtc]
-                        FROM [csddevapps].[dbo].[TPF_Envelopes]
+                      ,[EnvelopeStatus]
+                      ,[AgreementId]
+                      ,[EnvelopeId]
+                      ,[CreatedOnUtc]
+                      ,[LastModifiedOnUtc]
+                      ,[InitialSentOnUtc]
+                      ,[SentOnUtc]
+                      ,[LastStatusChangedOnUtc]
+                      ,[CompletedOnUtc]
+                      ,[DeliveredOnUtc]
+                      ,[ExpiringOnUtc]
+                      ,[VoidedOnUtc]
+                      ,[VoidReason]
+                      ,[AutoRespondReason]
+                        FROM [TPF_Envelopes]
                         WHERE
                       	EnvelopeId IS NOT NULL
                       	AND EnvelopeStatus IN (3,4)
@@ -112,8 +180,6 @@ internal sealed class ProcessStatusUpdateJob(
     }
 
     private async Task UpdateEnvelopeAsync(
-        IDbConnection connection,
-        IDbTransaction transaction,
         IEnumerable<UpdatedEnvelope> updatedEnvelope)
     {
         foreach (UpdatedEnvelope envelope in updatedEnvelope)
@@ -124,38 +190,38 @@ internal sealed class ProcessStatusUpdateJob(
                 Envelope.Update(
                     envRecord, 
                     envelope.EnvelopeStatus, 
-                    envRecord.EnvelopeId
-                    );
+                    envelope.EnvelopeId, 
+                    envelope.LastModifiedOnUtc, 
+                    envelope.InitialSentOnUtc, 
+                    envelope.SentOnUtc, 
+                    envelope.LastStatusChangedOnUtc, 
+                    envelope.CompletedOnUtc, 
+                    envelope.DeliveredOnUtc, 
+                    envelope.ExpiringOnUtc, 
+                    envelope.VoidedOnUtc, 
+                    envelope.VoidReason, 
+                    envelope.AutoRespondReason);
             }
         }
-        /*const string sql = """
-                           UPDATE[csddevapps].[dbo].[TPF_Envelopes]
-                           SET EnvelopeStatus = @EnvelopeStatus,
-                               VoidedOnUTC =
-                                  CASE WHEN EnvelopeStatus IN (5, 6) THEN @VoidedOnUTC ELSE NULL END,
-                               VoidReason =
-                                  CASE WHEN EnvelopeStatus IN (5, 6) THEN @VoidReason ELSE NULL END,
-                               ExpiringOnUtc =
-                                  CASE
-                                     WHEN ExpiringOnUtc IS NOT NULL AND ExpiringOnUtc != ''
-                                     THEN
-                                        @ExpiringOnUtc
-                                     ELSE
-                                        NULL
-                                  END
-                           WHERE Id = @Id
-                           """;
-        
-        await connection.ExecuteAsync(sql, updatedEnvelope, transaction: transaction);*/
     }
 
     private class UpdatedEnvelope
     {
-        public EnvelopeStatus EnvelopeStatus { get; set; }
-        public DateTime? VoidedOnUtc { get; set; }
-        public string? VoidReason { get; set; }
-        public DateTime? ExpiringOnUtc { get; set; }
-        public Guid Id { get; set; }
+        public Guid Id { get; init; }
+        public EnvelopeStatus EnvelopeStatus { get; init; }
+        public Guid AgreementId { get; init; }
+        public Guid? EnvelopeId { get; init; }
+        public DateTime CreatedOn { get; init; }
+        public DateTime? LastModifiedOnUtc { get; init; }
+        public DateTime? InitialSentOnUtc { get; init; }
+        public DateTime? SentOnUtc { get; init; }
+        public DateTime? LastStatusChangedOnUtc { get; init; }
+        public DateTime? CompletedOnUtc { get; init; }
+        public DateTime? DeliveredOnUtc { get; init; }
+        public DateTime? ExpiringOnUtc { get; init; }
+        public DateTime? VoidedOnUtc { get; init; }
+        public VoidReason? VoidReason { get; init; }
+        public AutoRespondReason? AutoRespondReason { get; init; }
      
         
     }

@@ -24,6 +24,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Quartz;
 using ThirdPartyFreight.Application.Abstractions.DocuSign;
+using ThirdPartyFreight.Application.Abstractions.Elsa;
 using ThirdPartyFreight.Domain.Customer;
 using ThirdPartyFreight.Domain.WorkflowTask;
 using ThirdPartyFreight.Infrastructure.Authentication;
@@ -33,6 +34,7 @@ using ThirdPartyFreight.Infrastructure.Clock;
 using ThirdPartyFreight.Infrastructure.Data;
 using ThirdPartyFreight.Infrastructure.DocuSign;
 using ThirdPartyFreight.Infrastructure.DocuSign.BackgroundJobs;
+using ThirdPartyFreight.Infrastructure.Elsa;
 using ThirdPartyFreight.Infrastructure.Email;
 using ThirdPartyFreight.Infrastructure.OutBox;
 using ThirdPartyFreight.Infrastructure.Repositories;
@@ -59,6 +61,7 @@ public static class DependencyInjection
         AddApiVersioning(services);
         AddBackgroundJobs(services, configuration);
         AddDocuSign(services, configuration);
+        AddElsa(services, configuration);
 
         return services;
     }
@@ -192,7 +195,6 @@ public static class DependencyInjection
     private static void AddBackgroundJobs(IServiceCollection services, IConfiguration configuration)
     {
         services.Configure<OutboxOptions>(configuration.GetSection("Outbox"));
-
         services.AddQuartz();
 
         services.AddQuartzHostedService(options => options.WaitForJobsToComplete = true);
@@ -200,6 +202,13 @@ public static class DependencyInjection
         services.ConfigureOptions<ProcessOutboxMessagesJobSetup>();
         services.ConfigureOptions<ProcessStatusUpdateJobSetup>();
     }
+
+    private static void AddElsa(IServiceCollection services, IConfiguration configuration)
+    {
+        services.Configure<ElsaServerOptions>(configuration.GetSection("ElsaServer"));
+        services.AddScoped<IElsaService, ElsaService>();
+    }
+    
 
 
 }

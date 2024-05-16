@@ -57,3 +57,11 @@ services:
     ports:
       - "80:80"
       - "443:443"
+  elsa-server:
+    container_name: elsa-server
+    build:
+      context: .
+      dockerfile: elsa/ElsaServer/Dockerfile
+    ports:
+      - "5000:8080"
+      - "5001:8081"

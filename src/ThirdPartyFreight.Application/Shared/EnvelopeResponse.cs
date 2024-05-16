@@ -6,6 +6,7 @@ public sealed class EnvelopeResponse
 {
     public Guid Id { get; init; }
     public EnvelopeStatus? EnvelopeStatus { get; init; }
+    public Guid AgreementId { get; init; }
     public Guid? EnvelopeId { get; init; }
     public DateTime CreatedOn { get; init; }
     public DateTime? LastModifiedOnUtc { get; init; }

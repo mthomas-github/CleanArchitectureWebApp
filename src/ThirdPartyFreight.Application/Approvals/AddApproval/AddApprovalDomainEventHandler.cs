@@ -35,49 +35,56 @@ internal sealed class AddApprovalDomainEventHandler(
         // Call Else WorkFlow
         logger.LogInformation("Calling Else Workflow for Approval Record {ApprovalId}", notification.ApprovalId);
         // Call Else Workflow
-        using var httpClient = new HttpClient();
-        using var request = new HttpRequestMessage(HttpMethod.Get,  "https://localhost:5001/elsa/api/workflow-definitions/b9abbad0024d0511/execute");
-        request.Headers.Add("Authorization", "ApiKey 00000000-0000-0000-0000-000000000000");
-        string jsonContent = "{\"input\": {\n\"Approval\": {\n\"AgreementId\": \"" + response.AgreementId + "\"\n}\n}\n}";
-        request.Content = new StringContent(jsonContent, null, "application/json");;
-        HttpResponseMessage httpResponse = await httpClient.SendAsync(request, cancellationToken);
-        
-        // response should not be null
-        
-        if (httpResponse.IsSuccessStatusCode)
+        try
         {
+            using var httpClient = new HttpClient();
+            using var request = new HttpRequestMessage(HttpMethod.Get,
+                "https://localhost:5001/elsa/api/workflow-definitions/b9abbad0024d0511/execute");
+            request.Headers.Add("Authorization", "ApiKey 00000000-0000-0000-0000-000000000000");
+            string jsonContent = "{\"input\": {\n\"Approval\": {\n\"AgreementId\": \"" + response.AgreementId +
+                                 "\"\n}\n}\n}";
+            request.Content = new StringContent(jsonContent, null, "application/json");
+            HttpResponseMessage httpResponse = await httpClient.SendAsync(request, cancellationToken);
             
-            // Update Approval Record
-            // Read HTTP Response
-             string responseBody = await httpResponse.Content.ReadAsStringAsync(cancellationToken);
-             ElsaWorkFlowResponse? data = JsonConvert.DeserializeObject<ElsaWorkFlowResponse>(responseBody);
-             
-             if(data is null) {
-                 logger.LogError("Failed to deserialize Elsa Workflow Response");
-                 throw new NullReferenceException("Failed to deserialize Elsa Workflow Response");
-             }
-             
-             logger.LogInformation("Updating Approval Record {ApprovalId}", notification.ApprovalId);
+            if (httpResponse.IsSuccessStatusCode)
+            {
             
-            Approval.Update(
-                response,
-                data.workflowState.bookmarks[0].payload.taskId,
-                dateTimeProvider.UtcNow,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null);
-        }
-        else
-        {
-            // Log Error
-            logger.LogError("Failed to call Else Workflow for Approval Record {ApprovalId}", notification.ApprovalId);
-        }
-        // Save Approval Record
-        await unitOfWork.SaveChangesAsync(cancellationToken);
+                // Update Approval Record
+                // Read HTTP Response
+                string responseBody = await httpResponse.Content.ReadAsStringAsync(cancellationToken);
+                ElsaWorkFlowResponse? data = JsonConvert.DeserializeObject<ElsaWorkFlowResponse>(responseBody);
+             
+                if(data is null) {
+                    logger.LogError("Failed to deserialize Elsa Workflow Response");
+                    throw new NullReferenceException("Failed to deserialize Elsa Workflow Response");
+                }
+             
+                logger.LogInformation("Updating Approval Record {ApprovalId}", notification.ApprovalId);
+            
+                Approval.Update(
+                    response,
+                    data.workflowState.bookmarks[0].payload.taskId,
+                    dateTimeProvider.UtcNow,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null);
+            }
+            else
+            {
+                // Log Error
+                logger.LogError("Failed to call Else Workflow for Approval Record {ApprovalId}", notification.ApprovalId);
+            }
+            // Save Approval Record
+            await unitOfWork.SaveChangesAsync(cancellationToken);
         
-        logger.LogInformation("Approval Record {ApprovalId} saved", notification.ApprovalId);
+            logger.LogInformation("Approval Record {ApprovalId} saved", notification.ApprovalId);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError("There was a problem calling Elsa, returned the following {Exception}", ex.Message);
+        }
     }
 }
