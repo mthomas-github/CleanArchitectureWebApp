@@ -15,9 +15,7 @@ internal sealed class AddWorkFlowTaskCommandHandler(
     {
         try
         {
-#pragma warning disable IDE0008
             var workFlowTask = WorkFlowTask.Create(request.ExternalId, request.ProcessId, request.Name,
-#pragma warning restore IDE0008
                 request.Approver, request.AgreementId, dateTimeProvider.UtcNow);
 
             workFlowTaskRepository.Add(workFlowTask);

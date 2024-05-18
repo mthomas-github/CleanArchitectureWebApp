@@ -25,6 +25,7 @@ internal sealed class GetApprovalsQueryHandler : IQueryHandler<GetApprovalsQuery
                                 ApprovalId,
                                 TaskId,
                                 AgreementId,
+                                AgreementType,
                                 WorkFlowTaskId,
                                 Approver,
                                 FirstApprovalStart,

@@ -22,7 +22,6 @@
   <ItemGroup>
     <Folder Include="Approvals\GetApprovals\" />
     <Folder Include="Customer\GetCustomer\" />
-    <Folder Include="WorkflowTasks\AddWorkFlowTask\" />
   </ItemGroup>
 
   <ItemGroup>

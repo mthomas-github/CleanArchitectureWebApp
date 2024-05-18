@@ -4,9 +4,8 @@ namespace ThirdPartyFreight.Application.Abstractions.Elsa;
 
 public interface IElsaService
 {
-    Task<ElsaWorkFlowResponse> ExecuteTask(string agreementId, CancellationToken cancellationToken);
+    Task ExecuteTask(string agreementId, CancellationToken cancellationToken);
     Task CompleteTask(string taskId, object? result = default, CancellationToken cancellationToken = default);
-
-    Task DeleteWFInstance(string processId,
+    Task DeleteWfInstance(string processId,
         CancellationToken cancellationToken = default);
 }

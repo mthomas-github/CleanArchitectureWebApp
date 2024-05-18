@@ -31,34 +31,25 @@ public class ElsaService : IElsaService
     private readonly ILogger<ElsaService> _logger;
     private readonly HttpClient _httpClient;
 
-    public async Task<ElsaWorkFlowResponse> ExecuteTask(string agreementId, CancellationToken cancellationToken)
+    public async Task ExecuteTask(string agreementId, CancellationToken cancellationToken)
     {
         try
         {
+            _logger.LogInformation("Execute Task For Agreement {Agreement}", agreementId);
             var url = new Uri($"workflow-definitions/{_options.WfDefinitionId}/execute", UriKind.Relative);
             using var request = new HttpRequestMessage(HttpMethod.Get, url);
             string jsonContent = "{\"input\": {\n\"Approval\": {\n\"AgreementId\": \"" + agreementId +
                                  "\"\n}\n}\n}";
             request.Content = new StringContent(jsonContent, null, "application/json");
             HttpResponseMessage httpResponse = await _httpClient.SendAsync(request, cancellationToken);
-            if (httpResponse.IsSuccessStatusCode)
-            {
-                string responseBody = await httpResponse.Content.ReadAsStringAsync(cancellationToken);
-                ElsaWorkFlowResponse? data = JsonConvert.DeserializeObject<ElsaWorkFlowResponse>(responseBody);
-                return data;
-            }
-            else
-            {
-                _logger.LogWarning("There was a problem calling Elsa Server Got Following status code: {StatusCode}", httpResponse.StatusCode);
-                return null;
-            }
+            httpResponse.EnsureSuccessStatusCode();
+            _logger.LogInformation("Task Executed Completed For Agreement {Agreement}", agreementId);
         }
         catch(HttpRequestException  exception)
         {
             _logger.LogError("There was issue HttpRequestException {ErrorMessage} - {Error}", exception.Message, exception);
             throw new ServiceException("Error With Elsa Server");
         }
-        //catch (TaskCanceledException exception
         catch (Exception exception)
         {
             _logger.LogError("There was issue Execute Elsa Server see {Error}", exception.Message);
@@ -81,7 +72,6 @@ public class ElsaService : IElsaService
             _logger.LogError("There was issue HttpRequestException {ErrorMessage} - {Error}", exception.Message, exception);
             throw new ServiceException("Error With Elsa Server");
         }
-        //catch (TaskCanceledException exception
         catch (Exception exception)
         {
             _logger.LogError("There was issue Execute Elsa Server see {Error}", exception.Message);
@@ -89,7 +79,7 @@ public class ElsaService : IElsaService
         }
     }
 
-    public async Task DeleteWFInstance(string processId,
+    public async Task DeleteWfInstance(string processId,
         CancellationToken cancellationToken = default)
     {
         try

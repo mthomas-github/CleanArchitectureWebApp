@@ -1,13 +1,15 @@
 using System.ComponentModel;
 using System.Reflection;
+using ThirdPartyFreight.Domain.Agreements;
 
 namespace ThirdPartyFreight.Web.Features.Approvals.Models;
 
-public sealed class ApprovalResponse
+internal sealed class ApprovalResponse
 {
     public Guid ApprovalId { get; init; }
     public string TaskId { get; init; }
     public Guid AgreementId { get; init; }
+    public AgreementType AgreementType { get; init; }
     public Guid WorkFlowTaskId { get; init; }
     public ApproverType Approver { get; init; }
     public DateTime FirstApprovalStart { get; init; }

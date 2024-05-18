@@ -43,14 +43,14 @@ public class WebhookTaskController(ISender sender, IElsaService elsaService) : C
         return result.IsSuccess ? Ok(result.Value) : NotFound(result.Error);
     }
 
-    [HttpPut("{webhookId:guid}")]
-    public async Task<IActionResult> CompleteTask(Guid webhookId, string taskId,
+    [HttpPut]
+    public async Task<IActionResult> CompleteTask(CompleteTaskRequest request,
         CancellationToken cancellationToken)
     {
-        await elsaService.CompleteTask(taskId,
+        await elsaService.CompleteTask(request.TaskId,
             cancellationToken: cancellationToken);
         
-        var command = new UpdateWorkFlowTaskCommand(webhookId);
+        var command = new UpdateWorkFlowTaskCommand(request.WorkFlowTaskId);
 
         Result result = await sender.Send(command, cancellationToken);
 

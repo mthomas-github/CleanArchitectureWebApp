@@ -1,6 +1,7 @@
 ﻿using System;
 using ThirdPartyFreight.Domain.Abstractions;
 using ThirdPartyFreight.Domain.Approvals;
+using ThirdPartyFreight.Domain.WorkflowTask.Events;
 
 namespace ThirdPartyFreight.Domain.WorkflowTask;
 
@@ -83,7 +84,9 @@ public sealed class WorkFlowTask : Entity
     {
         var workflowTask = new WorkFlowTask(Guid.NewGuid(), externalId, processId, name, approver, agreementId, false, createdAt,
             null);
-
+        
+        workflowTask.RaiseDomainEvent(new WorkFlowTaskCreatedDomainEvent(workflowTask.Id));
+        
         return workflowTask;
     }
 
@@ -102,6 +105,7 @@ public sealed class WorkFlowTask : Entity
             workFlowTask.CreatedAt, 
             DateTimeOffset.Now );
 
+        workFlowTask.RaiseDomainEvent(new WorkFlowTaskUpdatedDomainEvent(workFlowTask.Id));
         return updated;
     }
 

@@ -1,9 +1,9 @@
 using DocuSign.eSign.Model;
 using MediatR;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using ThirdPartyFreight.Application.Abstractions.Clock;
 using ThirdPartyFreight.Application.Abstractions.DocuSign;
+using ThirdPartyFreight.Application.Abstractions.Elsa;
 using ThirdPartyFreight.Domain.Abstractions;
 using ThirdPartyFreight.Domain.Approvals;
 using ThirdPartyFreight.Domain.Carriers;
@@ -20,6 +20,7 @@ internal sealed class UpdatedEnvelopeDomainEventHandler(
     ICarrierRepository carrierRepository,
     IUnitOfWork unitOfWork,
     IDocuSignService docuSignService,
+    IElsaService elsaService,
     ILogger<UpdatedEnvelopeDomainEventHandler> logger)
     : INotificationHandler<EnvelopeUpdatedDomainEvent>
 {
@@ -47,7 +48,7 @@ internal sealed class UpdatedEnvelopeDomainEventHandler(
             logger.LogWarning("Envelope with Id {EnvelopeId} did return any data from DocuSing", envelope.Id);
             throw new NullReferenceException("Envelope did not return any data from DocuSing");
         }
-        
+
         // Create Carrier
         logger.LogInformation("Creating Carrier Record");
         try
@@ -92,9 +93,15 @@ internal sealed class UpdatedEnvelopeDomainEventHandler(
         var approval = Approval.Create(envelope.AgreementId, dateTimeProvider.UtcNow);
         approvalRepository.Add(approval);
         await unitOfWork.SaveChangesAsync(cancellationToken);
+
+        //Call Elsa To Fire Off Process
+        logger.LogInformation("Calling Elsa To Start WorkFlow Process");
+        await elsaService.ExecuteTask(envelope.AgreementId.ToString(), cancellationToken);
+        logger.LogInformation("Finished Elsa To Start WorkFlow Process");
+
         logger.LogInformation("Finished Handling Envelope Updated Domain Event");
     }
-    
+
     private static string GetValue(EnvelopeFormData envelopeFormData, string fieldName)
     {
         FormDataItem? field = envelopeFormData.FormData?.FirstOrDefault(f => f.Name == fieldName);
