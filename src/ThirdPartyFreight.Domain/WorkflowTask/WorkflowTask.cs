@@ -105,7 +105,7 @@ public sealed class WorkFlowTask : Entity
             workFlowTask.CreatedAt, 
             DateTimeOffset.Now );
 
-        workFlowTask.RaiseDomainEvent(new WorkFlowTaskUpdatedDomainEvent(workFlowTask.Id));
+        updated.RaiseDomainEvent(new WorkFlowTaskUpdatedDomainEvent(workFlowTask.Id));
         return updated;
     }
 
