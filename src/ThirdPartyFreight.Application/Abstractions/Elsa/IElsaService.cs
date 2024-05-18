@@ -6,4 +6,7 @@ public interface IElsaService
 {
     Task<ElsaWorkFlowResponse> ExecuteTask(string agreementId, CancellationToken cancellationToken);
     Task CompleteTask(string taskId, object? result = default, CancellationToken cancellationToken = default);
+
+    Task DeleteWFInstance(string processId,
+        CancellationToken cancellationToken = default);
 }

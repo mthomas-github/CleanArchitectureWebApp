@@ -5,6 +5,7 @@ using Microsoft.Graph;
 using Newtonsoft.Json;
 using ThirdPartyFreight.Application.Abstractions.Elsa;
 using ThirdPartyFreight.Application.Approvals.AddApproval;
+using ThirdPartyFreight.Domain.Abstractions;
 
 namespace ThirdPartyFreight.Infrastructure.Elsa;
 public class ElsaService : IElsaService
@@ -75,6 +76,35 @@ public class ElsaService : IElsaService
             await _httpClient.PostAsJsonAsync(url, request, cancellationToken);
             _logger.LogInformation("Task {TaskId} Completed", taskId);
         }
+        catch(HttpRequestException  exception)
+        {
+            _logger.LogError("There was issue HttpRequestException {ErrorMessage} - {Error}", exception.Message, exception);
+            throw new ServiceException("Error With Elsa Server");
+        }
+        //catch (TaskCanceledException exception
+        catch (Exception exception)
+        {
+            _logger.LogError("There was issue Execute Elsa Server see {Error}", exception.Message);
+            throw new ServiceException("Error With Elsa Server");
+        }
+    }
+
+    public async Task DeleteWFInstance(string processId,
+        CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            _logger.LogInformation("Removing Instance {ProcessId}", processId);
+            var url = new Uri($"workflow-instances/{processId}", UriKind.Relative);
+            await _httpClient.DeleteAsync(url, cancellationToken);
+            _logger.LogInformation("Removing Instance {ProcessId} was completed", processId);
+        }
+        catch(HttpRequestException  exception)
+        {
+            _logger.LogError("There was issue HttpRequestException {ErrorMessage} - {Error}", exception.Message, exception);
+            throw new ServiceException("Error With Elsa Server");
+        }
+        //catch (TaskCanceledException exception
         catch (Exception exception)
         {
             _logger.LogError("There was issue Execute Elsa Server see {Error}", exception.Message);
