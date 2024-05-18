@@ -69,9 +69,11 @@ public class ElsaService : IElsaService
     {
         try
         {
+            _logger.LogInformation("Complete Task {TaskId}", taskId);
             var url = new Uri($"tasks/{taskId}/complete", UriKind.Relative);
             var request = new { Result = result };
             await _httpClient.PostAsJsonAsync(url, request, cancellationToken);
+            _logger.LogInformation("Task {TaskId} Completed", taskId);
         }
         catch (Exception exception)
         {
