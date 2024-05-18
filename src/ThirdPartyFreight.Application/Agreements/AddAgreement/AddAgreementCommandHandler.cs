@@ -5,22 +5,12 @@ using ThirdPartyFreight.Application.Abstractions.Messaging;
 
 namespace ThirdPartyFreight.Application.Agreements.AddAgreement;
 
-internal sealed class AddAgreementCommandHandler : ICommandHandler<AddAgreementCommand, Guid>
+internal sealed class AddAgreementCommandHandler(
+    IAgreementRepository agreementRepository,
+    IUnitOfWork unitOfWork,
+    IDateTimeProvider dateTimeProvider)
+    : ICommandHandler<AddAgreementCommand, Guid>
 {
-    private readonly IAgreementRepository _agreementRepository;
-    private readonly IUnitOfWork _unitOfWork;
-    private readonly IDateTimeProvider _dateTimeProvider;
-
-    public AddAgreementCommandHandler(
-        IAgreementRepository agreementRepository, 
-        IUnitOfWork unitOfWork, 
-        IDateTimeProvider dateTimeProvider)
-    {
-        _agreementRepository = agreementRepository;
-        _unitOfWork = unitOfWork;
-        _dateTimeProvider = dateTimeProvider;
-    }
-
     public async Task<Result<Guid>> Handle(AddAgreementCommand request, CancellationToken cancellationToken)
     {
         try
@@ -32,11 +22,11 @@ internal sealed class AddAgreementCommandHandler : ICommandHandler<AddAgreementC
                 request.AgreementType,
                 request.SiteType,
                 request.CreatedBy,
-                _dateTimeProvider.UtcNow);
+                dateTimeProvider.UtcNow);
 
-            _agreementRepository.Add(agreement);
+            agreementRepository.Add(agreement);
 
-            await _unitOfWork.SaveChangesAsync(cancellationToken);
+            await unitOfWork.SaveChangesAsync(cancellationToken);
 
             return agreement.Id;
         }

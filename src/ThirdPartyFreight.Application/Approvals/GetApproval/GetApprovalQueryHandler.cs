@@ -21,23 +21,24 @@ internal sealed class GetApprovalQueryHandler : IQueryHandler<GetApprovalQuery, 
     {
         using IDbConnection connection = _sqlConnectionFactory.CreateConnection();
 
-        const string sql = """
-                           SELECT
-                                Id,
+        const string sql = $"""
+                            SELECT
+                                ApprovalId,
+                                TaskId,
                                 AgreementId,
-                                CreatedOnUtc,
-                                FirstApprovalOnUtc,
-                                FirstApprovalEndUtc,
-                                SecondApprovalOnUtc,
-                                SecondApprovalEndUtc,
-                                ThirdApprovalOnUtc,
-                                ThirdApprovalEndUtc,
+                                Approver,
+                                FirstApprovalStart,
+                                FirstApprovalEnd,
+                                SecondApprovalStart,
+                                SecondApprovalEnd,
+                                ThirdApprovalStart,
+                                ThirdApprovalEnd,
                                 CompletedOn
-                           FROM
-                            TPF_Approvals
-                           WHERE
-                            Id = @ApprovalId;
-                           """;
+                            FROM
+                               View_TPFApprovals
+                            WHERE
+                             ApprovalId = @ApprovalId;
+                            """;
 
         ApprovalResponse? result = await connection.QueryFirstOrDefaultAsync<ApprovalResponse>(sql, new { request.ApprovalId });
 

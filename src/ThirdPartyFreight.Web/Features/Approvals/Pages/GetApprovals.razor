@@ -2,20 +2,21 @@
 @inject HttpClient Http
 
 <PageTitle>Approvals</PageTitle>
-
+<div class="row justify-content-center" style="padding-top: 20px">
     <TelerikLoaderContainer
         OverlayThemeColor="light"
         Visible="@(!IsInitialDataLoadComplete)"
         Text="@null"
         Class="initial-data-loader">
         <Template>
-            <TelerikLoader Size="@ThemeConstants.Loader.Size.Large" Type="LoaderType.InfiniteSpinner" />
+            <TelerikLoader Size="@ThemeConstants.Loader.Size.Large" Type="LoaderType.InfiniteSpinner"/>
         </Template>
     </TelerikLoaderContainer>
     <TelerikGrid
         Data="@GridData"
         Height="@Height"
-        Class="k-grid grid-no-scroll"
+        Width="25%"
+        Class="k-grid grid-no-scroll row-cols-auto"
         FilterMode="GridFilterMode.FilterMenu"
         FilterMenuType="FilterMenuType.CheckBoxList"
         Pageable="true"
@@ -29,20 +30,22 @@
                 InputType="@InputType"
                 PageSizes="@PageSizes"
                 ButtonCount="@ButtonCount"
-                Position="@PagePosition" />
+                Position="@PagePosition"/>
         </GridSettings>
         <GridColumns>
-            <GridColumn Field="Id" Title="Id" VisibleInColumnChooser="true" Visible="false" Width="20px" />
-            <GridColumn Field="Description" Title="Approver" VisibleInColumnChooser="true" Visible="true" Width="30px" />
-            <GridCommandColumn Width="10px">
-                <GridCommandButton OnClick="@((args) => ToggleWindow(args.Item as ApprovalResponse))" Icon="@SvgIcon.InfoSolid"/>
+            <GridColumn Field="ApprovalId" Title="Id" VisibleInColumnChooser="true" Visible="false" Width="20px"/>
+            <GridColumn Field="AgreementId" Title="AgreementId" VisibleInColumnChooser="true" Visible="false" Width="20px"/>
+            <GridColumn Field="ApproverDisplayName" TextAlign="ColumnTextAlign.Center" Title="Approver" VisibleInColumnChooser="true" Visible="true" Width="5px"/>
+            <GridCommandColumn Width="5px" Title="Agreement Info">
+                <GridCommandButton ThemeColor="info" Size="lg" OnClick="@((args) => ToggleWindow(args.Item as ApprovalResponse))" Icon="@SvgIcon.InfoSolid" />
             </GridCommandColumn>
-            <GridCommandColumn Width="30px">
-                <GridCommandButton>Approval</GridCommandButton>
-                <GridCommandButton>Decline</GridCommandButton>
+            <GridCommandColumn Width="5px">
+                <GridCommandButton ThemeColor="success" Size="lg" Icon="@SvgIcon.Check" OnClick="() => HandleApproval()" />
+                <GridCommandButton ThemeColor="error" Size="lg" Icon="@SvgIcon.X" OnClick="() => HandleDecline()" />
             </GridCommandColumn>
         </GridColumns>
     </TelerikGrid>
+</div>
 
 @code {
     private ObservableCollection<ApprovalResponse> GridData { get; set; } = [];
@@ -55,6 +58,7 @@
     PagerPosition PagePosition { get; set; } = PagerPosition.Bottom;
     static List<int?> PageSizes => [20, 30, 40, 50, null];
     bool Visible { get; set; }
+
     protected override async Task OnInitializedAsync()
     {
         if (IsInitialDataLoadComplete == false)
@@ -78,5 +82,14 @@
 
         Visible = !Visible;
     }
-}
 
+    private static Task HandleApproval()
+    {
+        throw new NotImplementedException();
+    }
+
+    private static Task HandleDecline()
+    {
+        throw new NotImplementedException();
+    }
+}

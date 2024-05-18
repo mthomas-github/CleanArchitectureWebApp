@@ -20,24 +20,24 @@ internal sealed class GetApprovalsQueryHandler : IQueryHandler<GetApprovalsQuery
     {
         using IDbConnection connection = _sqlConnectionFactory.CreateConnection();
 
-        const string sql = """
-                           SELECT
-                               ApprovalId,
-                               TaskId,
-                               AgreementId,
-                               Description,
-                               FirstApprovalStart,
-                               FirstApprovalEnd,
-                               SecondApprovalStart,
-                               SecondApprovalEnd,
-                               ThirdApprovalStart,
-                               ThirdApprovalEnd,
-                               CompletedOn
-                           FROM
-                              View_TPFApprovals
-                           WHERE
-                               CompletedOn IS NULL;
-                           """;
+        const string sql = $"""
+                            SELECT
+                                ApprovalId,
+                                TaskId,
+                                AgreementId,
+                                Approver,
+                                FirstApprovalStart,
+                                FirstApprovalEnd,
+                                SecondApprovalStart,
+                                SecondApprovalEnd,
+                                ThirdApprovalStart,
+                                ThirdApprovalEnd,
+                                CompletedOn
+                            FROM
+                               View_TPFApprovals
+                            WHERE 
+                                CompletedOn is null;
+                            """;
 
         IEnumerable<ApprovalResponse> result = await connection.QueryAsync<ApprovalResponse>(sql);
         return result.ToList();

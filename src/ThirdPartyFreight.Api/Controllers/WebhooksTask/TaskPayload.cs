@@ -1,3 +1,5 @@
-﻿namespace ThirdPartyFreight.Api.Controllers.WebhooksTask;
+﻿using ThirdPartyFreight.Domain.Approvals;
 
-public sealed record TaskPayload(ApprovalPayload Approval, string Description);
+namespace ThirdPartyFreight.Api.Controllers.WebhooksTask;
+
+public sealed record TaskPayload(ApprovalPayload Approval, ApproverType approver);

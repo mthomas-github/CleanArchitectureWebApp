@@ -5,29 +5,24 @@ using ThirdPartyFreight.Domain.WorkflowTask;
 
 namespace ThirdPartyFreight.Application.WorkflowTasks.AddWorkFlowTask;
 
-internal sealed class AddWorkFlowTaskCommandHandler : ICommandHandler<AddWorkFlowTaskCommand, Guid>
+internal sealed class AddWorkFlowTaskCommandHandler(
+    IWorkFlowTaskRepository workFlowTaskRepository,
+    IUnitOfWork unitOfWork,
+    IDateTimeProvider dateTimeProvider)
+    : ICommandHandler<AddWorkFlowTaskCommand, Guid>
 {
-    private readonly IWorkFlowTaskRepository _workFlowTaskRepository;
-    private readonly IUnitOfWork _unitOfWork;
-    private readonly IDateTimeProvider _dateTimeProvider;
-
-    public AddWorkFlowTaskCommandHandler(IWorkFlowTaskRepository workFlowTaskRepository, IUnitOfWork unitOfWork, IDateTimeProvider dateTimeProvider)
-    {
-        _workFlowTaskRepository = workFlowTaskRepository;
-        _unitOfWork = unitOfWork;
-        _dateTimeProvider = dateTimeProvider;
-    }
-
     public async Task<Result<Guid>> Handle(AddWorkFlowTaskCommand request, CancellationToken cancellationToken)
     {
         try
         {
+#pragma warning disable IDE0008
             var workFlowTask = WorkFlowTask.Create(request.ExternalId, request.ProcessId, request.Name,
-                request.Description, request.AgreementId, _dateTimeProvider.UtcNow);
+#pragma warning restore IDE0008
+                request.Approver, request.AgreementId, dateTimeProvider.UtcNow);
 
-            _workFlowTaskRepository.Add(workFlowTask);
+            workFlowTaskRepository.Add(workFlowTask);
 
-            await _unitOfWork.SaveChangesAsync(cancellationToken);
+            await unitOfWork.SaveChangesAsync(cancellationToken);
 
             return workFlowTask.Id;
         }

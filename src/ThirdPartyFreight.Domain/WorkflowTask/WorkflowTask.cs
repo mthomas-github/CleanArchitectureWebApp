@@ -1,5 +1,6 @@
 ﻿using System;
 using ThirdPartyFreight.Domain.Abstractions;
+using ThirdPartyFreight.Domain.Approvals;
 
 namespace ThirdPartyFreight.Domain.WorkflowTask;
 
@@ -11,7 +12,7 @@ public sealed class WorkFlowTask : Entity
         string externalId,
         string processId,
         string name,
-        string description,
+        ApproverType approver,
         Guid agreementId,
         bool isCompleted,
         DateTimeOffset createdAt,
@@ -22,7 +23,7 @@ public sealed class WorkFlowTask : Entity
         ExternalId = externalId;
         ProcessId = processId;
         Name = name;
-        Description = description;
+        Approver = approver;
         IsCompleted = isCompleted;
         CreatedAt = createdAt;
         CompletedAt = completedAt;
@@ -49,7 +50,7 @@ public sealed class WorkFlowTask : Entity
     /// <summary>
     /// The task description.
     /// </summary>
-    public string Description { get; private set; } = default!;
+    public ApproverType Approver { get; private set; } = default!;
 
     /// <summary>
     /// The Agreement that the approval task belongs to.
@@ -76,26 +77,30 @@ public sealed class WorkFlowTask : Entity
         string externalId,
         string processId,
         string name,
-        string description,
+        ApproverType approver,
         Guid agreementId,
         DateTimeOffset createdAt)
     {
-        var workflowTask = new WorkFlowTask(Guid.NewGuid(), externalId, processId, name, description, agreementId, false, createdAt,
+        var workflowTask = new WorkFlowTask(Guid.NewGuid(), externalId, processId, name, approver, agreementId, false, createdAt,
             null);
 
         return workflowTask;
     }
 
 
-    public static WorkFlowTask Update(
-        Guid requestWorkFlowTaskId, 
-        string workflowTaskExternalId, 
-        string workflowTaskProcessId, 
-        string workflowTaskName, 
-        string workflowTaskDescription, 
-        Guid workflowTaskAgreementId)
+    public static WorkFlowTask Complete(
+        WorkFlowTask workFlowTask)
     {
-        var updated = new WorkFlowTask(requestWorkFlowTaskId, workflowTaskExternalId, workflowTaskProcessId, workflowTaskName, workflowTaskDescription, workflowTaskAgreementId, true, DateTimeOffset.UtcNow, DateTimeOffset.UtcNow);
+        var updated = new WorkFlowTask(
+            workFlowTask.Id, 
+            workFlowTask.ExternalId, 
+            workFlowTask.ProcessId, 
+            workFlowTask.Name, 
+            workFlowTask.Approver, 
+            workFlowTask.AgreementId, 
+            true, 
+            workFlowTask.CreatedAt, 
+            DateTimeOffset.Now );
 
         return updated;
     }

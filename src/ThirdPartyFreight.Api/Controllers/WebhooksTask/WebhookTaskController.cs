@@ -25,7 +25,7 @@ public class WebhookTaskController(ISender sender, IElsaService elsaService) : C
             webhookEvent.Payload.TaskId,
             webhookEvent.Payload.WorkflowInstanceId,
             webhookEvent.Payload.TaskName,
-            webhookEvent.Payload.TaskPayload.Description,
+            webhookEvent.Payload.TaskPayload.approver,
             Guid.Parse(webhookEvent.Payload.TaskPayload.Approval.AgreementId));
 
         Result<Guid> result = await sender.Send(command, cancellationToken);
