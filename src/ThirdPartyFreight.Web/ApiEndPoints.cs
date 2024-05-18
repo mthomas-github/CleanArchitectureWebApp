@@ -10,4 +10,5 @@ internal static class ApiEndPoints
     public const string AddDocumentEndPoint = "api/v1.0/documents";
     public const string GetCustomersEndPoint = "api/v1.0/customers";
     public const string GetAllApprovalsEndPoint = "api/v1.0/approvals";
+    public const string CompleteTaskEndPoint = "api/v1.0/webhooktasks";
 }

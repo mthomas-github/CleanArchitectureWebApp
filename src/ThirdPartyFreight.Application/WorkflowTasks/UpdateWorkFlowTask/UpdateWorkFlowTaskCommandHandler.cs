@@ -11,7 +11,7 @@ internal sealed class UpdateWorkFlowTaskCommandHandler(IWorkFlowTaskRepository w
         try
         {
             WorkFlowTask? existingWorkFlowTask =
-                await workFlowTaskRepository.GetByIdAsync(request.WorkFlowTaskId, cancellationToken);
+                await workFlowTaskRepository.GetByIdAsync(request.WebHookTaskId, cancellationToken);
 
             if (existingWorkFlowTask is null)
             {
@@ -21,7 +21,6 @@ internal sealed class UpdateWorkFlowTaskCommandHandler(IWorkFlowTaskRepository w
             var updated = WorkFlowTask.Complete(existingWorkFlowTask);
 
             workFlowTaskRepository.Update(updated);
-
             await unitOfWork.SaveChangesAsync(cancellationToken);
 
             return Result.Success();

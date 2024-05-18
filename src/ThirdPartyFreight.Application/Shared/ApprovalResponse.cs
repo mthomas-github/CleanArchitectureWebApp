@@ -7,6 +7,7 @@ public sealed class ApprovalResponse
     public Guid ApprovalId { get; private set; }
     public string TaskId { get; private set; }
     public Guid AgreementId { get; private set; }
+    public Guid WorkFlowTaskId { get; private set; }
     public ApproverType Approver { get; private set; }
     public DateTime? FirstApprovalStart { get; private set; }
     public DateTime? FirstApprovalEnd { get; private set; }

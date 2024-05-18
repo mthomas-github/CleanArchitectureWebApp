@@ -23,15 +23,14 @@ internal sealed class GetWorkflowTaskQueryHandler : IQueryHandler<GetWorkflowTas
         const string sql = """
                             SELECT
                                  Id,
+                                 ExternalId,
+                                 ProcessId,
+                                 Name,
                                  AgreementId,
-                                 CreatedOnUtc,
-                                 FirstApprovalOnUtc,
-                                 FirstApprovalEndUtc,
-                                 SecondApprovalOnUtc,
-                                 SecondApprovalEndUtc,
-                                 ThirdApprovalOnUtc,
-                                 ThirdApprovalEndUtc,
-                                 CompletedOn
+                                 IsCompleted,
+                                 CreatedAt,
+                                 CompletedAt,
+                                 Approver
                             FROM
                              TPF_WorkflowTasks
                             WHERE

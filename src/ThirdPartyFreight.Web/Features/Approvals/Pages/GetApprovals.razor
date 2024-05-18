@@ -40,8 +40,8 @@
                 <GridCommandButton ThemeColor="info" Size="lg" OnClick="@((args) => ToggleWindow(args.Item as ApprovalResponse))" Icon="@SvgIcon.InfoSolid" />
             </GridCommandColumn>
             <GridCommandColumn Width="5px">
-                <GridCommandButton ThemeColor="success" Size="lg" Icon="@SvgIcon.Check" OnClick="() => HandleApproval()" />
-                <GridCommandButton ThemeColor="error" Size="lg" Icon="@SvgIcon.X" OnClick="() => HandleDecline()" />
+                <GridCommandButton ThemeColor="success" Size="lg" Icon="@SvgIcon.Check" OnClick="@((args) => HandleApproval(args.Item as ApprovalResponse))" />
+                <GridCommandButton ThemeColor="error" Size="lg" Icon="@SvgIcon.X" OnClick="@((args) => HandleDecline(args.Item as ApprovalResponse))" />
             </GridCommandColumn>
         </GridColumns>
     </TelerikGrid>
@@ -77,18 +77,25 @@
     {
         if (item is not null)
         {
-            await Http.GetFromJsonAsync<AgreementResponse>($"{GetAgreementEndPoint}{item.AgreementId}");
+            await Http.GetFromJsonAsync<AgreementResponse>($"{GetAgreementEndPoint}/{item.AgreementId}");
         }
 
         Visible = !Visible;
     }
 
-    private static Task HandleApproval()
+    private async Task HandleApproval(ApprovalResponse? item)
     {
-        throw new NotImplementedException();
+        if (item is not null)
+        {
+            await Http.PutAsJsonAsync($"{CompleteTaskEndPoint}/{item.WorkFlowTaskId}", item.TaskId);
+        }
+        else
+        {
+            throw new NullReferenceException("item was null, unable to complete the task");
+        }
     }
 
-    private static Task HandleDecline()
+    private static Task HandleDecline(ApprovalResponse? item)
     {
         throw new NotImplementedException();
     }
