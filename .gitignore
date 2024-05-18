@@ -369,4 +369,4 @@ FodyWeavers.xsd
 /src/ThirdPartyFreight.Api/PrivateKeys/ca_cert.crt
 
 /.idea/
-
+.nginx/certs

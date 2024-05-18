@@ -49,7 +49,7 @@ app.UseCors(options => options
     .AllowAnyMethod()
     .AllowAnyHeader());
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 
 app.UseRequestContextLogging();
 

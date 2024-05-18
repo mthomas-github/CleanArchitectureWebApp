@@ -23,4 +23,7 @@
   <ItemGroup>
     <Folder Include=".nginx\certs\" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="elsa\.DS_Store" />
+  </ItemGroup>
 </Project>

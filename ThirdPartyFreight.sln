@@ -29,14 +29,14 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ThirdPartyFreight.Architect
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ThirdPartyFreight.Domain.UnitTests", "test\ThirdPartyFreight.Domain.UnitTests\ThirdPartyFreight.Domain.UnitTests.csproj", "{FD4F9662-83DF-4681-9F02-539CB5E33B44}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ElsaServer", "elsa\ElsaServer\ElsaServer.csproj", "{20553BBA-462F-4660-8328-E54EE3279C5F}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ThirdPartyFreight.Web", "src\ThirdPartyFreight.Web\ThirdPartyFreight.Web.csproj", "{D445C93A-B3AF-4C7F-9AFF-CEFBCA0543AC}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Python", "Python", "{433F74D8-1F4F-4360-8750-9571E8D807F2}"
 	ProjectSection(SolutionItems) = preProject
 		datagen.py = datagen.py
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ElsaServer", "elsa\ElsaServer\ElsaServer.csproj", "{74440970-83BC-4E9A-803F-4804E8883323}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -84,14 +84,14 @@ Global
 		{FD4F9662-83DF-4681-9F02-539CB5E33B44}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FD4F9662-83DF-4681-9F02-539CB5E33B44}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FD4F9662-83DF-4681-9F02-539CB5E33B44}.Release|Any CPU.Build.0 = Release|Any CPU
-		{20553BBA-462F-4660-8328-E54EE3279C5F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{20553BBA-462F-4660-8328-E54EE3279C5F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{20553BBA-462F-4660-8328-E54EE3279C5F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{20553BBA-462F-4660-8328-E54EE3279C5F}.Release|Any CPU.Build.0 = Release|Any CPU
 		{D445C93A-B3AF-4C7F-9AFF-CEFBCA0543AC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{D445C93A-B3AF-4C7F-9AFF-CEFBCA0543AC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D445C93A-B3AF-4C7F-9AFF-CEFBCA0543AC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D445C93A-B3AF-4C7F-9AFF-CEFBCA0543AC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{74440970-83BC-4E9A-803F-4804E8883323}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{74440970-83BC-4E9A-803F-4804E8883323}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{74440970-83BC-4E9A-803F-4804E8883323}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{74440970-83BC-4E9A-803F-4804E8883323}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -106,8 +106,8 @@ Global
 		{3D783600-BF8A-4D85-842E-1637EA1FCA55} = {46DE2999-D82D-4370-BC82-E07955E425FF}
 		{DE2BB387-1EBA-455E-9A19-125FA6BAC1E1} = {46DE2999-D82D-4370-BC82-E07955E425FF}
 		{FD4F9662-83DF-4681-9F02-539CB5E33B44} = {46DE2999-D82D-4370-BC82-E07955E425FF}
-		{20553BBA-462F-4660-8328-E54EE3279C5F} = {067FC9AD-031D-41B1-ADAC-D2AE6C54CD0A}
 		{D445C93A-B3AF-4C7F-9AFF-CEFBCA0543AC} = {4C942005-7D69-4BD0-BA3E-C1754DD17F30}
+		{74440970-83BC-4E9A-803F-4804E8883323} = {067FC9AD-031D-41B1-ADAC-D2AE6C54CD0A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {BAF98603-8778-40E7-804B-7B80DCA7C5F1}

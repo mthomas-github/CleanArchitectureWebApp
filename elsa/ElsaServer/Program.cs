@@ -1,68 +1,127 @@
+using Elsa.EntityFrameworkCore.Extensions;
+using Elsa.EntityFrameworkCore.Modules.Identity;
 using Elsa.EntityFrameworkCore.Modules.Management;
 using Elsa.EntityFrameworkCore.Modules.Runtime;
 using Elsa.Extensions;
+using Elsa.MassTransit.Extensions;
+using Elsa.Workflows.Management.Services;
+using Medallion.Threading.Redis;
+using Elsa.Workflows.Management.Compression;
+using StackExchange.Redis;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
+const bool runEfCoreMigrations = true;
+ConfigurationManager configuration = builder.Configuration;
+string sqlServerConnectionString = configuration.GetConnectionString("SqlServer")!;
+string redisConnectionString = configuration.GetConnectionString("Redis")!;
+IConfigurationSection identitySection = configuration.GetSection("Identity")!;
+IConfigurationSection identityTokenSection = identitySection.GetSection("Tokens")!;
+string rabbitMqConnectionString = configuration.GetConnectionString("RabbitMq")!;
 
 builder.Services.AddElsa(elsa =>
 {
-    // Configure Management layer to use EF Core.
-    elsa.UseWorkflowManagement(management => management.UseEntityFrameworkCore());
-
-    // Configure Runtime layer to use EF Core.
-    elsa.UseWorkflowRuntime(runtime => runtime.UseEntityFrameworkCore());
-
-    // Default Identity features for authentication/authorization.
-    elsa.UseIdentity(identity =>
+    elsa.UseWorkflowManagement(management => management.UseEntityFrameworkCore(ef =>
     {
-        identity.TokenOptions = options => options.SigningKey = "af3b19e8c2047f6a98d7b2fb1d9c586fcf53e6873b92b7641d55a70c4a8db1e6"; // This key needs to be at least 256 bits long.
+        ef.UseSqlServer(sqlServerConnectionString!);
+        ef.RunMigrations = runEfCoreMigrations;
+        management.SetCompressionAlgorithm(nameof(Zstd));
+        management.UseWorkflowInstances(feature =>
+            feature.WorkflowInstanceStore = sp => sp.GetRequiredService<MemoryWorkflowInstanceStore>());
+        management.UseMassTransitDispatcher();
+    }));
+
+    elsa.UseWorkflowRuntime(runtime => runtime.UseEntityFrameworkCore(ef =>
+        {
+            ef.UseSqlServer(sqlServerConnectionString!);
+            ef.RunMigrations = runEfCoreMigrations;
+            runtime.UseMassTransitDispatcher();
+            runtime.WorkflowInboxCleanupOptions = options =>
+                configuration.GetSection("Runtime:WorkflowInboxCleanup").Bind(options);
+            runtime.WorkflowDispatcherOptions =
+                options => configuration.GetSection("Runtime:WorkflowDispatcher").Bind(options);
+            runtime.DistributedLockProvider = _ =>
+            {
+                var connectionMultiplexer = ConnectionMultiplexer.Connect(redisConnectionString);
+                IDatabase database = connectionMultiplexer.GetDatabase();
+                return new RedisDistributedSynchronizationProvider(database);
+            };
+        })
+    );
+    elsa.UseEnvironments(environments => environments.EnvironmentsOptions =
+        options => configuration.GetSection("Environments").Bind(options));
+    elsa.UseScheduling(scheduling => scheduling.UseQuartzScheduler());
+
+    elsa.UseIdentity(identity =>
+    {        
+        
+        
+        identity.TokenOptions = options => options.SigningKey = "ssaf3b19e8c2047f6a98d7b2fb1d9c586fcf53e6873b92b7641d55a70c4a8db1e6"; // This key needs to be at least 256 bits long.
         identity.UseAdminUserProvider();
+             // identity.UseConfigurationBasedUserProvider(options => identitySection.Bind(options));
+             // identity.UseConfigurationBasedApplicationProvider(options => identitySection.Bind(options));
+             // identity.UseConfigurationBasedRoleProvider(options => identitySection.Bind(options));
+
+        // identity.UseEntityFrameworkCore(ef =>
+        // {
+        //     ef.UseSqlServer(sqlServerConnectionString!);
+        //     ef.RunMigrations = runEfCoreMigrations;
+        // });
     });
 
-    // Configure ASP.NET authentication/authorization.
     elsa.UseDefaultAuthentication(auth => auth.UseAdminApiKey());
 
-    // Expose Elsa API endpoints.
     elsa.UseWorkflowsApi();
 
-    // Set up a SignalR hub for real-time updates from the server.
     elsa.UseRealTimeWorkflows();
 
-    // Enable JavaScript workflow expressions
     elsa.UseJavaScript(options => options.AllowClrAccess = true);
 
-    // Use email activities.
-    elsa.UseEmail(email => email.ConfigureOptions = options =>
+    elsa.UseEmail(email => email.ConfigureOptions = options => configuration.GetSection("Smtp").Bind(options));
+    elsa.AddSwagger();
+    elsa.UseWebhooks(webhooks =>
+        webhooks.WebhookOptions = options => builder.Configuration.GetSection("Webhooks").Bind(options));
+    elsa.UseMassTransit(massTransit => massTransit.UseRabbitMq(rabbitMqConnectionString, rabbit =>
+        rabbit.ConfigureServiceBus = bus =>
         {
-            options.Host = "localhost";
-            options.Port = 2525;
-        });
-
-    // Register custom webhook definitions from the application, if any.
-    elsa.UseWebhooks(webhooks => webhooks.WebhookOptions = options => builder.Configuration.GetSection("Webhooks").Bind(options));
+            bus.PrefetchCount = 4;
+            bus.Durable = true;
+            bus.AutoDelete = false;
+            bus.ConcurrentMessageLimit = 32;
+            // etc.
+        }));
 });
 
-// Configure CORS to allow designer app hosted on a different origin to invoke the APIs.
 builder.Services.AddCors(cors => cors
     .AddDefaultPolicy(policy => policy
-        .AllowAnyOrigin() // For demo purposes only. Use a specific origin instead.
+        .AllowAnyOrigin()
         .AllowAnyHeader()
         .AllowAnyMethod()
-        .WithExposedHeaders("*"))); // Required for Elsa Studio in order to support running workflows from the designer. Alternatively, you can use the `*` wildcard to expose all headers.
+        .WithExposedHeaders("x-elsa-workflow-instance-id")));
 
-// Add Health Checks.
 builder.Services.AddHealthChecks();
 
-// Build the web application.
 WebApplication app = builder.Build();
 
-// Configure web application's middleware pipeline.
+if (app.Environment.IsDevelopment())
+{
+    app.UseDeveloperExceptionPage();
+}
+
+
 app.UseCors();
-app.UseRouting(); // Required for SignalR.
+app.MapHealthChecks("/");
+app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
-app.UseWorkflowsApi(); // Use Elsa API endpoints.
-app.UseWorkflows(); // Use Elsa middleware to handle HTTP requests mapped to HTTP Endpoint activities.
-app.UseWorkflowsSignalRHubs(); // Optional SignalR integration. Elsa Studio uses SignalR to receive real-time updates from the server. 
+app.UseWorkflowsApi();
+app.UseJsonSerializationErrorHandler();
+app.UseWorkflows();
+// Swagger API documentation.
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwaggerUI();
+}
+
+app.UseWorkflowsSignalRHubs();
 
 app.Run();

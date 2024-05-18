@@ -1,4 +1,5 @@
-﻿using Asp.Versioning;
+﻿using System.Net.Http.Headers;
+using Asp.Versioning;
 using ThirdPartyFreight.Application.Abstractions.Authentication;
 using ThirdPartyFreight.Application.Abstractions.Caching;
 using ThirdPartyFreight.Application.Abstractions.Clock;
@@ -205,8 +206,22 @@ public static class DependencyInjection
 
     private static void AddElsa(IServiceCollection services, IConfiguration configuration)
     {
+        string baseUrl = configuration["ElsaServer:ApiBaseUrl"]!.TrimEnd('/') + '/';
+        string elsaApiKey = configuration["ElsaServer:ApiKey"]!;
+
+        services.AddTransient<HttpClient>(sp =>
+        {
+            var httpClient = new HttpClient
+            {
+                BaseAddress = new Uri(baseUrl)
+            };
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("ApiKey", elsaApiKey);
+            return httpClient;
+        });
+
+        services.AddTransient<IElsaService, ElsaService>();
         services.Configure<ElsaServerOptions>(configuration.GetSection("ElsaServer"));
-        services.AddScoped<IElsaService, ElsaService>();
+ 
     }
     
 

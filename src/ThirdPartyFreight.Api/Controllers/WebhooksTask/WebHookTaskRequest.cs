@@ -1,14 +1,5 @@
-﻿namespace ThirdPartyFreight.Api.Controllers.WebhooksTask;
+﻿using ThirdPartyFreight.Domain.WorkflowTask;
 
-public class WebHookTaskRequest
-{
-    public Guid Id { get; set; }
-    public string ProcessId { get; set; }
-    public string ExternalId { get; set; }
-    public string Name { get; set; }
-    public string Description { get; set; }
-    public Guid AgreementId { get; set; }
-    public DateTimeOffset CreatedAt { get; set; }
-    public bool? IsCompleted { get; set; }
-    public DateTimeOffset? CompletedAt { get; set; }
-}
+namespace ThirdPartyFreight.Api.Controllers.WebhooksTask;
+public sealed record WebHookTaskRequest(Guid WebHookTaskId, WorkFlowTask WorkFlowTask);
+

@@ -46,7 +46,7 @@ services:
     container_name: elsa-studio
     environment:
       - HTTP_PORTS=8080
-      - ELSASERVER__URL=https://localhost:5001/elsa/api
+      - ELSASERVER__URL=https://localhost:14001/elsa/api
     ports:
       - "14000:8080"
   thirdpartyfreight.web:
@@ -57,11 +57,32 @@ services:
     ports:
       - "80:80"
       - "443:443"
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbittmq
+    ports:
+      - "15672:15672"
+      - "5672:5672"
   elsa-server:
     container_name: elsa-server
     build:
       context: .
       dockerfile: elsa/ElsaServer/Dockerfile
+    depends_on:
+      - csdtpfblazorwebapp-db
+      - rabbitmq
+      - csdtpfblazorwebapp-redis
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      PYTHONNET_PYDLL: /opt/homebrew/Cellar/python@3.11/3.11.6_1/Frameworks/Python.framework/Versions/3.11/bin/python3.11
+      PYTHONNET_RUNTIME: coreclr
+      ASPNETCORE_HTTP_PORTS: 8080
+      ASPNETCORE_HTTPS_PORTS: 8081
+      ASPNETCORE_URLS: https://+:8081;http://+:8080
+      ASPNETCORE_Kestrel__Certificates__Default__Path: /https/${CertName}
     ports:
-      - "5000:8080"
-      - "5001:8081"
+      - "13000:8080"
+      - "14001:8081"
+    volumes:
+      - ${USERSECRETS}:/home/app/.microsoft/usersecrets:ro
+      - ${ASPHTTPS}:/https:ro
