@@ -103,5 +103,40 @@
     {
         throw new NotImplementedException();
     }
+    
+    public class ModelData
+    {
+        public string? Source { get; set; }
+        public int Percentage { get; set; }
+        public bool Explode { get; set; }
+    }
+
+    public List<ModelData> Data = new List<ModelData>()
+    {
+        new ModelData()
+        {
+            Source = "Hydro",
+            Percentage = 22,
+            Explode = true
+        },
+        new ModelData()
+        {
+            Source = "Solar",
+            Percentage = 2,
+            Explode = false
+        },
+        new ModelData()
+        {
+            Source = "Nuclear",
+            Percentage = 49,
+            Explode = false
+        },
+        new ModelData()
+        {
+            Source = "Wind",
+            Percentage = 27,
+            Explode = false
+        }
+    };
 
 }

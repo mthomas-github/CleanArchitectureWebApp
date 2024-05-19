@@ -2,9 +2,13 @@
 
 @if (_isLoading)
 {
-    <div class="loading">
-        <div class="spinner"></div>
-    </div>
+    <TelerikLoaderContainer Size="@ThemeConstants.Loader.Size.Large"
+                            ThemeColor="primary"
+                            OverlayThemeColor="light"
+                            LoaderPosition="@LoaderPosition.Top"
+                            Text="Data is Loading..."
+                            LoaderType="@LoaderType.InfiniteSpinner"
+    ></TelerikLoaderContainer>
 }
 else
 {

@@ -61,7 +61,7 @@ else
             <GridPagerSettings InputType="@InputType" PageSizes="@PageSizes" ButtonCount="@ButtonCount" Position="@PagerPosition" />
         </GridSettings>
         <GridColumns>
-            <GridCheckboxColumn SelectAll="@ShowSelectAll" Width="2px" ShowColumnMenu="false"></GridCheckboxColumn>
+            <GridCheckboxColumn CheckBoxOnlySelection="true" SelectAll="@ShowSelectAll" Width="2px" ShowColumnMenu="false"></GridCheckboxColumn>
             <GridColumn Field="Site" Title="Site #" VisibleInColumnChooser="true" Visible="true" Width="8px" />
             <GridColumn Field="FullAddress" Title="Site Address" VisibleInColumnChooser="true" Width="35px" />
         </GridColumns>
