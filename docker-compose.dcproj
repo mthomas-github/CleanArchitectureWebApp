@@ -21,9 +21,8 @@
     <None Include=".dockerignore" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include=".nginx\certs\" />
-  </ItemGroup>
-  <ItemGroup>
+    <Content Include=".nginx\certs\localhost+2-key.pem" />
+    <Content Include=".nginx\certs\localhost+2.pem" />
     <Content Include="elsa\.DS_Store" />
   </ItemGroup>
 </Project>
