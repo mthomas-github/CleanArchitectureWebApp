@@ -1,8 +1,8 @@
-﻿FROM nginx:alpine AS base
+﻿FROM nginx:1.26.0-alpine-slim AS base
 EXPOSE 80
 EXPOSE 443
 
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:8.0-stable-slim AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["src/ThirdPartyFreight.Web/ThirdPartyFreight.Web.csproj", "src/ThirdPartyFreight.Web/"]
