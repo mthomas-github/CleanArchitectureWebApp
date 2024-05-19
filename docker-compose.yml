@@ -2,6 +2,10 @@ services:
   thirdpartyfreight.api:
     image: ${DOCKER_REGISTRY-}thirdpartyfreightapi
     container_name: ThirdPartyFreight.Api
+    depends_on:
+      - csdtpfblazorwebapp-db
+      - csdtpfblazorwebapp-redis
+      - csdtpfblazorwebapp-idp
     build:
       context: .
       dockerfile: src/ThirdPartyFreight.Api/Dockerfile
@@ -44,13 +48,18 @@ services:
   elsa-studio:
     image: elsaworkflows/elsa-studio-v3:latest
     container_name: elsa-studio
+    depends_on:
+      - elsa-server
     environment:
       - HTTP_PORTS=8080
       - ELSASERVER__URL=https://localhost:14001/elsa/api
     ports:
       - "14000:8080"
   thirdpartyfreight.web:
+    image: ${DOCKER_REGISTRY-}csdtpfwebapp-thirdpartyfreight.web
     container_name: ThirdPartyFreight.Web
+    depends_on:
+      - thirdpartyfreight.api
     build:
       context: .
       dockerfile: src/ThirdPartyFreight.Web/Dockerfile
@@ -64,6 +73,7 @@ services:
       - "15672:15672"
       - "5672:5672"
   elsa-server:
+    image: ${DOCKER_REGISTRY-}csdtpfwebapp-elsa-server
     container_name: elsa-server
     build:
       context: .
