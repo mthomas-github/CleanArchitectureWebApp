@@ -1,6 +1,7 @@
 using MediatR;
 using Microsoft.Extensions.Logging;
 using ThirdPartyFreight.Application.Abstractions.Clock;
+using ThirdPartyFreight.Application.Abstractions.PowerAutomate;
 using ThirdPartyFreight.Domain.Abstractions;
 using ThirdPartyFreight.Domain.Agreements;
 using ThirdPartyFreight.Domain.Approvals;
@@ -13,6 +14,7 @@ public class AddWorkFlowTaskDomainEventHandler(
     IWorkFlowTaskRepository workFlowTaskRepository, 
     IApprovalRepository approvalRepository,
     IAgreementRepository agreementRepository,
+    IPowerAutomateService powerAutomateService,
     IUnitOfWork unitOfWork,
     IDateTimeProvider dateTimeProvider,
     ILogger<AddWorkFlowTaskDomainEventHandler> logger) : 
@@ -82,6 +84,12 @@ public class AddWorkFlowTaskDomainEventHandler(
                             null,
                             new ModifiedBy("System"),
                             dateTimeProvider.UtcNow);
+                        await powerAutomateService.TriggerFlow(
+                            new Uri(
+                                "https://prod-114.westus.logic.azure.com:443/workflows/a37839f116de43b49666a0cd9e97fb24/triggers/manual/paths/invoke?api-version=2016-06-01"),
+                            new FlowRequest(
+                                JsonDataString:
+                                "{\n  \"Description\": \"This is a sample description.\",\n  \"FileLocation\": \"/path/to/file/location\"\n}\n"));
                         await unitOfWork.SaveChangesAsync(cancellationToken);
                         break;
                     default:

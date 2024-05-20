@@ -26,6 +26,7 @@ using Microsoft.Extensions.Options;
 using Quartz;
 using ThirdPartyFreight.Application.Abstractions.DocuSign;
 using ThirdPartyFreight.Application.Abstractions.Elsa;
+using ThirdPartyFreight.Application.Abstractions.PowerAutomate;
 using ThirdPartyFreight.Domain.Customer;
 using ThirdPartyFreight.Domain.WorkflowTask;
 using ThirdPartyFreight.Infrastructure.Authentication;
@@ -38,6 +39,7 @@ using ThirdPartyFreight.Infrastructure.DocuSign.BackgroundJobs;
 using ThirdPartyFreight.Infrastructure.Elsa;
 using ThirdPartyFreight.Infrastructure.Email;
 using ThirdPartyFreight.Infrastructure.OutBox;
+using ThirdPartyFreight.Infrastructure.PowerAutomate;
 using ThirdPartyFreight.Infrastructure.Repositories;
 using AuthenticationOptions = ThirdPartyFreight.Infrastructure.Authentication.AuthenticationOptions;
 using AuthenticationService = ThirdPartyFreight.Infrastructure.Authentication.AuthenticationService;
@@ -63,6 +65,7 @@ public static class DependencyInjection
         AddBackgroundJobs(services, configuration);
         AddDocuSign(services, configuration);
         AddElsa(services, configuration);
+        AddPowerAutomate(services, configuration);
 
         return services;
     }
@@ -223,6 +226,13 @@ public static class DependencyInjection
         services.Configure<ElsaServerOptions>(configuration.GetSection("ElsaServer"));
  
     }
+
+    private static void AddPowerAutomate(IServiceCollection services, IConfiguration configuration)
+    {
+        services.AddScoped<IPowerAutomateService, PowerAutomateService>();
+        services.Configure<PowerAutomateOptions>(configuration.GetSection("PowerAutomate"));
+    }
+    
     
 
 

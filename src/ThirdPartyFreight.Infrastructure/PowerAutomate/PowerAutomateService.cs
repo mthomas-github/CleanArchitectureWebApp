@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 using ThirdPartyFreight.Application.Abstractions.PowerAutomate;
 
 namespace ThirdPartyFreight.Infrastructure.PowerAutomate;
@@ -30,7 +31,9 @@ public class PowerAutomateService(IOptions<PowerAutomateOptions> options, ILogge
         HttpResponseMessage response = await client.SendAsync(request);
         if (response.IsSuccessStatusCode)
         {
-            return await response.Content.ReadFromJsonAsync<AuthResponse>();
+            string jsonString = await response.Content.ReadAsStringAsync();
+            AuthResponse? json = JsonConvert.DeserializeObject<AuthResponse>(jsonString);
+            return json;
         }
         else
         {
