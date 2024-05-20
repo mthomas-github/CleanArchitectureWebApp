@@ -2,6 +2,7 @@ using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using ThirdPartyFreight.Web;
+using ThirdPartyFreight.Web.Pages;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
@@ -20,7 +21,7 @@ builder.Services.AddOidcAuthentication(options =>
     options.UserOptions.RoleClaim = "client roles"; 
     options.UserOptions.ScopeClaim = "scope";
 });
-
+builder.Services.AddSingleton<Home.IssuesGenerator>();
 builder.Services.AddTelerikBlazor();
 builder.Services.AddBlazoredLocalStorage();
 await builder.Build().RunAsync();

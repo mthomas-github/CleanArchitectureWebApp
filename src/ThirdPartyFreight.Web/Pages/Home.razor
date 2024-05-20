@@ -1,7 +1,323 @@
 ﻿@page "/"
+@inject IssuesGenerator IssuesGeneratorService
+@implements IDisposable
 
 <PageTitle>Home</PageTitle>
 
-<h1>Hello, world!</h1>
+<div class="dashboard">
+    <div class="mb-4 k-hstack">
+        <div>
+            <h2>
+                <span class="small text-uppercase text-muted d-block">Statistics</span>
+                @IssuesFilter.GetRangeFromNumber(timeRange).ToString("ddd, dd MMM yyyy")
+                - @DateTime.Now.ToString("ddd, dd MMM yyyy")
+            </h2>
+        </div>
+        <div class="k-spacer"></div>
+        <div>
+            <TelerikDropDownList Width="300px" Data="@DateFilterData" TextField="Text" ValueField="Value" @bind-Value="@timeRange"
+                                 OnChange="@LoadIssuesData">
+                <DropDownListSettings>
+                    <DropDownListPopupSettings Height="auto"></DropDownListPopupSettings>
+                </DropDownListSettings>
+            </TelerikDropDownList>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <h3 class="card-header">Active Issues</h3>
+                <div class="card-body">
 
-Welcome to your new app.
+                    <div class="row">
+
+                        <div class="col-sm-12 col-md-6 col-lg active-issues">
+                            <span class="comp-label">
+                                <strong>@IssuesList.Count()</strong>
+                                <small>Active issues</small>
+                            </span>
+                        </div>
+
+                        <div class="col-sm-12 col-md-6 col-lg text-success closed-issues">
+                            <span class="comp-label">
+                                <strong>@ClosedIssues.Count()</strong>
+                                <small>Closed issues</small>
+                            </span>
+                        </div>
+
+                        <div class="col-sm-12 col-md-6 col-lg text-danger open-issues">
+                            <span class="comp-label">
+                                <strong>@OpenIssues.Count()</strong>
+                                <small>Open issues</small>
+                            </span>
+                        </div>
+
+                        <div class="col-sm-12 col-md-6 col-lg close-rate">
+                            <span class="comp-label">
+                                <strong>@GetCloseRate()</strong>
+                                <small>Close rate</small>
+                            </span>
+                        </div>
+                    </div>
+
+
+                    <h3 class="card-header">All issues</h3>
+                    <div class="all-issues">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card issue-types">
+                <h4 class="card-header">Issue Types</h4>
+                <div class="card-body">
+                    <div class="comp-label chart-label">
+                        <div class="comp-label chart-label">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-8">
+            <div class="card">
+                <h4 class="card-header">Types Distribution</h4>
+                <div class="card-body">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+#pragma warning disable CA5394
+
+    IEnumerable<Issue> IssuesList { get; set; } = new List<Issue>();
+    IEnumerable<Issue> OpenIssues { get; set; } = new List<Issue>();
+    IEnumerable<Issue> ClosedIssues { get; set; } = new List<Issue>();
+
+    CancellationTokenSource? stopTimer;
+
+    List<DateFilterModel>? DateFilterData;
+
+    int timeRange { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        DateFilterData = IssuesFilter.GetTimeRangeFilterValues();
+        timeRange = DateFilterData.First().Value;
+
+        await LoadIssuesData();
+    }
+
+    public void Dispose()
+    {
+        StopTimer();
+    }
+
+    private async Task LoadDataOnInterval()
+    {
+        StopTimer();
+        stopTimer = new CancellationTokenSource();
+
+        while (IssuesFilter.ShouldForceGeneration(timeRange))
+        {
+            await Task.Delay(10000, stopTimer.Token);
+            await LoadIssuesData();
+            StateHasChanged();
+        }
+    }
+
+    public void StopTimer()
+    {
+        if (stopTimer != null)
+        {
+            stopTimer.Cancel();
+        }
+    }
+
+    private async Task LoadIssuesData()
+    {
+        IssuesList = IssuesGenerator.GetIssues(IssuesFilter.GetRangeFromNumber(timeRange));
+        OpenIssues = IssuesFilter.GetOpenIssues(IssuesList);
+        ClosedIssues = IssuesFilter.GetClosedIssues(IssuesList);
+
+        StateHasChanged();
+
+        await LoadDataOnInterval();
+
+        StateHasChanged();
+    }
+
+    private MarkupString GetCloseRate()
+    {
+        double rate = ((double)ClosedIssues.Count() / (double)IssuesList.Count());
+        return new MarkupString(string.Format("{0:P0}", rate));
+    }
+    
+    public class Issue
+	{
+		public int Id { get; set; }
+		public string? Title { get; set; }
+		public DateTime CreatedOn { get; set; }
+		public DateTime? ClosedOn { get; set; }
+		public string? Description { get; set; }
+		public IssueType Type { get; set; }
+		public IssueSeverity? Severity { get; set; }
+		public List<string>? Labels { get; set; }
+		public bool IsOpen
+		{
+			get
+			{
+				return this.ClosedOn.HasValue;
+			}
+			set
+			{
+				if (!this.ClosedOn.HasValue)
+				{
+					this.ClosedOn = DateTime.Now;
+				}
+			}
+		}
+	}
+    public enum IssueSeverity
+    {
+        Low = 0,
+        Medium = 1,
+        High = 2
+    }
+    public enum IssueType
+    {
+        Bug = 0,
+        Feature = 1,
+        Enhancement = 2
+    }
+    public class IssuesGenerator
+	{
+		public static List<Issue> GetIssues(DateTime timeRange)
+		{
+			//in a real case this can be asynchronous and would be calling an actual data endpoint. Here, we generate data "randomly"
+
+			DateTime currTime = DateTime.Now;
+			int daysToGenerateIssueFor = ((TimeSpan)(currTime - timeRange)).Days;
+			List<Issue> issueList = new List<Issue>();
+            int issueId = 0;
+
+            for (int i = daysToGenerateIssueFor; i >= 0; i--)
+			{
+				for (int j = 0; j < rand.Next(1, 4); j++)
+				{
+					Issue currIssue = new Issue();
+
+                    currIssue.Id = ++issueId;
+                    currIssue.Title = _dummyTitle.Substring(rand.Next(5, _dummyTitle.Length)) + currIssue.Id;
+					currIssue.CreatedOn = currTime.AddDays(-i);
+					if (rand.Next(0, 10) % rand.Next(1, 4) == 0)
+					{
+						currIssue.ClosedOn = currTime.AddDays(-rand.Next(0, rand.Next(0, i)));
+					}
+
+					int type = rand.Next(0, 3);
+					currIssue.Type = (IssueType)type;
+					currIssue.Labels = new List<string> { _issueTypes[type] };
+                    if (currIssue.Type == IssueType.Bug)
+					{
+						int sev = rand.Next(0, 3);
+						currIssue.Severity = (IssueSeverity)sev;
+						currIssue.Labels.Add(_severities[sev]);
+					}
+					currIssue.Labels.Add("team " + rand.Next(1, 3));
+					currIssue.Labels.Add("priority " + rand.Next(1, 7));
+					currIssue.Labels.Add(_componentList[rand.Next(0, _componentList.Length - 1)]);
+					currIssue.Labels.Add(rand.Next(0, 20) % 6 == 0 ? "appearance" : "functionality");
+					currIssue.Labels.Add(currIssue.IsOpen ? "open" : "closed");
+
+					currIssue.Description = "<p style=\"margin: 0px 0px 15px; padding: 0px; text-align: justify; font-family: 'Open Sans', Arial, sans-serif;\"><strong>Lorem ipsum </strong>dolor sit amet, consectetur adipiscing elit. Nam eget diam et ipsum vulputate porta. Duis non venenatis odio, ut sagittis mi. Nam et pellentesque dolor. Pellentesque ornare neque ac feugiat convallis:</p><ul>	<li style =\"margin: 0px 0px 15px; padding: 0px; text-align: justify; font-family: 'Open Sans', Arial, sans-serif;\"> Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. </li><li style =\"margin: 0px 0px 15px; padding: 0px; text-align: justify; font-family: 'Open Sans', Arial, sans-serif; \">In ac eros eget elit laoreet congue vitae vel quam. </li><li style =\"margin: 0px 0px 15px; padding: 0px; text-align: justify; font-family: 'Open Sans', Arial, sans-serif; \">Suspendisse potenti. </li><li style =\"margin: 0px 0px 15px; padding: 0px; text-align: justify; font-family: 'Open Sans', Arial, sans-serif; \">Fusce vitae magna maximus, ornare turpis quis, porttitor velit. Nam ac condimentum massa, vitae tristique nulla.</li></ul><h5 style =\"margin: 0px 0px 15px; padding: 0px; text-align: justify; font-family: 'Open Sans', Arial, sans-serif; \">Vestibulum vitae ante egestas, sollicitudin justo a, pulvinar turpis.</h5><p style =\"margin: 0px 0px 15px; padding: 0px; text-align: justify; font-family: 'Open Sans', Arial, sans-serif; \"> Sed at condimentum turpis. Mauris fermentum, felis non euismod sagittis, nisl dui bibendum urna, vel iaculis mi nunc dictum turpis. In sodales at sapien eget pellentesque.</p>";
+
+					issueList.Add(currIssue);
+				}
+			}
+
+			return issueList;
+		}
+
+		private static Random rand = new Random();
+		private static string _dummyTitle = "Issue lorem ipsum dolor sit amet, consectetur adipiscing elit.";
+		private static string[] _issueTypes = { "bug", "feature", "enhancement" };
+		private static string[] _severities = { "low", "medium", "high" };
+		private static string[] _componentList = { "grid", "button", "window", "chart", "textbox", "numeric textbox", "dropdownlist", "calendar" };
+	}
+    
+    public static class IssuesFilter
+    {
+        public static DateTime GetRangeFromNumber(int range)
+        {
+            switch (range)
+            {
+                case 1: return DateTime.Now.AddMonths(-1);
+                case 2: return DateTime.Now.AddDays(-14);
+                case 3: return DateTime.Now.AddDays(-7);
+                case 4:
+                default:
+                    return DateTime.Now.AddMonths(-1);
+            }
+        }
+
+        public static List<DateFilterModel> GetTimeRangeFilterValues()
+        {
+            return new List<DateFilterModel>()
+            {
+                new DateFilterModel { Text = "1 Month", Value = 1},
+                new DateFilterModel { Text = "2 Weeks", Value = 2},
+                new DateFilterModel { Text = "1 Week", Value = 3},
+                new DateFilterModel { Text = "Generate random data at interval", Value = 4}
+            };
+        }
+
+        public static bool ShouldForceGeneration(int timeRange)
+        {
+            return timeRange == 4;
+        }
+
+        public static IEnumerable<Issue> GetOpenIssues(IEnumerable<Issue> input)
+        {
+            return input.Where(x => x.IsOpen == true);
+        }
+
+        public static IEnumerable<Issue> GetClosedIssues(IEnumerable<Issue> input)
+        {
+            return input.Where(x => x.IsOpen == false);
+        }
+
+        public static IEnumerable<Issue> GetEnhancements(IEnumerable<Issue> input)
+        {
+            return input.Where(x => x.Type == IssueType.Enhancement);
+        }
+
+        public static IEnumerable<Issue> GetFeatures(IEnumerable<Issue> input)
+        {
+            return input.Where(x => x.Type == IssueType.Feature);
+        }
+
+        public static IEnumerable<Issue> GetLowSevBugs(IEnumerable<Issue> input)
+        {
+            return  input.Where(x => x.Type == IssueType.Bug && x.Severity == IssueSeverity.Low);
+        }
+
+        public static IEnumerable<Issue> GetMedSevBugs(IEnumerable<Issue> input)
+        {
+            return  input.Where(x => x.Type == IssueType.Bug && x.Severity == IssueSeverity.Medium);
+        }
+
+        public static IEnumerable<Issue> GetHighSevBugs(IEnumerable<Issue> input)
+        {
+            return input.Where(x => x.Type == IssueType.Bug && x.Severity == IssueSeverity.High);
+        }
+    }
+    
+    public class DateFilterModel
+    {
+        public string? Text { get; set; }
+        public int Value { get; set; }
+    }
+#pragma warning restore CA5394
+}
