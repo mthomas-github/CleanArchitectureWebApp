@@ -1,0 +1,9 @@
+@page "/authentication/logged-out"
+@inject NavigationManager Navigation
+
+@code {
+    protected override void OnInitialized()
+    {
+        Navigation.NavigateTo("./");
+    }
+}

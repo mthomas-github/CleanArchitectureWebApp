@@ -1,27 +1,41 @@
-﻿@inherits LayoutComponentBase
+﻿@using System.Security.Claims
+@inherits LayoutComponentBase
 @inject ILocalStorageService LocalStorage
+@inject NavigationManager Navigation
+@inject AuthenticationStateProvider AuthenticationStateProvider
 
 <TelerikRootComponent>
-    <div class="header">
-        <div class="nav-container">
-            <div class="menu-button">
-                <TelerikButton Icon="@SvgIcon.Menu" OnClick="ToggleMenuDrawer" />
-            </div>
-            <div class="title">
-                <h1>CSD Third Party Freight Request Tool</h1>
-            </div>
-            @* @{ *@
-            @*     if (!WindowWidthSmall) *@
-            @*     { *@
-            @*         <HeaderSettings></HeaderSettings> *@
-            @*     } *@
-            @* } *@
-        </div>
-    </div>
+    <TelerikAppBar ThemeColor="@ThemeConstants.AppBar.ThemeColor.Tertiary">
+        <AppBarSection>
+            <TelerikButton  FillMode="flat" Icon="@SvgIcon.Menu" OnClick="ToggleMenuDrawer" />
+        </AppBarSection>
+
+        <AppBarSpacer Size="4px" />
+
+        <AppBarSection>
+            <h1 class="title">Third Party Freight Request Web App</h1>
+        </AppBarSection>
+        <AppBarSection Class="AuthBtn">
+            
+                @if (_user is null || _user!.Identity?.IsAuthenticated != true)
+                {
+                    <TelerikButton Size="@ThemeConstants.Button.Size.Large" FillMode="flat" Icon="@SvgIcon.Login" OnClick="HandleLogin"/>
+                }
+                else
+                {
+                    <TelerikButton Size="@ThemeConstants.Button.Size.Large" FillMode="flat" Icon="@SvgIcon.Logout" OnClick="HandleLogout"/>
+                }
+
+        </AppBarSection>
+    </TelerikAppBar>
     <TelerikDrawer @ref="MenuDrawer"
                    Expanded="@Expanded"
                    ExpandedChanged="((bool newValue) => ExpandedChangedHandler(newValue))"
-                   Width="190px" Data="Data" Mode="DrawerMode.Push" Position="DrawerPosition.Start" MiniMode="true">
+                   Width="190px" 
+                   Data="Data" 
+                   Mode="DrawerMode.Push" 
+                   Position="DrawerPosition.Start" 
+                   MiniMode="true">
         <DrawerContent>
             @Body
         </DrawerContent>
@@ -36,14 +50,14 @@
 
     bool Expanded { get; set; }
     bool WindowWidthSmall { get; set; }
-
+    private ClaimsPrincipal? _user;
     static IEnumerable<DrawerItem> Data =>
         new List<DrawerItem>
         {
-            new() { Text = "Home", Icon = SvgIcon.Grid, Url="/"},
-            new() { Text = "Dashboard", Icon = SvgIcon.ChartLineMarkers, Url="/user/dashboard"},
-            new() { Text = "Agreements", Icon = SvgIcon.DocumentManager, Url=AgreementsNavigation},
-            new() { Text = "Approvals", Icon = SvgIcon.Clipboard, Url=ApprovalsNavigation},
+            new() { Text = "Home", Icon = SvgIcon.Grid, Url = "/" },
+            new() { Text = "Dashboard", Icon = SvgIcon.ChartLineMarkers, Url = "/user/dashboard" },
+            new() { Text = "Agreements", Icon = SvgIcon.DocumentManager, Url = AgreementsNavigation },
+            new() { Text = "Approvals", Icon = SvgIcon.Clipboard, Url = ApprovalsNavigation },
         };
 
     async Task ToggleMenuDrawer()
@@ -65,8 +79,15 @@
         await LocalStorage.SetItemAsync("drawerState", value);
     }
 
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        _user = authState.User;
+    }
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        _user = authState.User;
         var hasKey = await LocalStorage.ContainKeyAsync("drawerState");
         if (hasKey)
         {
@@ -76,5 +97,15 @@
         {
             Expanded = false;
         }
+    }
+
+    void HandleLogout()
+    {
+        Navigation.NavigateTo("/logout");
+    }
+
+    void HandleLogin()
+    {
+        Navigation.NavigateTo($"authentication/login?returnUrl={Uri.EscapeDataString(Navigation.Uri)}");
     }
 }

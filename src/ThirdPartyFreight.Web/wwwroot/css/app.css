@@ -857,3 +857,14 @@ span.k-dropdownlist .k-input-inner {
 .grid-no-scroll .k-grid-footer-wrap {
     border-right-width: 0;
 }
+
+.title {
+    font-size: 30px;
+    font-family: Roboto, serif;
+    margin: 0;
+}
+
+.AuthBtn{
+    position: absolute;
+    left: 97vw;
+}
