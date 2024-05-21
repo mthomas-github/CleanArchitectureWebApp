@@ -24,6 +24,9 @@ services:
       - ./.nginx/certs:/etc/nginx/certs
       - ${USERSECRETS}:/home/app/.microsoft/usersecrets:ro
       - ${ASPHTTPS}:/https:ro
+    ports:
+      - "38080:80"
+      - "39443:443"
   elsa-server:
    environment:
       ASPNETCORE_ENVIRONMENT: Development

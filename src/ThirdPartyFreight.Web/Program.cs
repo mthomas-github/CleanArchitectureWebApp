@@ -18,7 +18,6 @@ builder.Services.AddOidcAuthentication(options =>
     options.ProviderOptions.ResponseType = "id_token token";
     
     options.UserOptions.NameClaim = "preferred_username";
-    options.UserOptions.RoleClaim = "client roles"; 
     options.UserOptions.ScopeClaim = "scope";
 });
 builder.Services.AddSingleton<Home.IssuesGenerator>();
