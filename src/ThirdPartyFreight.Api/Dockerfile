@@ -22,5 +22,8 @@ RUN dotnet publish "./ThirdPartyFreight.Api.csproj" -c $BUILD_CONFIGURATION -o /
 
 FROM base AS final
 WORKDIR /app
+RUN mkdir "/home/app/.dscerts"
+COPY ["./.privatekeys/", "/home/app/.dscerts/"]
 COPY --from=publish /app/publish .
+
 ENTRYPOINT ["dotnet", "ThirdPartyFreight.Api.dll"]
