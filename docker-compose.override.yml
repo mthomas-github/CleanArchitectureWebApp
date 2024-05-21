@@ -12,10 +12,32 @@ services:
     volumes:
       - ${USERSECRETS}:/home/app/.microsoft/usersecrets:ro
       - ${ASPHTTPS}:/https:ro
-      - .privatekeys/:/home/app/.aspnet:ro
+      - .privatekeys/:/https:ro
   thirdpartyfreight.web:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      - ASPNETCORE_HTTPS_PORTS=8081
+      - ASPNETCORE_URLS=https://+:8081;http://+:8080
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/${CertName}
     volumes:
       - ./.nginx/conf/nginx.conf:/etc/nginx/nginx.conf
       - ./.nginx/certs:/etc/nginx/certs
+      - ${USERSECRETS}:/home/app/.microsoft/usersecrets:ro
+      - ${ASPHTTPS}:/https:ro 
+  elsa-server:
+   environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      PYTHONNET_PYDLL: /opt/homebrew/Cellar/python@3.11/3.11.6_1/Frameworks/Python.framework/Versions/3.11/bin/python3.11
+      PYTHONNET_RUNTIME: coreclr
+      ASPNETCORE_HTTP_PORTS: 8080
+      ASPNETCORE_HTTPS_PORTS: 8081
+      ASPNETCORE_URLS: https://+:8081;http://+:8080
+      ASPNETCORE_Kestrel__Certificates__Default__Path: /https/${CertName}
+   ports:
+      - "13000:8080"
+      - "14001:8081"
+   volumes:
+      - ${USERSECRETS}:/home/app/.microsoft/usersecrets:ro
+      - ${ASPHTTPS}:/https:ro
+    

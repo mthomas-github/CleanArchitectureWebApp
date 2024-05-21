@@ -2,10 +2,6 @@ services:
   thirdpartyfreight.api:
     image: ${DOCKER_REGISTRY-}thirdpartyfreightapi
     container_name: ThirdPartyFreight.Api
-    depends_on:
-      - csdtpfblazorwebapp-db
-      - csdtpfblazorwebapp-redis
-      - csdtpfblazorwebapp-idp
     build:
       context: .
       dockerfile: src/ThirdPartyFreight.Api/Dockerfile
@@ -23,15 +19,24 @@ services:
     volumes:
         -  ./.containers/database:/var/opt/mssql/data
   csdtpfblazorwebapp-idp:
-    image: quay.io/keycloak/keycloak:latest
+    build:
+        context: .
+        dockerfile: keycloak-theme/Dockerfile
     container_name: CSDTPFBlazorWebApp.Identity
     environment:
-        - KEYCLOAK_ADMIN=admin
-        - KEYCLOAK_ADMIN_PASSWORD=admin
+        KC_DB: postgres
+        KC_DB_URL_HOST: postgres-idp-db
+        KC_DB_USERNAME: keycloak
+        KC_DB_PASSWORD: wfQ6biA$%H4tCJiE1!z7
+        KEYCLOAK_ADMIN: admin
+        KEYCLOAK_ADMIN_PASSWORD: UJxer@fxbf5XE74Q3Y@&
     command:
         - start-dev
     ports:
         - "18080:8080"
+    volumes:
+        -  ./keycloak-theme/theme/:/opt/keycloak/themes
+        -  ./.containers/keycloak/db-data:/opt/keycloak/data
   csdtpfblazorwebapp-seq:
     image: datalust/seq:latest
     container_name: CSDTPFBlazorWebApp.Seq
@@ -82,17 +87,12 @@ services:
       - csdtpfblazorwebapp-db
       - rabbitmq
       - csdtpfblazorwebapp-redis
+  postgres-idp-db:
+    image: postgres:latest
+    container_name: postgres-idp-db
     environment:
-      ASPNETCORE_ENVIRONMENT: Development
-      PYTHONNET_PYDLL: /opt/homebrew/Cellar/python@3.11/3.11.6_1/Frameworks/Python.framework/Versions/3.11/bin/python3.11
-      PYTHONNET_RUNTIME: coreclr
-      ASPNETCORE_HTTP_PORTS: 8080
-      ASPNETCORE_HTTPS_PORTS: 8081
-      ASPNETCORE_URLS: https://+:8081;http://+:8080
-      ASPNETCORE_Kestrel__Certificates__Default__Path: /https/${CertName}
-    ports:
-      - "13000:8080"
-      - "14001:8081"
+      POSTGRES_DB: keycloak
+      POSTGRES_USER: keycloak
+      POSTGRES_PASSWORD: wfQ6biA$%H4tCJiE1!z7
     volumes:
-      - ${USERSECRETS}:/home/app/.microsoft/usersecrets:ro
-      - ${ASPHTTPS}:/https:ro
+       - ./.containers/postgres-idp-db:/var/lib/postgresql/data

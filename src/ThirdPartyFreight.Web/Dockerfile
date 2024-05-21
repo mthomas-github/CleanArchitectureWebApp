@@ -23,3 +23,4 @@ RUN dotnet publish "ThirdPartyFreight.Web.csproj" -c $BUILD_CONFIGURATION -o /ap
 FROM base AS final
 WORKDIR /usr/share/nginx/html
 COPY --from=publish /app/publish/wwwroot .
+CMD ["nginx", "-g", "daemon off;"]
