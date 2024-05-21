@@ -12,7 +12,6 @@ services:
     volumes:
       - ${USERSECRETS}:/home/app/.microsoft/usersecrets:ro
       - ${ASPHTTPS}:/https:ro
-      - .privatekeys/:/https:ro
   thirdpartyfreight.web:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
@@ -24,7 +23,7 @@ services:
       - ./.nginx/conf/nginx.conf:/etc/nginx/nginx.conf
       - ./.nginx/certs:/etc/nginx/certs
       - ${USERSECRETS}:/home/app/.microsoft/usersecrets:ro
-      - ${ASPHTTPS}:/https:ro 
+      - ${ASPHTTPS}:/https:ro
   elsa-server:
    environment:
       ASPNETCORE_ENVIRONMENT: Development
