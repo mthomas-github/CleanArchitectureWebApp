@@ -19,24 +19,24 @@ services:
     volumes:
         -  ./.containers/database:/var/opt/mssql/data
   csdtpfblazorwebapp-idp:
-    build:
-        context: .
-        dockerfile: keycloak-theme/Dockerfile
+    image: quay.io/keycloak/keycloak:latest
+    command: ["start-dev", "--import-realm"]
     container_name: CSDTPFBlazorWebApp.Identity
+    restart: unless-stopped
     environment:
         KC_DB: postgres
-        KC_DB_URL_HOST: postgres-idp-db
         KC_DB_USERNAME: keycloak
         KC_DB_PASSWORD: wfQ6biA$%H4tCJiE1!z7
+        KC_DB_URL: "jdbc:postgresql://postgres-idp-db:5432/keycloak"
+        KC_METRICS_ENABLED: true
         KEYCLOAK_ADMIN: admin
         KEYCLOAK_ADMIN_PASSWORD: UJxer@fxbf5XE74Q3Y@&
-    command:
-        - start-dev
+        KC_REALM_NAME: csd-tpf
     ports:
         - "18080:8080"
     volumes:
         -  ./keycloak-theme/theme/:/opt/keycloak/themes
-        -  ./.containers/keycloak/db-data:/opt/keycloak/data
+        -  ./.files/csd-tpf-realm-export.json:/opt/keycloak/data/import/csd-tpf-realm-export.json:ro
   csdtpfblazorwebapp-seq:
     image: datalust/seq:latest
     container_name: CSDTPFBlazorWebApp.Seq
@@ -89,10 +89,19 @@ services:
       - csdtpfblazorwebapp-redis
   postgres-idp-db:
     image: postgres:latest
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "keycloak"]
     container_name: postgres-idp-db
     environment:
       POSTGRES_DB: keycloak
       POSTGRES_USER: keycloak
       POSTGRES_PASSWORD: wfQ6biA$%H4tCJiE1!z7
+      POSTGRES_INIT_DB_ARGS: --data-checksums
+    command: postgres -c temp_tablespaces=/var/lib/postgresql/temp
     volumes:
-       - ./.containers/postgres-idp-db:/var/lib/postgresql/data
+      - ./.containers/postgres:/var/lib/postgresql/data
+      - type: tmpfs
+        target: /var/lib/postgresql/temp
+        tmpfs:
+          size: 100000000
