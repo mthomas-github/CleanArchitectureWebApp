@@ -13,8 +13,6 @@
     <None Include=".nginx\conf\nginx.conf">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include=".nginx\localhost+2-key.pem" />
-    <None Include=".nginx\localhost+2.pem" />
     <None Include=".privatekeys\privatekeydocusign.pem" />
     <None Include="docker-compose.override.yml">
       <DependentUpon>docker-compose.yml</DependentUpon>
@@ -23,8 +21,9 @@
     <None Include=".dockerignore" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include=".nginx\certs\localhost+2-key.pem" />
-    <Content Include=".nginx\certs\localhost+2.pem" />
     <Content Include="elsa\.DS_Store" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include=".nginx\certs\" />
   </ItemGroup>
 </Project>
