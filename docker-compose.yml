@@ -9,21 +9,8 @@ services:
         - "28080:8080"
         - "28081:8081"
     depends_on:
-        - csdtpfblazorwebapp-db
         - csdtpfblazorwebapp-redis
-  
-  csdtpfblazorwebapp-db:
-    image: mcr.microsoft.com/mssql/server:2022-latest
-    container_name: CSDTPFBlazorWebApp.Db
-    restart: unless-stopped
-    environment:
-      SA_PASSWORD: "SuperHardPassword!!"
-      ACCEPT_EULA: "Y"
-    ports:
-        - "1433:1433"
-    volumes:
-        -  ./.containers/database:/var/opt/mssql/data
-  
+
   csdtpfblazorwebapp-idp:
     image: quay.io/keycloak/keycloak:latest
     command: ["start-dev", "--import-realm"]
@@ -86,7 +73,6 @@ services:
       context: .
       dockerfile: elsa/ElsaServer/Dockerfile
     depends_on:
-      - csdtpfblazorwebapp-db
       - rabbitmq
       - csdtpfblazorwebapp-redis
   

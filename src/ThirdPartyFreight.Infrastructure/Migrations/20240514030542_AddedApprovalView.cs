@@ -31,7 +31,7 @@ namespace ThirdPartyFreight.Infrastructure.Migrations
                     FROM
                         TPF_Approvals a
                         JOIN TPF_WorkflowTasks wft
-                        ON a.TaskId = wft.ExternalId;");
+                        ON a.WorkflowId = wft.ExternalId;");
         }
 
         /// <inheritdoc />
