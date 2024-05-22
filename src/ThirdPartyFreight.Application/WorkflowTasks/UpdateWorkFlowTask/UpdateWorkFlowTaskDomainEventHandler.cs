@@ -32,7 +32,7 @@ public class UpdateWorkFlowTaskDomainEventHandler(
         }
         logger.LogInformation("Completed Pulling Workflow Task For Task Id {WorkFlowTaskId}", notification.WorkFlowId);
         logger.LogInformation("Pulling Approval Information For Task Id {TaskId}", workFlowTask.ExternalId);
-        Approval? approval = await approvalRepository.GetByTaskIdAsync(workFlowTask.ExternalId, cancellationToken);
+        Approval? approval = await approvalRepository.GetByAgreementIdAsync(workFlowTask.AgreementId, cancellationToken);
         if (approval is null)
         {
             logger.LogError("Unable To Get Approval For {TaskId}", workFlowTask.ExternalId);

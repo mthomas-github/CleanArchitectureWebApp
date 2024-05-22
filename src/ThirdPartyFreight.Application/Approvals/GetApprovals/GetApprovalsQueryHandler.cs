@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Data;
+﻿using System.Data;
 using Dapper;
 using ThirdPartyFreight.Application.Abstractions.Data;
 using ThirdPartyFreight.Application.Abstractions.Messaging;
