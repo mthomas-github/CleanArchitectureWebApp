@@ -8,7 +8,7 @@ WORKDIR /src
 COPY ["src/ThirdPartyFreight.Web/ThirdPartyFreight.Web.csproj", "src/ThirdPartyFreight.Web/"]
 COPY ["src/ThirdPartyFreight.Application/ThirdPartyFreight.Application.csproj", "src/ThirdPartyFreight.Application/"]
 COPY ["src/ThirdPartyFreight.Domain/ThirdPartyFreight.Domain.csproj", "src/ThirdPartyFreight.Domain/"]
-RUN dotnet nuget add source https://nuget.telerik.com/v3/index.json  --name "MyTelerikFeed" --username "api-key" --password "5fQlq5eE7kSqHk//TBXmZQ==.A8MDnzeRpTzYcwaoLKiVKoycQ4MA+zTqugDQr1pDE20+Xl/Jpo+yZ4dBcqR0D7NKJIGzcbuLDSYeboPPHmfeFg==" --store-password-in-clear-text
+RUN dotnet nuget add source https://nuget.telerik.com/v3/index.json  --name "MyTelerikFeed" --username "api-key" --password "vW6Aedi7d0yc9D+ZWyPuPQ==.QNy4q9ceRlp/GeDMKhuGTPAhKx9W/qfP517HVJLt47RdNzHJ5VTJ6WrbcOU1dAfR00w2eir5dIstzRCQe9D4hQ==" --store-password-in-clear-text
 
 
 RUN dotnet restore "src/ThirdPartyFreight.Web/ThirdPartyFreight.Web.csproj"
@@ -23,4 +23,3 @@ RUN dotnet publish "ThirdPartyFreight.Web.csproj" -c $BUILD_CONFIGURATION -o /ap
 FROM base AS final
 WORKDIR /usr/share/nginx/html
 COPY --from=publish /app/publish/wwwroot .
-CMD ["nginx", "-g", "daemon off;"]
