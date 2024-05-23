@@ -101,9 +101,8 @@
     {
         _hubConnection.On<ApprovalResponse>("SendPayload", (payload) =>
         {
-            Console.WriteLine(payload.ToString());
             GridData.Add(payload);
-            InvokeAsync(StateHasChanged);
+            StateHasChanged();
         });
     }
 
