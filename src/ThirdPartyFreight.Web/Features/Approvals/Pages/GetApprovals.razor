@@ -15,7 +15,7 @@
     <TelerikGrid
         Data="@GridData"
         Height="@Height"
-        Width="45%"
+        Width="35%"
         Class="k-grid grid-no-scroll row-cols-auto"
         FilterMode="GridFilterMode.FilterMenu"
         FilterMenuType="FilterMenuType.CheckBoxList"
@@ -34,16 +34,12 @@
         </GridSettings>
         <GridColumns>
             <GridColumn Field="ApprovalId" Title="Id" VisibleInColumnChooser="true" Visible="false" Width="20px"/>
-            <GridColumn Field="AgreementId" Title="AgreementId" VisibleInColumnChooser="true" Visible="false" Width="20px"/>
             <GridColumn Field="ApproverDisplayName" TextAlign="ColumnTextAlign.Center" Title="Approver" VisibleInColumnChooser="true" Visible="true" Width="5px"/>
-            <GridColumn Field="AgreementType" TextAlign="ColumnTextAlign.Center" Title="Agreement Type" VisibleInColumnChooser="true" Visible="true" Width="8px"/>
-
-            <GridCommandColumn Width="5px" Title="Agreement Info">
-                <GridCommandButton ThemeColor="info" Size="lg" OnClick="@((args) => ToggleWindow(args.Item as ApprovalResponse))" Icon="@SvgIcon.InfoSolid"/>
-            </GridCommandColumn>
+            <GridColumn Field="AgreementType" TextAlign="ColumnTextAlign.Center" Title="Agreement Type" VisibleInColumnChooser="true" Visible="true" Width="5px"/>
             <GridCommandColumn Width="5px">
-                <GridCommandButton ThemeColor="success" Size="lg" Icon="@SvgIcon.Check" OnClick="@((args) => HandleApproval(args.Item as ApprovalResponse))"/>
-                <GridCommandButton ThemeColor="error" Size="lg" Icon="@SvgIcon.X" OnClick="@((args) => HandleDecline(args.Item as ApprovalResponse))"/>
+                <GridCommandButton Title="Agreement Info" AriaLabel="Agreement Info" ThemeColor="info" Size="lg" OnClick="@((args) => ToggleWindow(args.Item as ApprovalResponse))" Icon="@SvgIcon.InfoSolid"/>
+                <GridCommandButton Title="Approval" AriaLabel="Approval Agreement" ThemeColor="success" Size="lg" Icon="@SvgIcon.Check" OnClick="@((args) => HandleApproval(args.Item as ApprovalResponse))"/>
+                <GridCommandButton Title="Decline" AriaLabel="Decline Agreement" ThemeColor="error" Size="lg" Icon="@SvgIcon.X" OnClick="@((args) => HandleDecline(args.Item as ApprovalResponse))"/>
             </GridCommandColumn>
         </GridColumns>
     </TelerikGrid>

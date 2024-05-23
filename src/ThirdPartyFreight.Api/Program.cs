@@ -6,6 +6,7 @@ using ThirdPartyFreight.Infrastructure;
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Serilog;
+using ThirdPartyFreight.Infrastructure.Hubs;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
@@ -67,6 +68,8 @@ app.MapHealthChecks("health", new HealthCheckOptions()
 {
     ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
 });
+
+app.MapHub<NotificationHub>("notifications");
 
 app.Run();
 public partial class Program;

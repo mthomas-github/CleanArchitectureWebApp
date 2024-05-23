@@ -38,6 +38,7 @@ using ThirdPartyFreight.Infrastructure.DocuSign;
 using ThirdPartyFreight.Infrastructure.DocuSign.BackgroundJobs;
 using ThirdPartyFreight.Infrastructure.Elsa;
 using ThirdPartyFreight.Infrastructure.Email;
+using ThirdPartyFreight.Infrastructure.Hubs;
 using ThirdPartyFreight.Infrastructure.OutBox;
 using ThirdPartyFreight.Infrastructure.PowerAutomate;
 using ThirdPartyFreight.Infrastructure.Repositories;
@@ -55,7 +56,7 @@ public static class DependencyInjection
     {
         services.AddTransient<IDateTimeProvider, DateTimeProvider>();
         services.AddTransient<IEmailService, EmailService>();
-
+        services.AddSignalR();
         AddPersistence(services, configuration);
         AddAuthentication(services, configuration);
         AddAuthorization(services);
@@ -205,6 +206,8 @@ public static class DependencyInjection
 
         services.ConfigureOptions<ProcessOutboxMessagesJobSetup>();
         services.ConfigureOptions<ProcessStatusUpdateJobSetup>();
+
+        services.AddHostedService<ServerTimeNotifier>();
     }
 
     private static void AddElsa(IServiceCollection services, IConfiguration configuration)
@@ -226,14 +229,9 @@ public static class DependencyInjection
         services.Configure<ElsaServerOptions>(configuration.GetSection("ElsaServer"));
  
     }
-
     private static void AddPowerAutomate(IServiceCollection services, IConfiguration configuration)
     {
         services.AddScoped<IPowerAutomateService, PowerAutomateService>();
         services.Configure<PowerAutomateOptions>(configuration.GetSection("PowerAutomate"));
     }
-    
-    
-
-
 }

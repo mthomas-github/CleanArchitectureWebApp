@@ -1,4 +1,4 @@
-﻿@page "/"
+﻿@page "/home"
 @inject IssuesGenerator IssuesGeneratorService
 @implements IDisposable
 
@@ -89,6 +89,10 @@
 </div>
 
 @code {
+
+
+
+
 #pragma warning disable CA5394
 
     IEnumerable<Issue> IssuesList { get; set; } = new List<Issue>();
@@ -103,6 +107,7 @@
 
     protected override async Task OnInitializedAsync()
     {
+
         DateFilterData = IssuesFilter.GetTimeRangeFilterValues();
         timeRange = DateFilterData.First().Value;
 
