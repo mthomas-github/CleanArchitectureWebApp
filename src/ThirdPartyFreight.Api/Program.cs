@@ -13,7 +13,6 @@ WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 builder.Host.UseSerilog((context, configuration) =>
     configuration.ReadFrom.Configuration(context.Configuration));
 
-
 builder.Services.AddControllers();
 builder.Services.AddCors();
 builder.Services.AddEndpointsApiExplorer();
@@ -69,7 +68,7 @@ app.MapHealthChecks("health", new HealthCheckOptions()
     ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
 });
 
-app.MapHub<NotificationHub>("notifications");
+app.MapHub<ApprovalHub>("/approval_payloads");
 
 app.Run();
 public partial class Program;

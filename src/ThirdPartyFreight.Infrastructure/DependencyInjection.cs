@@ -26,6 +26,7 @@ using Microsoft.Extensions.Options;
 using Quartz;
 using ThirdPartyFreight.Application.Abstractions.DocuSign;
 using ThirdPartyFreight.Application.Abstractions.Elsa;
+using ThirdPartyFreight.Application.Abstractions.Hub;
 using ThirdPartyFreight.Application.Abstractions.PowerAutomate;
 using ThirdPartyFreight.Domain.Customer;
 using ThirdPartyFreight.Domain.WorkflowTask;
@@ -45,7 +46,6 @@ using ThirdPartyFreight.Infrastructure.Repositories;
 using AuthenticationOptions = ThirdPartyFreight.Infrastructure.Authentication.AuthenticationOptions;
 using AuthenticationService = ThirdPartyFreight.Infrastructure.Authentication.AuthenticationService;
 using IAuthenticationService = ThirdPartyFreight.Application.Abstractions.Authentication.IAuthenticationService;
-
 namespace ThirdPartyFreight.Infrastructure;
 
 public static class DependencyInjection
@@ -54,9 +54,9 @@ public static class DependencyInjection
         this IServiceCollection services,
         IConfiguration configuration)
     {
+        services.AddSignalR();
         services.AddTransient<IDateTimeProvider, DateTimeProvider>();
         services.AddTransient<IEmailService, EmailService>();
-        services.AddSignalR();
         AddPersistence(services, configuration);
         AddAuthentication(services, configuration);
         AddAuthorization(services);
@@ -67,6 +67,7 @@ public static class DependencyInjection
         AddDocuSign(services, configuration);
         AddElsa(services, configuration);
         AddPowerAutomate(services, configuration);
+        AddSignalRHubs(services);
 
         return services;
     }
@@ -206,8 +207,6 @@ public static class DependencyInjection
 
         services.ConfigureOptions<ProcessOutboxMessagesJobSetup>();
         services.ConfigureOptions<ProcessStatusUpdateJobSetup>();
-
-        services.AddHostedService<ServerTimeNotifier>();
     }
 
     private static void AddElsa(IServiceCollection services, IConfiguration configuration)
@@ -233,5 +232,10 @@ public static class DependencyInjection
     {
         services.AddScoped<IPowerAutomateService, PowerAutomateService>();
         services.Configure<PowerAutomateOptions>(configuration.GetSection("PowerAutomate"));
+    }
+
+    private static void AddSignalRHubs(IServiceCollection services)
+    {
+        services.AddScoped<IApprovalClient, ApprovalClient>();
     }
 }

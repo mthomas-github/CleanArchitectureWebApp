@@ -1,7 +1,10 @@
 ﻿@page "/approvals"
+@using Newtonsoft.Json
+@implements IAsyncDisposable
 @inject HttpClient Http
-@attribute [Authorize]
+
 <PageTitle>Approvals</PageTitle>
+
 <div class="row justify-content-center" style="padding-top: 20px">
     <TelerikLoaderContainer
         OverlayThemeColor="light"
@@ -46,7 +49,7 @@
 </div>
 
 @code {
-    private ObservableCollection<ApprovalResponse> GridData { get; set; } = [];
+    private ObservableCollection<ApprovalResponse?> GridData { get; set; } = [];
     private IEnumerable<ApprovalResponse>? AllData { get; set; } = [];
     private const int PageSize = 20;
     private const string Height = "100%";
@@ -57,8 +60,18 @@
     static List<int?> PageSizes => [20, 30, 40, 50, null];
     bool Visible { get; set; }
 
+    private HubConnection _hubConnection = null!;
+
+    public async ValueTask DisposeAsync()
+    {
+        await _hubConnection.DisposeAsync();
+    }
+
+
     protected override async Task OnInitializedAsync()
     {
+        await StartHubConnection();
+
         if (IsInitialDataLoadComplete == false)
         {
             AllData = await Http.GetFromJsonAsync<IEnumerable<ApprovalResponse>>($"{GetAllApprovalsEndPoint}");
@@ -66,9 +79,32 @@
 
         if (AllData is not null)
         {
-            GridData = new ObservableCollection<ApprovalResponse>(AllData);
+            GridData = new ObservableCollection<ApprovalResponse?>(AllData);
             IsInitialDataLoadComplete = true;
         }
+
+        AddApprovalDataListener();
+    }
+
+    private async Task StartHubConnection()
+    {
+        _hubConnection = new HubConnectionBuilder()
+            .WithUrl("https://localhost:28081/approval_payloads")
+            .Build();
+
+        await _hubConnection.StartAsync();
+        if (_hubConnection.State == HubConnectionState.Connected)
+            Console.WriteLine("Connection Started");
+    }
+
+    private void AddApprovalDataListener()
+    {
+        _hubConnection.On<ApprovalResponse>("SendPayload", (payload) =>
+        {
+            Console.WriteLine(payload.ToString());
+            GridData.Add(payload);
+            InvokeAsync(StateHasChanged);
+        });
     }
 
     async Task ToggleWindow(ApprovalResponse? item)
@@ -85,6 +121,7 @@
     {
         if (item is not null)
         {
+            GridData.Remove(item);
             var request = new ApprovalCompleteRequest(item.WorkFlowTaskId, item.TaskId);
 
             await Http.PutAsJsonAsync($"{CompleteTaskEndPoint}", request);
@@ -99,7 +136,7 @@
     {
         throw new NotImplementedException();
     }
-    
+
     public class ModelData
     {
         public string? Source { get; set; }
