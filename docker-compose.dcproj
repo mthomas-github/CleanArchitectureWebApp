@@ -21,6 +21,7 @@
     <None Include=".dockerignore" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include=".env" />
     <Content Include="elsa\.DS_Store" />
   </ItemGroup>
   <ItemGroup>
