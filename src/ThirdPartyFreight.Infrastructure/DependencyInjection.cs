@@ -72,7 +72,7 @@ public static class DependencyInjection
 
     private static void AddPersistence(IServiceCollection services, IConfiguration configuration)
     {
-        string connectionString = configuration.GetConnectionString("DefaultConnection") ??
+        string connectionString = configuration.GetConnectionString("AppsDb") ??
                                   throw new ArgumentException("Invalid configuration parameter", nameof(configuration));
 
         services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString));

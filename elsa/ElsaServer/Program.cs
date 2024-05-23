@@ -12,7 +12,7 @@ using StackExchange.Redis;
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 const bool runEfCoreMigrations = true;
 ConfigurationManager configuration = builder.Configuration;
-string sqlServerConnectionString = configuration.GetConnectionString("SqlServer")!;
+string sqlServerConnectionString = configuration.GetConnectionString("AppsDb")!;
 string redisConnectionString = configuration.GetConnectionString("Redis")!;
 IConfigurationSection identitySection = configuration.GetSection("Identity")!;
 IConfigurationSection identityTokenSection = identitySection.GetSection("Tokens")!;
