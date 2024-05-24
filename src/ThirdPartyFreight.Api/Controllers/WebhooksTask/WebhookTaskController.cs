@@ -1,14 +1,17 @@
 ﻿using Asp.Versioning;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.Graph.Models;
 using Newtonsoft.Json;
 using ThirdPartyFreight.Application.Abstractions.Elsa;
+using ThirdPartyFreight.Application.Abstractions.Hub;
 using ThirdPartyFreight.Application.WorkflowTasks.AddWorkFlowTask;
 using ThirdPartyFreight.Application.WorkflowTasks.GetWorkFlowTask;
 using ThirdPartyFreight.Application.WorkflowTasks.UpdateWorkFlowTask;
 using ThirdPartyFreight.Domain.Abstractions;
 using ThirdPartyFreight.Domain.WorkflowTask;
+using ThirdPartyFreight.Infrastructure.Hubs;
 using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace ThirdPartyFreight.Api.Controllers.WebhooksTask;
@@ -16,7 +19,7 @@ namespace ThirdPartyFreight.Api.Controllers.WebhooksTask;
 [ApiController]
 [ApiVersion(ApiVersions.V1)]
 [Route("api/v{version:apiVersion}/webhooktasks")]
-public class WebhookTaskController(ISender sender, IElsaService elsaService) : ControllerBase
+public class WebhookTaskController(ISender sender, IElsaService elsaService, IHubContext<ApprovalHub, IApprovalClient> hubContext) : ControllerBase
 {
     [HttpPost]
     public async Task<IActionResult> RunTask(WebhookEvent webhookEvent, CancellationToken cancellationToken)
@@ -47,11 +50,12 @@ public class WebhookTaskController(ISender sender, IElsaService elsaService) : C
     public async Task<IActionResult> CompleteTask(CompleteTaskRequest request,
         CancellationToken cancellationToken)
     {
+        await hubContext.Clients.All.DeletePayload(request.WorkFlowTaskId, cancellationToken);
+        
         await elsaService.CompleteTask(request.TaskId,
             cancellationToken: cancellationToken);
-        
         var command = new UpdateWorkFlowTaskCommand(request.WorkFlowTaskId);
-
+    
         Result result = await sender.Send(command, cancellationToken);
 
         return result.IsSuccess ? Ok() : BadRequest(result.Error);

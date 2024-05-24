@@ -1,6 +1,6 @@
 ﻿@page "/approvals"
-@using Newtonsoft.Json
-@implements IAsyncDisposable
+@inject HubConnection HubConnection
+@implements IDisposable
 @inject HttpClient Http
 
 <PageTitle>Approvals</PageTitle>
@@ -59,19 +59,10 @@
     PagerPosition PagePosition { get; set; } = PagerPosition.Bottom;
     static List<int?> PageSizes => [20, 30, 40, 50, null];
     bool Visible { get; set; }
-
-    private HubConnection _hubConnection = null!;
-
-    public async ValueTask DisposeAsync()
-    {
-        await _hubConnection.DisposeAsync();
-    }
-
-
+    
     protected override async Task OnInitializedAsync()
     {
-        await StartHubConnection();
-
+        
         if (IsInitialDataLoadComplete == false)
         {
             AllData = await Http.GetFromJsonAsync<IEnumerable<ApprovalResponse>>($"{GetAllApprovalsEndPoint}");
@@ -85,23 +76,23 @@
 
         AddApprovalDataListener();
     }
-
-    private async Task StartHubConnection()
-    {
-        _hubConnection = new HubConnectionBuilder()
-            .WithUrl("https://localhost:28081/approval_payloads")
-            .Build();
-
-        await _hubConnection.StartAsync();
-        if (_hubConnection.State == HubConnectionState.Connected)
-            Console.WriteLine("Connection Started");
-    }
-
+    
     private void AddApprovalDataListener()
     {
-        _hubConnection.On<ApprovalResponse>("SendPayload", (payload) =>
+        HubConnection.On<ApprovalResponse>("SendPayload", (payload) =>
         {
+            if (GridData.Any(item => item?.ApprovalId == payload.ApprovalId)) return;
             GridData.Add(payload);
+            StateHasChanged();
+        });
+        
+        HubConnection.On<Guid>("DeletePayload", (payload) =>
+        {
+            Console.WriteLine($"Received DeletePayload for ApprovalId: {payload}");
+            // Remove the approval
+            var itemToRemove = GridData.FirstOrDefault(item => item?.WorkFlowTaskId == payload);
+            if (itemToRemove is null) return;
+            GridData.Remove(itemToRemove);
             StateHasChanged();
         });
     }
@@ -122,7 +113,6 @@
         {
             GridData.Remove(item);
             var request = new ApprovalCompleteRequest(item.WorkFlowTaskId, item.TaskId);
-
             await Http.PutAsJsonAsync($"{CompleteTaskEndPoint}", request);
         }
         else
@@ -136,39 +126,10 @@
         throw new NotImplementedException();
     }
 
-    public class ModelData
+    public void Dispose()
     {
-        public string? Source { get; set; }
-        public int Percentage { get; set; }
-        public bool Explode { get; set; }
+        HubConnection.Remove("SendPayload");
+        HubConnection.Remove("DeletePayload");
     }
-
-    public List<ModelData> Data = new List<ModelData>()
-    {
-        new ModelData()
-        {
-            Source = "Hydro",
-            Percentage = 22,
-            Explode = true
-        },
-        new ModelData()
-        {
-            Source = "Solar",
-            Percentage = 2,
-            Explode = false
-        },
-        new ModelData()
-        {
-            Source = "Nuclear",
-            Percentage = 49,
-            Explode = false
-        },
-        new ModelData()
-        {
-            Source = "Wind",
-            Percentage = 27,
-            Explode = false
-        }
-    };
 
 }

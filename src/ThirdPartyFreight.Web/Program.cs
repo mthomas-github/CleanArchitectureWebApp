@@ -1,6 +1,7 @@
 using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using Microsoft.AspNetCore.SignalR.Client;
 using ThirdPartyFreight.Web;
 using ThirdPartyFreight.Web.Pages;
 
@@ -21,6 +22,13 @@ builder.Services.AddOidcAuthentication(options =>
     options.UserOptions.RoleClaim = "roles";
     options.UserOptions.ScopeClaim = "scope";
 });
+
+builder.Services.AddSingleton<HubConnection>(_ => new HubConnectionBuilder()
+        .WithUrl("https://localhost:28081/approval_payloads")
+        .WithAutomaticReconnect()
+        .Build());
+
+
 builder.Services.AddSingleton<Home.IssuesGenerator>();
 builder.Services.AddTelerikBlazor();
 builder.Services.AddBlazoredLocalStorage();

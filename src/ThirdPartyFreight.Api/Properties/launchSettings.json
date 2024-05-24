@@ -15,7 +15,9 @@
       "launchBrowser": true,
       "launchUrl": "swagger",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "ASPNETCORE_Kestrel__Certificates__Default__Path": "C:\\Users\\mthomas\\.aspnet\\https\\aspnetapp.pfx",
+        "ASPNETCORE_Kestrel__Certificates__Default__Password": "password123"
       },
       "dotnetRunMessages": true,
       "applicationUrl": "https://localhost:28080;http://localhost:28081"
