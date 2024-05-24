@@ -27,7 +27,8 @@ internal sealed class UpdateApprovalCommandHandler(IApprovalRepository approvalR
                 request.Approval.SecondApprovalEndUtc, 
                 request.Approval.ThirdApprovalOnUtc, 
                 request.Approval.ThirdApprovalEndUtc,
-                request.Approval.CompletedOn
+                request.Approval.CompletedOn,
+                request.Approval.Voided
                 );
 
             await unitOfWork.SaveChangesAsync(cancellationToken);

@@ -2,4 +2,4 @@
 
 namespace ThirdPartyFreight.Web.Features.Approvals.Models;
 
-public record AddNoteRequest(Guid AgreementId, string NoteContent, NoteType NoteType);
+public sealed record AddNoteRequest(Guid AgreementId, string NoteContent, NoteType NoteType);

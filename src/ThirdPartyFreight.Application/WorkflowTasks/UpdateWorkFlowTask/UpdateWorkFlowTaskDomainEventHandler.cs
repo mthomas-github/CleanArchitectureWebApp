@@ -54,7 +54,7 @@ public class UpdateWorkFlowTaskDomainEventHandler(
             Agreement.Update(agreement, Status.Completed, null, new ModifiedBy("System"), dateTimeProvider.UtcNow);
             Approval.Update(approval, workFlowTask.ExternalId, approval.FirstApprovalOnUtc,
                 approval.FirstApprovalEndUtc, approval.SecondApprovalOnUtc, approval.SecondApprovalEndUtc,
-                approval.ThirdApprovalOnUtc, workFlowTask.CompletedAt?.DateTime, workFlowTask.CompletedAt?.DateTime);
+                approval.ThirdApprovalOnUtc, workFlowTask.CompletedAt?.DateTime, workFlowTask.CompletedAt?.DateTime, false);
             await unitOfWork.SaveChangesAsync(cancellationToken);
             
         }

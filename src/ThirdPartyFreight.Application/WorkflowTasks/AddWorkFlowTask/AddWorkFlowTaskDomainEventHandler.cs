@@ -45,7 +45,8 @@ public class AddWorkFlowTaskDomainEventHandler(
                             null,
                             null,
                             null,
-                            null);
+                            null,
+                            false);
                         await unitOfWork.SaveChangesAsync(cancellationToken);
                         break;
                     case ApproverType.TmsTeam:
@@ -58,7 +59,8 @@ public class AddWorkFlowTaskDomainEventHandler(
                             null,
                             null,
                             null,
-                            null);
+                            null,
+                            false);
                         Agreement.Update(
                             agreement,
                             Status.PendingReviewTms,
@@ -77,7 +79,8 @@ public class AddWorkFlowTaskDomainEventHandler(
                            approval.SecondApprovalEndUtc ?? startTime,
                             startTime,
                             null,
-                            null);
+                            null,
+                            false);
                         Agreement.Update(
                             agreement,
                             Status.PendingReviewMdm,

@@ -16,7 +16,8 @@ public sealed class Approval : Entity
         DateTime? secondApprovalEndUtc,
         DateTime? thirdApprovalOnUtc,
         DateTime? thirdApprovalEndUtc,
-        DateTime? completedOn)
+        DateTime? completedOn,
+        bool? voided)
         : base(id)
     {
         AgreementId = agreementId;
@@ -29,6 +30,7 @@ public sealed class Approval : Entity
         ThirdApprovalOnUtc = thirdApprovalOnUtc;
         ThirdApprovalEndUtc = thirdApprovalEndUtc;
         CompletedOn = completedOn;
+        Voided = voided;
     }
 
     private Approval() { }
@@ -42,6 +44,7 @@ public sealed class Approval : Entity
     public DateTime? ThirdApprovalOnUtc { get; private set; }
     public DateTime? ThirdApprovalEndUtc { get; private set; }
     public DateTime? CompletedOn { get; private set; }
+    public bool? Voided { get; private set; }
 
     public static Approval Create(
         Guid agreementId,
@@ -54,6 +57,7 @@ public sealed class Approval : Entity
                 null,
                 createdOnUtc,
                 null,
+            null,
             null,
             null,
             null,
@@ -75,7 +79,8 @@ public sealed class Approval : Entity
         DateTime? secondApprovalEndUtc,
         DateTime? thirdApprovalOnUtc,
         DateTime? thirdApprovalEndUtc,
-        DateTime? completedOn)
+        DateTime? completedOn,
+        bool? voided)
     {
         approval.FirstApprovalOnUtc = firstApprovalOnUtc;
         approval.FirstApprovalEndUtc = firstApprovalEndUtc;
@@ -85,6 +90,7 @@ public sealed class Approval : Entity
         approval.ThirdApprovalEndUtc = thirdApprovalEndUtc;
         approval.CompletedOn = completedOn;
         approval.TaskId = taskId;
+        approval.Voided = voided;
 
         approval.RaiseDomainEvent(new ApprovalUpdatedDomainEvent(approval.Id));
     }

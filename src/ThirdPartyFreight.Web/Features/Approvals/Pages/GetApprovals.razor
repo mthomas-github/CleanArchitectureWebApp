@@ -117,7 +117,7 @@
         {
             GridData.Remove(item);
             var request = new ApprovalCompleteRequest(item.WorkFlowTaskId, item.TaskId);
-            await Http.PutAsJsonAsync($"{CompleteTaskEndPoint}", request);
+            await Http.PutAsJsonAsync(CompleteTaskEndPoint, request);
         }
         else
         {
@@ -125,13 +125,16 @@
         }
     }
 
-    private void HandleDecline(ApprovalResponse? item)
+    private async Task HandleDecline(ApprovalResponse? item)
     {
         if (item is null) return;
         _noteAgreementId = item.AgreementId;
         Visible = !Visible;
+        GridData.Remove(item);
+        var request = new ApprovalDeclineRequest(item.ApprovalId, item.WorkFlowTaskId);
+        await Http.PutAsJsonAsync(CancelWorkFlowEndPoint, request);
     }
-
+    
     public void Dispose()
     {
         HubConnection.Remove("SendPayload");

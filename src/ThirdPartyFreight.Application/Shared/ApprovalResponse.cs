@@ -5,17 +5,18 @@ namespace ThirdPartyFreight.Application.Shared;
 
 public sealed class ApprovalResponse
 {
-    public Guid ApprovalId { get; private set; }
-    public string TaskId { get; private set; }
-    public Guid AgreementId { get; private set; }
-    public AgreementType AgreementType { get; private set; }
-    public Guid WorkFlowTaskId { get; private set; }
-    public ApproverType Approver { get; private set; }
-    public DateTime? FirstApprovalStart { get; private set; }
-    public DateTime? FirstApprovalEnd { get; private set; }
-    public DateTime? SecondApprovalStart { get; private set; }
-    public DateTime? SecondApprovalEnd { get; private set; }
-    public DateTime? ThirdApprovalStart { get; private set; }
-    public DateTime? ThirdApprovalEnd { get; private set; }
-    public DateTime? CompletedOn { get; private set; }
+    public Guid ApprovalId { get; init; }
+    public string TaskId { get; init; }
+    public Guid AgreementId { get; init; }
+    public AgreementType AgreementType { get; init; }
+    public Guid WorkFlowTaskId { get; init; }
+    public ApproverType Approver { get; init; }
+    public DateTime? FirstApprovalStart { get; init; }
+    public DateTime? FirstApprovalEnd { get; init; }
+    public DateTime? SecondApprovalStart { get; init; }
+    public DateTime? SecondApprovalEnd { get; init; }
+    public DateTime? ThirdApprovalStart { get; init; }
+    public DateTime? ThirdApprovalEnd { get; init; }
+    public DateTime? CompletedOn { get; init; }
+    public bool? Voided { get;init; }
 }

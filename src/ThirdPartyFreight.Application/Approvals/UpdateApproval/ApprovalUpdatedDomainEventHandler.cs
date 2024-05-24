@@ -31,7 +31,7 @@ public class ApprovalUpdatedDomainEventHandler(
         ApprovalResponse updatedApproval = results.Value;
         // Step 3 Call Client Service To Fire Off Signal R To Client
         // Signal R will publish the change in real time not require client a round trip to the DB
-        if (updatedApproval.CompletedOn is null)
+        if (updatedApproval.CompletedOn is null && updatedApproval.Voided is null)
         {
             try
             {
@@ -43,8 +43,20 @@ public class ApprovalUpdatedDomainEventHandler(
                 logger.LogError("There was a problem, see error {ExMessage} ", ex.Message);
                 throw new Exception(ex.Message);
             }
+        } 
+        else if (updatedApproval.Voided.HasValue && updatedApproval.Voided.Value)
+        {
+            try
+            {
+                await approvalClient.DeletePayload(updatedApproval.WorkFlowTaskId, cancellationToken);
+            }
+            catch (Exception ex)
+            {
+                logger.LogError("There was a problem, see error {ExMessage} ", ex.Message);
+                throw new Exception(ex.Message);
+            }
         }
 
-        logger.LogInformation("Finish Handling {Name}, as Completed", nameof(ApprovalUpdatedDomainEventHandler));
+        logger.LogInformation("Finished Handling {Name}", nameof(ApprovalUpdatedDomainEventHandler));
     }
 }

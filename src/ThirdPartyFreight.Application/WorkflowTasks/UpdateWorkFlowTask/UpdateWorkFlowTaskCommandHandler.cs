@@ -17,7 +17,7 @@ internal sealed class UpdateWorkFlowTaskCommandHandler(IWorkFlowTaskRepository w
             {
                 return Result.Failure(WorkFlowTaskErrors.NotFound);
             }
-
+            
             var updated = WorkFlowTask.Complete(existingWorkFlowTask);
 
             workFlowTaskRepository.Update(updated);

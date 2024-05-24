@@ -12,4 +12,5 @@ internal static class ApiEndPoints
     public const string GetAllApprovalsEndPoint = "api/v1.0/approvals";
     public const string CompleteTaskEndPoint = "api/v1.0/webhooktasks";
     public const string AddNoteEndPoint = "api/v1.0/notes";
+    public const string CancelWorkFlowEndPoint = "api/v1.0/webhooktasks/cancel";
 }

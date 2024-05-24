@@ -17,7 +17,8 @@ public sealed class WorkFlowTask : Entity
         Guid agreementId,
         bool isCompleted,
         DateTimeOffset createdAt,
-        DateTimeOffset? completedAt)
+        DateTimeOffset? completedAt,
+        bool voided)
         : base(id)
     {
         Id = id;
@@ -29,6 +30,7 @@ public sealed class WorkFlowTask : Entity
         CreatedAt = createdAt;
         CompletedAt = completedAt;
         AgreementId = agreementId;
+        Voided = voided;
     }
 
     private WorkFlowTask() { }
@@ -72,6 +74,11 @@ public sealed class WorkFlowTask : Entity
     /// The date and time when the task was completed.
     /// </summary>
     public DateTimeOffset? CompletedAt { get; private set; }
+    
+    /// <summary>
+    /// This is when an approval is decline and notes are added
+    /// </summary>
+    public bool Voided { get; private set; }
 
 
     public static WorkFlowTask Create(
@@ -83,7 +90,7 @@ public sealed class WorkFlowTask : Entity
         DateTimeOffset createdAt)
     {
         var workflowTask = new WorkFlowTask(Guid.NewGuid(), externalId, processId, name, approver, agreementId, false, createdAt,
-            null);
+            null, false);
         
         workflowTask.RaiseDomainEvent(new WorkFlowTaskCreatedDomainEvent(workflowTask.Id));
         
@@ -103,10 +110,29 @@ public sealed class WorkFlowTask : Entity
             workFlowTask.AgreementId, 
             true, 
             workFlowTask.CreatedAt, 
-            DateTimeOffset.Now );
+            DateTimeOffset.Now,
+            workFlowTask.Voided);
 
         updated.RaiseDomainEvent(new WorkFlowTaskUpdatedDomainEvent(workFlowTask.Id));
         return updated;
+    }
+
+    public static WorkFlowTask Decline(
+        WorkFlowTask workFlowTask)
+    {
+        var canceled = new WorkFlowTask(
+            workFlowTask.Id,
+            workFlowTask.ExternalId,
+            workFlowTask.ProcessId,
+            workFlowTask.Name,
+            workFlowTask.Approver,
+            workFlowTask.AgreementId,
+            true,
+            workFlowTask.CreatedAt,
+            DateTimeOffset.Now,
+            true);
+
+        return canceled;
     }
 
 }
