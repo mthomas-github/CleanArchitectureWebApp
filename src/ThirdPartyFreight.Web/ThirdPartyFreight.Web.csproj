@@ -26,7 +26,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Features\Approvals\Componets\" />
     <Folder Include="wwwroot\img\country-flags\" />
     <Folder Include="wwwroot\img\employees\" />
     <Folder Include="wwwroot\img\products\" />

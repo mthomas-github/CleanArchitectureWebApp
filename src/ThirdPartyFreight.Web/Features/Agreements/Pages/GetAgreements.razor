@@ -47,10 +47,6 @@
         </GridToolBarTemplate>
     </TelerikGrid>
     <ModalInfo @bind-WindowIsVisible="@Visible" Data="@Agreement"></ModalInfo>
-    <TelerikNotification @ref="NotificationComponent"
-                         Class="demo-notification"
-                         HorizontalPosition="@NotificationHorizontalPosition.Right"
-                         VerticalPosition="@NotificationVerticalPosition.Top"></TelerikNotification>
 
 @code {
     private TelerikNotification NotificationComponent { get; set; } = default!;
@@ -91,7 +87,6 @@
         Visible = !Visible;
     }
     
-
     private void ToggleOnCreate()
     {
         NavigationManager.NavigateTo(NewAgreementNavigation);

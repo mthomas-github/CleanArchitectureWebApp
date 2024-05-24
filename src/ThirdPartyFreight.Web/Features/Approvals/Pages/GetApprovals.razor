@@ -40,12 +40,13 @@
             <GridColumn Field="ApproverDisplayName" TextAlign="ColumnTextAlign.Center" Title="Approver" VisibleInColumnChooser="true" Visible="true" Width="5px"/>
             <GridColumn Field="AgreementType" TextAlign="ColumnTextAlign.Center" Title="Agreement Type" VisibleInColumnChooser="true" Visible="true" Width="5px"/>
             <GridCommandColumn Width="5px">
-                <GridCommandButton Title="Agreement Info" AriaLabel="Agreement Info" ThemeColor="info" Size="lg" OnClick="@((args) => ToggleWindow(args.Item as ApprovalResponse))" Icon="@SvgIcon.InfoSolid"/>
+                <GridCommandButton Title="Agreement Info" AriaLabel="Agreement Info" ThemeColor="info" Size="lg" OnClick="@((args) => ToggleInfoModel(args.Item as ApprovalResponse))" Icon="@SvgIcon.InfoSolid"/>
                 <GridCommandButton Title="Approval" AriaLabel="Approval Agreement" ThemeColor="success" Size="lg" Icon="@SvgIcon.Check" OnClick="@((args) => HandleApproval(args.Item as ApprovalResponse))"/>
                 <GridCommandButton Title="Decline" AriaLabel="Decline Agreement" ThemeColor="error" Size="lg" Icon="@SvgIcon.X" OnClick="@((args) => HandleDecline(args.Item as ApprovalResponse))"/>
             </GridCommandColumn>
         </GridColumns>
     </TelerikGrid>
+    <NotesModal WindowIsVisible="@Visible" Value="" AgreementId="@_noteAgreementId" />
 </div>
 
 @code {
@@ -59,6 +60,9 @@
     PagerPosition PagePosition { get; set; } = PagerPosition.Bottom;
     static List<int?> PageSizes => [20, 30, 40, 50, null];
     bool Visible { get; set; }
+    private AgreementResponse? Agreement { get; set; }
+    private Guid _noteAgreementId;
+    
     
     protected override async Task OnInitializedAsync()
     {
@@ -97,7 +101,7 @@
         });
     }
 
-    async Task ToggleWindow(ApprovalResponse? item)
+    private async Task ToggleInfoModel(ApprovalResponse? item)
     {
         if (item is not null)
         {
@@ -121,9 +125,11 @@
         }
     }
 
-    private static Task HandleDecline(ApprovalResponse? item)
+    private void HandleDecline(ApprovalResponse? item)
     {
-        throw new NotImplementedException();
+        if (item is null) return;
+        _noteAgreementId = item.AgreementId;
+        Visible = !Visible;
     }
 
     public void Dispose()

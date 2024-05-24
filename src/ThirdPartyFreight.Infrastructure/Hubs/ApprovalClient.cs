@@ -13,8 +13,9 @@ internal sealed class ApprovalClient(IHubContext<ApprovalHub, IApprovalClient> h
         await hubContext.Clients.All.SendPayload(approval, cancellationToken);
     }
 
-    public Task DeletePayload(Guid id, CancellationToken cancellationToken = default)
+    public async Task DeletePayload(Guid id, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        logger.LogInformation("Executing DeletePayload");
+        await hubContext.Clients.All.DeletePayload(id, cancellationToken);
     }
 }

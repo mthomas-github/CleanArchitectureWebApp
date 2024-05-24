@@ -1,0 +1,68 @@
+﻿@using ThirdPartyFreight.Domain.Notes
+@inject HttpClient Http
+<TelerikWindow
+    Width="1260px"
+    Height="968px"
+    Centered="true"
+    Visible="@WindowIsVisible"
+    VisibleChanged="WindowIsVisibleChanged"
+    FooterLayoutAlign="WindowFooterLayoutAlign.Center">
+    <WindowTitle>Agreement Notes</WindowTitle>
+    <WindowActions>
+        <WindowAction Name="Minimize"></WindowAction>
+        <WindowAction Name="Maximize"></WindowAction>
+        <WindowAction Name="Close"></WindowAction>
+    </WindowActions>
+    <WindowContent>
+        <TelerikEditor @bind-Value="@Value"
+                       Tools="@Tools"
+                       Height="880px"/>
+    </WindowContent>
+    <WindowFooter>
+        <TelerikButton OnClick="Submit"
+                       ThemeColor="@ThemeConstants.Button.ThemeColor.Primary">
+            Submit
+        </TelerikButton>
+        <TelerikButton OnClick="Cancel"
+                       FillMode="@ThemeConstants.Button.FillMode.Flat">
+            Cancel
+        </TelerikButton>
+    </WindowFooter>
+</TelerikWindow>
+@code {
+    [Parameter]
+    public bool WindowIsVisible { get; set; }
+
+    [Parameter]
+    public EventCallback<bool> WindowIsVisibleChanged { get; set; }
+    
+    [Parameter]
+    public Guid AgreementId { get; set; }
+
+    [Parameter] public string Value { get; set; } = "";
+
+    private List<IEditorTool> Tools { get; set; } =
+    [
+        new EditorButtonGroup(new Telerik.Blazor.Components.Editor.Bold(), new Telerik.Blazor.Components.Editor.Italic(), new Telerik.Blazor.Components.Editor.Underline()),
+        new EditorButtonGroup(new Telerik.Blazor.Components.Editor.AlignLeft(), new Telerik.Blazor.Components.Editor.AlignCenter(), new Telerik.Blazor.Components.Editor.AlignRight()),
+        new UnorderedList(),
+        new EditorButtonGroup(new CreateLink(), new Telerik.Blazor.Components.Editor.Unlink(), new InsertImage()),
+        new InsertTable(),
+        new EditorButtonGroup(new AddRowBefore(), new AddRowAfter(), new MergeCells(), new SplitCell()),
+        new Format(),
+        new Telerik.Blazor.Components.Editor.FontSize(),
+        new Telerik.Blazor.Components.Editor.FontFamily()
+    ];
+    
+    private async Task Submit()
+    {
+        var addNoteRequest = new AddNoteRequest(AgreementId, Value, NoteType.TeamResponse);
+        var response = await Http.PostAsJsonAsync(AddNoteEndPoint, addNoteRequest);
+        if (response.IsSuccessStatusCode)
+        {
+            WindowIsVisible = false;
+        }
+    }
+
+    public void Cancel() => WindowIsVisible = false;
+}
