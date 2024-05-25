@@ -11,7 +11,7 @@ namespace ThirdPartyFreight.Application.Approvals.UpdateApproval;
 
 public class ApprovalUpdatedDomainEventHandler(
     ISender sender,
-    IApprovalClient approvalClient,
+    INotificationClient notificationClient,
     ILogger<ApprovalUpdatedDomainEventHandler> logger
     ) : INotificationHandler<ApprovalUpdatedDomainEvent>
 {
@@ -37,7 +37,7 @@ public class ApprovalUpdatedDomainEventHandler(
             try
             {
 
-                await approvalClient.SendPayload(updatedApproval, cancellationToken);
+                await notificationClient.SendApprovalPayload(updatedApproval, cancellationToken);
             }
             catch (Exception ex)
             {

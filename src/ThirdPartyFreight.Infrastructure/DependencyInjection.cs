@@ -236,6 +236,6 @@ public static class DependencyInjection
 
     private static void AddSignalRHubs(IServiceCollection services)
     {
-        services.AddScoped<IApprovalClient, ApprovalClient>();
+        services.AddScoped<INotificationClient, NotificationClient>();
     }
 }

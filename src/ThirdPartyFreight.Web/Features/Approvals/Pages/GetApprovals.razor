@@ -83,16 +83,15 @@
     
     private void AddApprovalDataListener()
     {
-        HubConnection.On<ApprovalResponse>("SendPayload", (payload) =>
+        HubConnection.On<ApprovalResponse>("SendApprovalPayload", (payload) =>
         {
             if (GridData.Any(item => item?.ApprovalId == payload.ApprovalId)) return;
             GridData.Add(payload);
             StateHasChanged();
         });
         
-        HubConnection.On<Guid>("DeletePayload", (payload) =>
+        HubConnection.On<Guid>("DeleteApprovalPayload", (payload) =>
         {
-            Console.WriteLine($"Received DeletePayload for ApprovalId: {payload}");
             // Remove the approval
             var itemToRemove = GridData.FirstOrDefault(item => item?.WorkFlowTaskId == payload);
             if (itemToRemove is null) return;
@@ -137,8 +136,8 @@
     
     public void Dispose()
     {
-        HubConnection.Remove("SendPayload");
-        HubConnection.Remove("DeletePayload");
+        HubConnection.Remove("SendApprovalPayload");
+        HubConnection.Remove("DeleteApprovalPayload");
     }
 
 }

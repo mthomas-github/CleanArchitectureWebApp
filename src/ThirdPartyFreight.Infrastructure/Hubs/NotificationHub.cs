@@ -3,8 +3,7 @@ using ThirdPartyFreight.Application.Abstractions.Hub;
 
 namespace ThirdPartyFreight.Infrastructure.Hubs;
 
-public sealed class ApprovalHub : Hub<IApprovalClient>
+public class NotificationHub : Hub<INotificationClient>
 {
-   
+    
 }
-

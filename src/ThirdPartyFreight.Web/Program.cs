@@ -10,6 +10,7 @@ builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 WebAssemblyHostConfiguration configuration = builder.Configuration;
 string? apiBaseUrl = configuration["ApiSettings:BaseUrl"] ?? throw new NullReferenceException("ApiSettings:BaseUrl not configured");
+string? signalRUrl = configuration["ApiSettings:SignalR"] ?? throw new NullReferenceException("ApiSettings:SignalR not configured");
 string? metadataUrl = configuration["AuthSettings:MetadataUrl"] ?? throw new NullReferenceException("AuthSettings:MetadataUrl not configured");
 string? authority = configuration["AuthSettings:Authority"] ?? throw new NullReferenceException("AuthSettings:Authority not configured");
 string? clientId = configuration["AuthSettings:ClientId"] ?? throw new NullReferenceException("AuthSettings:ClientId not configured");
@@ -30,7 +31,7 @@ builder.Services.AddOidcAuthentication(options =>
 });
 
 builder.Services.AddSingleton<HubConnection>(_ => new HubConnectionBuilder()
-        .WithUrl($"{apiBaseUrl}/approval_payloads")
+        .WithUrl(signalRUrl)
         .WithAutomaticReconnect()
         .Build());
 
