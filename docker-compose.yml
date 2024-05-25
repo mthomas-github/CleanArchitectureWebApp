@@ -1,6 +1,5 @@
 services:
   thirdpartyfreight.api:
-    image: ${DOCKER_REGISTRY-}thirdpartyfreightapi
     container_name: ThirdPartyFreight.Api
     restart: unless-stopped
     build:
