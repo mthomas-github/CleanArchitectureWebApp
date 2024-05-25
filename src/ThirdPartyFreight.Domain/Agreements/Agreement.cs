@@ -34,7 +34,7 @@ public sealed class Agreement : Entity
     public DateTime? ModifiedOnUtc { get; private set; }
     public ModifiedBy? ModifiedBy { get; private set; }
     public CreatedBy CreatedBy { get; private set; }
-
+    
     public static Agreement Create(
         ContactInfo contactInfo,
         Status status,

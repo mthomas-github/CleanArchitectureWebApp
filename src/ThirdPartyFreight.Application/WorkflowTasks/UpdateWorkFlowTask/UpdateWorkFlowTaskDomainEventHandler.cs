@@ -39,6 +39,7 @@ public class UpdateWorkFlowTaskDomainEventHandler(
             throw new NullReferenceException();
         }
         logger.LogInformation("Completed Pulling Approval For Task Id {TaskId}", workFlowTask.ExternalId);
+
         if (workFlowTask.Approver == ApproverType.MdmTeam)
         {
             Agreement? agreement = await agreementRepository.GetByIdAsync(workFlowTask.AgreementId, cancellationToken);

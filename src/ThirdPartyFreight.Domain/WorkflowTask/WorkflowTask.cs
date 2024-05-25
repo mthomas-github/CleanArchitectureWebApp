@@ -131,7 +131,9 @@ public sealed class WorkFlowTask : Entity
             workFlowTask.CreatedAt,
             DateTimeOffset.Now,
             true);
-
+        
+        canceled.RaiseDomainEvent(new WorkFlowTaskCancelledDomainEvent(workFlowTask.Id));
+        
         return canceled;
     }
 

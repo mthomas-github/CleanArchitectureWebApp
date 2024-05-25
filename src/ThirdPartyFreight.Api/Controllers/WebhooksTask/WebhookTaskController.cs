@@ -61,12 +61,11 @@ public class WebhookTaskController(ISender sender, IElsaService elsaService, IHu
         return result.IsSuccess ? Ok() : BadRequest(result.Error);
     }
 
-    [HttpPut("Cancel")]
+    [HttpPut("cancel")]
     public async Task<IActionResult> CancelWorkFlow(ApprovalDeclineRequest request, CancellationToken cancellationToken)
     {
         // Send SignalR Signal
         await hubContext.Clients.All.DeletePayload(request.WorkFlowTaskId, cancellationToken);
-        // Get Workflow To Retrieve the ProcessId
         
         await elsaService.DeleteWfInstance(request.ProcessId, cancellationToken);
         

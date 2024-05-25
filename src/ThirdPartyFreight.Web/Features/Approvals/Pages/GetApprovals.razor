@@ -131,7 +131,7 @@
         _noteAgreementId = item.AgreementId;
         Visible = !Visible;
         GridData.Remove(item);
-        var request = new ApprovalDeclineRequest(item.ApprovalId, item.WorkFlowTaskId);
+        var request = new ApprovalDeclineRequest(item.ApprovalId, item.WorkFlowTaskId, item.ProcessId);
         await Http.PutAsJsonAsync(CancelWorkFlowEndPoint, request);
     }
     

@@ -33,7 +33,8 @@ internal sealed class GetApprovalsQueryHandler : IQueryHandler<GetApprovalsQuery
                                 SecondApprovalEnd,
                                 ThirdApprovalStart,
                                 ThirdApprovalEnd,
-                                CompletedOn
+                                CompletedOn,
+                                ProcessId
                             FROM
                                View_TPFApprovals
                             WHERE 

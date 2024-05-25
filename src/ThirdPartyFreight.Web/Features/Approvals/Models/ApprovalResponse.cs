@@ -19,6 +19,7 @@ internal sealed class ApprovalResponse
     public DateTime? ThirdApprovalStart { get; init; }
     public DateTime? ThirdApprovalEnd { get; init; }
     public DateTime? CompletedOn { get; init; }
+    public string ProcessId { get; init; }
     
     public string ApproverDisplayName => GetDisplayName(Approver);
 

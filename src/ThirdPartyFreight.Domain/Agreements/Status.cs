@@ -12,4 +12,6 @@ public enum Status
     Closed = 8,
     Failed = 9,
     Cancelled = 10,
+    CustomerRejected = 11,
+    ApprovalRejected = 12
 }

@@ -17,10 +17,18 @@ internal sealed class UpdateWorkFlowTaskCommandHandler(IWorkFlowTaskRepository w
             {
                 return Result.Failure(WorkFlowTaskErrors.NotFound);
             }
-            
-            var updated = WorkFlowTask.Complete(existingWorkFlowTask);
 
-            workFlowTaskRepository.Update(updated);
+            if (request.Voided)
+            {
+                var denied = WorkFlowTask.Decline(existingWorkFlowTask);
+                workFlowTaskRepository.Update(denied);
+            }
+            else
+            {
+                var updated = WorkFlowTask.Complete(existingWorkFlowTask);
+                workFlowTaskRepository.Update(updated);
+            }
+
             await unitOfWork.SaveChangesAsync(cancellationToken);
 
             return Result.Success();

@@ -8,15 +8,21 @@ using ThirdPartyFreight.Web.Pages;
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
+WebAssemblyHostConfiguration configuration = builder.Configuration;
+string? apiBaseUrl = configuration["ApiSettings:BaseUrl"] ?? throw new NullReferenceException("ApiSettings:BaseUrl not configured");
+string? metadataUrl = configuration["AuthSettings:MetadataUrl"] ?? throw new NullReferenceException("AuthSettings:MetadataUrl not configured");
+string? authority = configuration["AuthSettings:Authority"] ?? throw new NullReferenceException("AuthSettings:Authority not configured");
+string? clientId = configuration["AuthSettings:ClientId"] ?? throw new NullReferenceException("AuthSettings:ClientId not configured");
+string? responseType = configuration["AuthSettings:ResponseType"] ?? throw new NullReferenceException("AuthSettings:ResponseType not configured");
 
-builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://localhost:28081") });
+builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(apiBaseUrl) });
 
 builder.Services.AddOidcAuthentication(options =>
 {
-    options.ProviderOptions.MetadataUrl = "http://localhost:18080/realms/csd-tpf/.well-known/openid-configuration";
-    options.ProviderOptions.Authority = "http://localhost:18080/realms/csd-tpf";
-    options.ProviderOptions.ClientId = "csd-tpf-web";
-    options.ProviderOptions.ResponseType = "id_token token";
+    options.ProviderOptions.MetadataUrl = metadataUrl;
+    options.ProviderOptions.Authority = authority;
+    options.ProviderOptions.ClientId = clientId;
+    options.ProviderOptions.ResponseType = responseType;
     
     options.UserOptions.NameClaim = "preferred_username";
     options.UserOptions.RoleClaim = "roles";
@@ -24,7 +30,7 @@ builder.Services.AddOidcAuthentication(options =>
 });
 
 builder.Services.AddSingleton<HubConnection>(_ => new HubConnectionBuilder()
-        .WithUrl("https://localhost:28081/approval_payloads")
+        .WithUrl($"{apiBaseUrl}/approval_payloads")
         .WithAutomaticReconnect()
         .Build());
 

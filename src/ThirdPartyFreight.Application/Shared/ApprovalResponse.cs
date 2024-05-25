@@ -19,4 +19,5 @@ public sealed class ApprovalResponse
     public DateTime? ThirdApprovalEnd { get; init; }
     public DateTime? CompletedOn { get; init; }
     public bool? Voided { get;init; }
+    public string ProcessId { get; init; }
 }
