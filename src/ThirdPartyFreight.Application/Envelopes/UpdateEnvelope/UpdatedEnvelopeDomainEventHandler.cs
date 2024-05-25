@@ -5,6 +5,7 @@ using ThirdPartyFreight.Application.Abstractions.Clock;
 using ThirdPartyFreight.Application.Abstractions.DocuSign;
 using ThirdPartyFreight.Application.Abstractions.Elsa;
 using ThirdPartyFreight.Domain.Abstractions;
+using ThirdPartyFreight.Domain.Agreements;
 using ThirdPartyFreight.Domain.Approvals;
 using ThirdPartyFreight.Domain.Carriers;
 using ThirdPartyFreight.Domain.Envelopes;
@@ -18,6 +19,7 @@ internal sealed class UpdatedEnvelopeDomainEventHandler(
     IDateTimeProvider dateTimeProvider,
     IApprovalRepository approvalRepository,
     ICarrierRepository carrierRepository,
+    IAgreementRepository agreementRepository,
     IUnitOfWork unitOfWork,
     IDocuSignService docuSignService,
     IElsaService elsaService,
@@ -86,6 +88,19 @@ internal sealed class UpdatedEnvelopeDomainEventHandler(
         {
             logger.LogError(ex, "Error Creating Carrier Record");
             throw;
+        }
+        // Update Agreement
+        logger.LogInformation("Updating Agreement Record");
+        Agreement result = await agreementRepository.GetByIdAsync(envelope.AgreementId, cancellationToken);
+        if (result is not null)
+        {
+            Agreement.Update(
+                result,
+                Status.PendingReviewTpf,
+                null,
+                new ModifiedBy("System"),
+                dateTimeProvider.UtcNow
+            );
         }
 
         // Then Save Approval

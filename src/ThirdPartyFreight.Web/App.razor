@@ -28,13 +28,13 @@
 </CascadingAuthenticationState>
 
 @code {
-    private readonly CancellationTokenSource cts = new CancellationTokenSource();
+    private readonly CancellationTokenSource _cts = new CancellationTokenSource();
     protected override void OnInitialized()
     {
 #pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-        ConnectWithRetryAsync(cts.Token);
+        ConnectWithRetryAsync(_cts.Token);
 #pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-        HubConnection.Closed += error => ConnectWithRetryAsync(cts.Token);
+        HubConnection.Closed += error => ConnectWithRetryAsync(_cts.Token);
     }
     
     private async Task<bool> ConnectWithRetryAsync(CancellationToken token)
@@ -63,8 +63,8 @@
     
     public async ValueTask DisposeAsync()
     {
-        await cts.CancelAsync();
-        cts.Dispose();
+        await _cts.CancelAsync();
+        _cts.Dispose();
         await HubConnection.DisposeAsync();
     }
 

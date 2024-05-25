@@ -1,4 +1,6 @@
 ﻿@page "/agreements"
+@inject HubConnection HubConnection
+@implements IDisposable
 @inject HttpClient Http
 @inject NavigationManager NavigationManager
 @*@attribute [Authorize]*@
@@ -75,8 +77,29 @@
             GridData = new ObservableCollection<AgreementResponse>(AllData);
             IsInitialDataLoadComplete = true;
         }
+
+        AddAgreementDataListener();
     }
 
+    private void AddAgreementDataListener()
+    {
+        HubConnection.On<AgreementResponse>("SendAgreementPayload", (payload) =>
+        {
+            if (GridData.Any(item => item?.Id == payload.Id)) return;
+            GridData.Add(payload);
+            StateHasChanged();
+        });
+        
+        HubConnection.On<Guid>("DeleteAgreementPayload", (payload) =>
+        {
+            // Remove the approval
+            var itemToRemove = GridData.FirstOrDefault(item => item?.Id == payload);
+            if (itemToRemove is null) return;
+            GridData.Remove(itemToRemove);
+            StateHasChanged();
+        });
+    }
+    
     async Task ToggleWindow(AgreementResponse? item)
     {
         if (item is not null)
@@ -96,6 +119,10 @@
     {
         throw new NotImplementedException();
     }
-
+    public void Dispose()
+    {
+        HubConnection.Remove("SendAgreementPayload");
+        HubConnection.Remove("DeleteAgreementPayload");
+    }
 
 }

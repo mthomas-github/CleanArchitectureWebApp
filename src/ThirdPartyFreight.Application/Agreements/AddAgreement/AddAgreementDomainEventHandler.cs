@@ -5,6 +5,7 @@ using MediatR;
 using Microsoft.Extensions.Logging;
 using ThirdPartyFreight.Application.Abstractions.Clock;
 using ThirdPartyFreight.Application.Abstractions.DocuSign;
+using ThirdPartyFreight.Application.Abstractions.Hub;
 using ThirdPartyFreight.Domain.Abstractions;
 using ThirdPartyFreight.Domain.Agreements;
 using ThirdPartyFreight.Domain.Envelopes;

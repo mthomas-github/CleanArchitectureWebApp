@@ -11,8 +11,11 @@ public sealed class Agreement : Entity
         Status status,
         AgreementType agreementType,
         SiteType siteType,
+        DateTime createdOnUtc,
         CreatedBy createdBy,
-        DateTime createdOnUtc)
+        DateTime? modifiedOnUtc,
+        ModifiedBy? modifiedBy,
+        Ticket? ticket)
         : base(id)
     {
         ContactInfo = contactInfo;
@@ -21,6 +24,9 @@ public sealed class Agreement : Entity
         SiteType = siteType;
         CreatedBy = createdBy;
         CreatedOnUtc = createdOnUtc;
+        ModifiedOnUtc = modifiedOnUtc;
+        ModifiedBy = modifiedBy;
+        Ticket = ticket;
     }
 
     private Agreement() {} // EF Core
@@ -31,9 +37,10 @@ public sealed class Agreement : Entity
     public AgreementType AgreementType { get; private set; }
     public SiteType SiteType { get; private set; }
     public DateTime CreatedOnUtc { get; private set; }
+    public CreatedBy CreatedBy { get; private set; }
     public DateTime? ModifiedOnUtc { get; private set; }
     public ModifiedBy? ModifiedBy { get; private set; }
-    public CreatedBy CreatedBy { get; private set; }
+
     
     public static Agreement Create(
         ContactInfo contactInfo,
@@ -49,8 +56,11 @@ public sealed class Agreement : Entity
             status,
             agreementType,
             siteType,
+            utcNow,
             createdBy,
-            utcNow);
+            null,
+            null,
+            null);
 
         agreement.RaiseDomainEvent(new AgreementCreatedDomainEvent(agreement.Id));
 
@@ -73,17 +83,28 @@ public sealed class Agreement : Entity
         return Result.Success();
     }
 
-    public static void Update(
+    public static Agreement Update(
         Agreement agreement,
         Status status,
         Ticket? mdmTicket,
         ModifiedBy modifiedBy,
         DateTime utcNow)
     {
-        agreement.Status = status;
-        agreement.ModifiedBy = modifiedBy;
-        agreement.ModifiedOnUtc = utcNow;
-        agreement.Ticket = mdmTicket;
+        var updated = new Agreement(
+            agreement.Id,
+            agreement.ContactInfo,
+            status,
+            agreement.AgreementType,
+            agreement.SiteType,
+            agreement.CreatedOnUtc,
+            agreement.CreatedBy,
+            utcNow,
+            modifiedBy,
+            mdmTicket);
+        updated.RaiseDomainEvent(new AgreementUpdatedDomainEvent(updated.Id));
+
+        return agreement;
     }
+    
 
 }

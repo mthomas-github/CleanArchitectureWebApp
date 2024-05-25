@@ -9,13 +9,25 @@ internal sealed class NotificationClient(IHubContext<NotificationHub, INotificat
 {
     public async Task SendApprovalPayload(ApprovalResponse approval, CancellationToken cancellationToken = default)
     {
-        logger.LogInformation("Executing SendPayload with {Approval}", approval.ApprovalId);
+        logger.LogInformation("Executing SendApprovalPayload with {Approval}", approval.ApprovalId);
         await hubContext.Clients.All.SendApprovalPayload(approval, cancellationToken);
     }
 
-    public async Task DeleteApprovalPayload(Guid id, CancellationToken cancellationToken = default)
+    public async Task DeleteApprovalPayload(Guid workFlowTaskId, CancellationToken cancellationToken = default)
     {
-        logger.LogInformation("Executing DeletePayload");
-        await hubContext.Clients.All.DeleteApprovalPayload(id, cancellationToken);
+        logger.LogInformation("Executing DeleteApprovalPayload");
+        await hubContext.Clients.All.DeleteApprovalPayload(workFlowTaskId, cancellationToken);
+    }
+
+    public async Task SendAgreementPayload(AgreementResponse agreement, CancellationToken cancellationToken = default)
+    {
+        logger.LogInformation("Executing SendAgreementPayload with {Agreement}", agreement.Id);
+        await hubContext.Clients.All.SendAgreementPayload(agreement, cancellationToken);
+    }
+
+    public async Task DeleteAgreementPayload(Guid agreementId, CancellationToken cancellationToken = default)
+    {
+        logger.LogInformation("Executing DeleteAgreementPayload");
+        await hubContext.Clients.All.DeleteAgreementPayload(agreementId, cancellationToken);
     }
 }
