@@ -70,8 +70,7 @@ public sealed class Approval : Entity
         return approval;
     }
 
-    public static void Update(
-        Approval approval,
+    public Result SetUpdatedValues(
         string? taskId,
         DateTime? firstApprovalOnUtc,
         DateTime? firstApprovalEndUtc,
@@ -81,17 +80,20 @@ public sealed class Approval : Entity
         DateTime? thirdApprovalEndUtc,
         DateTime? completedOn,
         bool? voided)
-    {
-        approval.FirstApprovalOnUtc = firstApprovalOnUtc;
-        approval.FirstApprovalEndUtc = firstApprovalEndUtc;
-        approval.SecondApprovalOnUtc = secondApprovalOnUtc;
-        approval.SecondApprovalEndUtc = secondApprovalEndUtc;
-        approval.ThirdApprovalOnUtc = thirdApprovalOnUtc;
-        approval.ThirdApprovalEndUtc = thirdApprovalEndUtc;
-        approval.CompletedOn = completedOn;
-        approval.TaskId = taskId;
-        approval.Voided = voided;
 
-        approval.RaiseDomainEvent(new ApprovalUpdatedDomainEvent(approval.Id));
+    {
+        TaskId = taskId;
+        FirstApprovalOnUtc = firstApprovalOnUtc;
+        FirstApprovalEndUtc = firstApprovalEndUtc;
+        SecondApprovalOnUtc = secondApprovalOnUtc;
+        SecondApprovalEndUtc = secondApprovalEndUtc;
+        ThirdApprovalOnUtc = thirdApprovalOnUtc;
+        ThirdApprovalEndUtc = thirdApprovalEndUtc;
+        CompletedOn = completedOn;
+        Voided = voided;
+        
+        RaiseDomainEvent(new ApprovalUpdatedDomainEvent(Id));
+
+        return Result.Success();
     }
 }

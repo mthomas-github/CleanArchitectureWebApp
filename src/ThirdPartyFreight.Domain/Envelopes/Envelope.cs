@@ -56,8 +56,7 @@ public sealed class Envelope : Entity
         return envelope;
     }
 
-    public static void Update(
-        Envelope envelope,
+    public Result SetUpdatedValues(
         EnvelopeStatus envelopeStatus,
         Guid? envelopeId,
         DateTime? lastModifiedDateTime,
@@ -71,20 +70,22 @@ public sealed class Envelope : Entity
         VoidReason? voidReason,
         AutoRespondReason? autoRespondReason)
     {
-        envelope.EnvelopeStatus = envelopeStatus;
-        envelope.EnvelopeId = envelopeId;
-        envelope.LastModifiedOnUtc = lastModifiedDateTime;
-        envelope.InitialSentOnUtc = initialSentDateTime;
-        envelope.SentOnUtc = sentDateTime;
-        envelope.LastStatusChangedOnUtc = lastStatusChangedDateTime;
-        envelope.CompletedOnUtc = completedDateTime;
-        envelope.DeliveredOnUtc = deliveredDateTime;
-        envelope.ExpiringOnUtc = expiringDateTime;
-        envelope.VoidedOnUtc = voidedDateTime;
-        envelope.VoidReason = voidReason;
-        envelope.AutoRespondReason = autoRespondReason;
+        EnvelopeStatus = envelopeStatus;
+        EnvelopeId = envelopeId;
+        LastModifiedOnUtc = lastModifiedDateTime;
+        InitialSentOnUtc = initialSentDateTime;
+        SentOnUtc = sentDateTime;
+        LastStatusChangedOnUtc = lastStatusChangedDateTime;
+        CompletedOnUtc = completedDateTime;
+        ExpiringOnUtc = expiringDateTime;
+        VoidedOnUtc = voidedDateTime;
+        VoidReason = voidReason;
+        DeliveredOnUtc = deliveredDateTime;
+        AutoRespondReason = autoRespondReason;
         
-        envelope.RaiseDomainEvent(new EnvelopeUpdatedDomainEvent(envelope.Id));
-        
+        RaiseDomainEvent(new EnvelopeUpdatedDomainEvent(Id));
+
+        return Result.Success();
     }
+   
 }

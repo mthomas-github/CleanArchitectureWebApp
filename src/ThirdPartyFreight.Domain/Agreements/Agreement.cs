@@ -82,28 +82,16 @@ public sealed class Agreement : Entity
 
         return Result.Success();
     }
-
-    public static Agreement Update(
-        Agreement agreement,
-        Status status,
-        Ticket? mdmTicket,
-        ModifiedBy modifiedBy,
-        DateTime utcNow)
+    
+    public Result SetStatus(Status status, DateTime utcNow)
     {
-        var updated = new Agreement(
-            agreement.Id,
-            agreement.ContactInfo,
-            status,
-            agreement.AgreementType,
-            agreement.SiteType,
-            agreement.CreatedOnUtc,
-            agreement.CreatedBy,
-            utcNow,
-            modifiedBy,
-            mdmTicket);
-        updated.RaiseDomainEvent(new AgreementUpdatedDomainEvent(updated.Id));
+        Status = status;
+        ModifiedBy = new ModifiedBy("System");
+        ModifiedOnUtc = utcNow;
+        
+        RaiseDomainEvent(new AgreementStatusUpdatedDomainEvent(Id, status));
 
-        return agreement;
+        return Result.Success();
     }
     
 

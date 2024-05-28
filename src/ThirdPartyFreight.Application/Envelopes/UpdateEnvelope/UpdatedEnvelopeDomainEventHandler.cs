@@ -92,16 +92,7 @@ internal sealed class UpdatedEnvelopeDomainEventHandler(
         // Update Agreement
         logger.LogInformation("Updating Agreement Record");
         Agreement result = await agreementRepository.GetByIdAsync(envelope.AgreementId, cancellationToken);
-        if (result is not null)
-        {
-            Agreement.Update(
-                result,
-                Status.PendingReviewTpf,
-                null,
-                new ModifiedBy("System"),
-                dateTimeProvider.UtcNow
-            );
-        }
+        result?.SetStatus(Status.PendingReviewTpf, dateTimeProvider.UtcNow);
 
         // Then Save Approval
         logger.LogInformation("Creating Approval Record");

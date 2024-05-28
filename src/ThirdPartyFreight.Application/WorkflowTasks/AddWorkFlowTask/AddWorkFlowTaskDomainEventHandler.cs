@@ -14,7 +14,6 @@ public class AddWorkFlowTaskDomainEventHandler(
     IWorkFlowTaskRepository workFlowTaskRepository, 
     IApprovalRepository approvalRepository,
     IAgreementRepository agreementRepository,
-    IPowerAutomateService powerAutomateService,
     IUnitOfWork unitOfWork,
     IDateTimeProvider dateTimeProvider,
     ILogger<AddWorkFlowTaskDomainEventHandler> logger) : 
@@ -36,11 +35,10 @@ public class AddWorkFlowTaskDomainEventHandler(
                 switch (workFlowTask.Approver)
                 {
                     case ApproverType.TpfTeam:
-                        Approval.Update(
-                            approval, 
-                            workFlowTask.ExternalId, 
-                            startTime, 
-                            null, 
+                        approval.SetUpdatedValues(
+                            workFlowTask.ExternalId,
+                            startTime,
+                            null,
                             null,
                             null,
                             null,
@@ -50,49 +48,31 @@ public class AddWorkFlowTaskDomainEventHandler(
                         await unitOfWork.SaveChangesAsync(cancellationToken);
                         break;
                     case ApproverType.TmsTeam:
-                        Approval.Update(
-                            approval, 
-                            workFlowTask.ExternalId, 
-                            approval.FirstApprovalOnUtc, 
-                            approval.FirstApprovalEndUtc ?? startTime, 
+                        approval.SetUpdatedValues(
+                            workFlowTask.ExternalId,
+                            approval.FirstApprovalOnUtc,
+                            approval.FirstApprovalEndUtc ?? startTime,
                             startTime,
                             null,
                             null,
                             null,
                             null,
                             false);
-                        Agreement.Update(
-                            agreement,
-                            Status.PendingReviewTms,
-                            null,
-                            new ModifiedBy("System"),
-                            dateTimeProvider.UtcNow);
+                        agreement.SetStatus(Status.PendingReviewTms, dateTimeProvider.UtcNow);
                         await unitOfWork.SaveChangesAsync(cancellationToken);
                         break;
                     case ApproverType.MdmTeam:
-                        Approval.Update(
-                            approval, 
-                            workFlowTask.ExternalId, 
-                            approval.FirstApprovalOnUtc, 
-                            approval.FirstApprovalEndUtc, 
+                        approval.SetUpdatedValues(
+                            workFlowTask.ExternalId,
+                            approval.FirstApprovalOnUtc,
+                            approval.FirstApprovalEndUtc,
                             approval.SecondApprovalOnUtc,
-                           approval.SecondApprovalEndUtc ?? startTime,
+                            approval.SecondApprovalEndUtc ?? startTime,
                             startTime,
                             null,
                             null,
                             false);
-                        Agreement.Update(
-                            agreement,
-                            Status.PendingReviewMdm,
-                            null,
-                            new ModifiedBy("System"),
-                            dateTimeProvider.UtcNow);
-                        await powerAutomateService.TriggerFlow(
-                            new Uri(
-                                "https://prod-114.westus.logic.azure.com:443/workflows/a37839f116de43b49666a0cd9e97fb24/triggers/manual/paths/invoke?api-version=2016-06-01"),
-                            new FlowRequest(
-                                JsonDataString:
-                                "{\n  \"Description\": \"This is a sample description.\",\n  \"FileLocation\": \"/path/to/file/location\"\n}\n"));
+                        agreement.SetStatus(Status.PendingReviewMdm, dateTimeProvider.UtcNow);
                         await unitOfWork.SaveChangesAsync(cancellationToken);
                         break;
                     default:

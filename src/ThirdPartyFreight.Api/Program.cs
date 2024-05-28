@@ -68,7 +68,7 @@ app.MapHealthChecks("health", new HealthCheckOptions()
     ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
 });
 
-app.MapHub<NotificationHub>("/notifications");
+app.MapHub<NotificationHub>("notifications");
 
 app.Run();
 public partial class Program;

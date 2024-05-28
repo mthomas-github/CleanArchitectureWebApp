@@ -53,10 +53,12 @@ public class UpdateWorkFlowTaskDomainEventHandler(
             logger.LogInformation("Updating Approval - {ApprovalId} & Agreements - {AgreementId} for Completion",
                 approval.Id, agreement.Id);
 
-            Agreement.Update(agreement, Status.Completed, null, new ModifiedBy("System"), dateTimeProvider.UtcNow);
-            Approval.Update(approval, workFlowTask.ExternalId, approval.FirstApprovalOnUtc,
+            agreement.SetStatus(Status.Completed, dateTimeProvider.UtcNow);
+            
+            approval.SetUpdatedValues(workFlowTask.ExternalId, approval.FirstApprovalOnUtc,
                 approval.FirstApprovalEndUtc, approval.SecondApprovalOnUtc, approval.SecondApprovalEndUtc,
                 approval.ThirdApprovalOnUtc, workFlowTask.CompletedAt?.DateTime, workFlowTask.CompletedAt?.DateTime, false);
+            
             await unitOfWork.SaveChangesAsync(cancellationToken);
             
         }

@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Logging;
 using ThirdPartyFreight.Application.Abstractions.Hub;
 using ThirdPartyFreight.Application.Shared;
+using ThirdPartyFreight.Domain.Agreements;
 
 namespace ThirdPartyFreight.Infrastructure.Hubs;
 
@@ -13,16 +14,16 @@ internal sealed class NotificationClient(IHubContext<NotificationHub, INotificat
         await hubContext.Clients.All.SendApprovalPayload(approval, cancellationToken);
     }
 
-    public async Task DeleteApprovalPayload(Guid workFlowTaskId, CancellationToken cancellationToken = default)
+    public async Task DeleteApprovalPayload(Guid workflowTaskId, CancellationToken cancellationToken = default)
     {
         logger.LogInformation("Executing DeleteApprovalPayload");
-        await hubContext.Clients.All.DeleteApprovalPayload(workFlowTaskId, cancellationToken);
+        await hubContext.Clients.All.DeleteApprovalPayload(workflowTaskId, cancellationToken);
     }
 
-    public async Task SendAgreementPayload(AgreementResponse agreement, CancellationToken cancellationToken = default)
+    public async Task SendAgreementPayload(Guid agreementId, Status newStatus, CancellationToken cancellationToken = default)
     {
-        logger.LogInformation("Executing SendAgreementPayload with {Agreement}", agreement.Id);
-        await hubContext.Clients.All.SendAgreementPayload(agreement, cancellationToken);
+        logger.LogInformation("Executing SendAgreementPayload with {Agreement}", agreementId);
+        await hubContext.Clients.All.SendAgreementPayload(agreementId, newStatus, cancellationToken);
     }
 
     public async Task DeleteAgreementPayload(Guid agreementId, CancellationToken cancellationToken = default)

@@ -83,10 +83,11 @@
 
     private void AddAgreementDataListener()
     {
-        HubConnection.On<AgreementResponse>("SendAgreementPayload", (payload) =>
+        HubConnection.On<Guid, Status>("SendAgreementPayload", (agreementId, newStatus) =>
         {
-            if (GridData.Any(item => item?.Id == payload.Id)) return;
-            GridData.Add(payload);
+            var item = GridData.FirstOrDefault(item => item.Id == agreementId);
+            if (item is null) return;
+            item.Status = newStatus;
             StateHasChanged();
         });
         

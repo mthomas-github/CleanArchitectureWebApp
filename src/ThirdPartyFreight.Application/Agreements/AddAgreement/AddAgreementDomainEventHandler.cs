@@ -6,6 +6,8 @@ using Microsoft.Extensions.Logging;
 using ThirdPartyFreight.Application.Abstractions.Clock;
 using ThirdPartyFreight.Application.Abstractions.DocuSign;
 using ThirdPartyFreight.Application.Abstractions.Hub;
+using ThirdPartyFreight.Application.Agreements.GetAgreement;
+using ThirdPartyFreight.Application.Shared;
 using ThirdPartyFreight.Domain.Abstractions;
 using ThirdPartyFreight.Domain.Agreements;
 using ThirdPartyFreight.Domain.Envelopes;
@@ -28,31 +30,39 @@ internal sealed class AddAgreementDomainEventHandler(
     {
         // Step 1 Pull the agreement from the database
         logger.LogInformation("Handling AgreementCreatedDomainEvent for AgreementId: {AgreementId}", notification.AgreementId);
-        Agreement? result = await agreementRepository.GetByIdAsync(notification.AgreementId, cancellationToken);
-        if (result is not null)
+        Agreement? agreement = await agreementRepository.GetByIdAsync(notification.AgreementId, cancellationToken);
+        if (agreement is not null)
         {
             // Step 2 Get Sites
-            logger.LogInformation("Getting Sites for AgreementId: {AgreementId}", result.Id);
+            logger.LogInformation("Getting Sites for AgreementId: {AgreementId}", agreement.Id);
             IEnumerable<Site> sites =
                 await siteRepository.GetSitesAsyncByAgreementId(notification.AgreementId, cancellationToken);
             string siteString = string.Join(", ", sites.Select(s => s.SiteNumber.Value));
-            string customerNum = result.ContactInfo.CustomerNumber.ToString(CultureInfo.CurrentCulture);
+            string customerNum = agreement.ContactInfo.CustomerNumber.ToString(CultureInfo.CurrentCulture);
             // Step 3 Call DocuSign
-            logger.LogInformation("Calling DocuSign for AgreementId: {AgreementId}", result.Id);
-            EnvelopeSummary response = await docuSignService.SendEnvelopeFromTemplate(result.ContactInfo.CustomerEmail,
-                result.ContactInfo.CustomerName, "72ec3391-33b4-4cb3-a131-210a0f8d262a",
-                customerNumber: customerNum, result.ContactInfo.CompanyName, siteString);
+            logger.LogInformation("Calling DocuSign for AgreementId: {AgreementId}", agreement.Id);
+            EnvelopeSummary response = await docuSignService.SendEnvelopeFromTemplate(agreement.ContactInfo.CustomerEmail,
+                agreement.ContactInfo.CustomerName, "72ec3391-33b4-4cb3-a131-210a0f8d262a",
+                customerNumber: customerNum, agreement.ContactInfo.CompanyName, siteString);
 
             if (response.Status == "sent")
             {
-                logger.LogInformation("Calling DocuSign for AgreementId: {AgreementId}", result.Id);
                 string? envelopeId = response.EnvelopeId;
                 string? sentDate = response.StatusDateTime;
                 
-                Envelope envelope = await envelopeRepository.GetEnvelopeAsyncByAgreementId(result.Id, cancellationToken);
+                Envelope envelope = await envelopeRepository.GetEnvelopeAsyncByAgreementId(agreement.Id, cancellationToken);
+                
+                try
+                {
+                    logger.LogInformation("Updating Status for AgreementId: {AgreementId}", agreement.Id);
+                    agreement.SetStatus(Status.CustomerSignature, dateTimeProvider.UtcNow);
+                }
+                catch (Exception ex)
+                {
+                    logger.LogError("Issue Updating Agreement For {AgreementId} With {Error}", agreement.Id, ex.Message);
+                }
 
-                Envelope.Update(
-                    envelope,
+                envelope.SetUpdatedValues(
                     EnvelopeStatus.Sent,
                     Guid.Parse(response.EnvelopeId),
                     DateTime.Parse(response.StatusDateTime, CultureInfo.CurrentCulture),
@@ -65,20 +75,12 @@ internal sealed class AddAgreementDomainEventHandler(
                     null,
                     null,
                     null);
-
-                Agreement.Update(
-                    result,
-                    Status.CustomerSignature,
-                    null,
-                    new ModifiedBy("System"),
-                    dateTimeProvider.UtcNow
-                );
-
+                
                 await unitOfWork.SaveChangesAsync(cancellationToken);
             }
             else
             {
-                logger.LogError("Error sending envelope for AgreementId: {AgreementId}", result.Id);
+                logger.LogError("Error sending envelope for AgreementId: {AgreementId}", agreement.Id);
             }
             logger.LogInformation("Finished handling AgreementCreatedDomainEvent for AgreementId: {AgreementId}", notification.AgreementId);
         }

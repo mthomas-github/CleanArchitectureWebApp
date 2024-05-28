@@ -43,22 +43,20 @@ public class CancelledWorkFlowTaskDomainEventHandler(
         if (workFlowTask.Voided)
         {          
             Agreement? agreement = await agreementRepository.GetByIdAsync(workFlowTask.AgreementId, cancellationToken);
-            if (agreement is not null)
-            {
-                Agreement.Update(agreement, Status.ApprovalRejected, null, new ModifiedBy("System"), dateTimeProvider.UtcNow);
-            }
             
-            Approval.Update(
-                approval, 
-                workFlowTask.ExternalId, 
+            agreement?.SetStatus(Status.ApprovalRejected, dateTimeProvider.UtcNow);
+
+            approval.SetUpdatedValues(
+                workFlowTask.ExternalId,
                 approval.FirstApprovalOnUtc,
-                approval.FirstApprovalEndUtc, 
-                approval.SecondApprovalOnUtc, 
+                approval.FirstApprovalEndUtc,
+                approval.SecondApprovalOnUtc,
                 approval.SecondApprovalEndUtc,
-                approval.ThirdApprovalOnUtc, 
-                approval.ThirdApprovalEndUtc, 
-                approval.CompletedOn, 
-                true);
+                approval.ThirdApprovalOnUtc,
+                approval.ThirdApprovalEndUtc,
+                approval.CompletedOn,
+                true
+            );
             
             await unitOfWork.SaveChangesAsync(cancellationToken);
         }

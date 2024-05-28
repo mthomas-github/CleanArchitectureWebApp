@@ -185,23 +185,19 @@ internal sealed class ProcessStatusUpdateJob(
         foreach (UpdatedEnvelope envelope in updatedEnvelope)
         {
             Envelope? envRecord = await envelopeRepository.GetByIdAsync(envelope.Id);
-            if (envRecord is not null)
-            {
-                Envelope.Update(
-                    envRecord, 
-                    envelope.EnvelopeStatus, 
-                    envelope.EnvelopeId, 
-                    envelope.LastModifiedOnUtc, 
-                    envelope.InitialSentOnUtc, 
-                    envelope.SentOnUtc, 
-                    envelope.LastStatusChangedOnUtc, 
-                    envelope.CompletedOnUtc, 
-                    envelope.DeliveredOnUtc, 
-                    envelope.ExpiringOnUtc, 
-                    envelope.VoidedOnUtc, 
-                    envelope.VoidReason, 
+            envRecord?.SetUpdatedValues(
+                    envelope.EnvelopeStatus,
+                    envelope.EnvelopeId,
+                    envelope.LastModifiedOnUtc,
+                    envelope.InitialSentOnUtc,
+                    envelope.SentOnUtc,
+                    envelope.LastStatusChangedOnUtc,
+                    envelope.CompletedOnUtc,
+                    envelope.DeliveredOnUtc,
+                    envelope.ExpiringOnUtc,
+                    envelope.VoidedOnUtc,
+                    envelope.VoidReason,
                     envelope.AutoRespondReason);
-            }
         }
     }
 
