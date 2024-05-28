@@ -67,7 +67,7 @@ public sealed class Agreement : Entity
         return agreement;
     }
 
-    public Result Complete(DateTime utcNow, ModifiedBy modifiedBy)
+    public Result Complete(DateTime utcNow)
     {
         if (Status != Status.Completed)
         {
@@ -76,7 +76,7 @@ public sealed class Agreement : Entity
 
         Status = Status.Completed;
         ModifiedOnUtc = utcNow;
-        ModifiedBy = modifiedBy;
+        ModifiedBy = new ModifiedBy("System");
 
         RaiseDomainEvent(new AgreementCompletedDomainEvent(Id));
 
@@ -90,6 +90,15 @@ public sealed class Agreement : Entity
         ModifiedOnUtc = utcNow;
         
         RaiseDomainEvent(new AgreementStatusUpdatedDomainEvent(Id, status));
+
+        return Result.Success();
+    }
+
+    public Result Close(DateTime utcNow)
+    {
+        Status = Status.Closed;
+        ModifiedBy = new ModifiedBy("System");
+        ModifiedOnUtc = utcNow;
 
         return Result.Success();
     }

@@ -1,14 +1,13 @@
 using MediatR;
 using Microsoft.Extensions.Logging;
 using ThirdPartyFreight.Application.Abstractions.Clock;
-using ThirdPartyFreight.Application.Abstractions.PowerAutomate;
 using ThirdPartyFreight.Domain.Abstractions;
 using ThirdPartyFreight.Domain.Agreements;
 using ThirdPartyFreight.Domain.Approvals;
 using ThirdPartyFreight.Domain.WorkflowTask;
 using ThirdPartyFreight.Domain.WorkflowTask.Events;
 
-namespace ThirdPartyFreight.Application.WorkflowTasks.AddWorkFlowTask;
+namespace ThirdPartyFreight.Application.WorkflowTasks.DomainEventHandlers;
 
 public class AddWorkFlowTaskDomainEventHandler(
     IWorkFlowTaskRepository workFlowTaskRepository, 

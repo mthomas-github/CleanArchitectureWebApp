@@ -7,7 +7,7 @@ using ThirdPartyFreight.Domain.Approvals;
 using ThirdPartyFreight.Domain.WorkflowTask;
 using ThirdPartyFreight.Domain.WorkflowTask.Events;
 
-namespace ThirdPartyFreight.Application.WorkflowTasks.UpdateWorkFlowTask;
+namespace ThirdPartyFreight.Application.WorkflowTasks.DomainEventHandlers;
 
 public class UpdateWorkFlowTaskDomainEventHandler(
     IWorkFlowTaskRepository workFlowTaskRepository,
@@ -53,7 +53,7 @@ public class UpdateWorkFlowTaskDomainEventHandler(
             logger.LogInformation("Updating Approval - {ApprovalId} & Agreements - {AgreementId} for Completion",
                 approval.Id, agreement.Id);
 
-            agreement.SetStatus(Status.Completed, dateTimeProvider.UtcNow);
+            agreement.Complete(dateTimeProvider.UtcNow);
             
             approval.SetUpdatedValues(workFlowTask.ExternalId, approval.FirstApprovalOnUtc,
                 approval.FirstApprovalEndUtc, approval.SecondApprovalOnUtc, approval.SecondApprovalEndUtc,

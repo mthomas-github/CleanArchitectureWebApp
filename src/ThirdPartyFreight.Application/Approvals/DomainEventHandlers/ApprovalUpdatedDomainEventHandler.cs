@@ -7,7 +7,7 @@ using ThirdPartyFreight.Application.Shared;
 using ThirdPartyFreight.Domain.Abstractions;
 using ThirdPartyFreight.Domain.Approvals.Events;
 
-namespace ThirdPartyFreight.Application.Approvals.UpdateApproval;
+namespace ThirdPartyFreight.Application.Approvals.DomainEventHandlers;
 
 public class ApprovalUpdatedDomainEventHandler(
     ISender sender,

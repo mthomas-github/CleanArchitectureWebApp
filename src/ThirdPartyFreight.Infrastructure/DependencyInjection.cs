@@ -56,7 +56,6 @@ public static class DependencyInjection
     {
         services.AddSignalR();
         services.AddTransient<IDateTimeProvider, DateTimeProvider>();
-        services.AddTransient<IEmailService, EmailService>();
         AddPersistence(services, configuration);
         AddAuthentication(services, configuration);
         AddAuthorization(services);
@@ -68,6 +67,7 @@ public static class DependencyInjection
         AddElsa(services, configuration);
         AddPowerAutomate(services, configuration);
         AddSignalRHubs(services);
+        AddEmailServices(services, configuration);
 
         return services;
     }
@@ -237,5 +237,11 @@ public static class DependencyInjection
     private static void AddSignalRHubs(IServiceCollection services)
     {
         services.AddScoped<INotificationClient, NotificationClient>();
+    }
+
+    private static void AddEmailServices(IServiceCollection services, IConfiguration configuration)
+    {
+        services.AddTransient<IEmailService, EmailService>();
+        services.Configure<EmailOptions>(configuration.GetSection("EmailSettings"));
     }
 }

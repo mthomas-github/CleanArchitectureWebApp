@@ -7,7 +7,7 @@ using ThirdPartyFreight.Domain.Approvals;
 using ThirdPartyFreight.Domain.WorkflowTask;
 using ThirdPartyFreight.Domain.WorkflowTask.Events;
 
-namespace ThirdPartyFreight.Application.WorkflowTasks.UpdateWorkFlowTask;
+namespace ThirdPartyFreight.Application.WorkflowTasks.DomainEventHandlers;
 
 public class CancelledWorkFlowTaskDomainEventHandler(
     IWorkFlowTaskRepository workFlowTaskRepository, 

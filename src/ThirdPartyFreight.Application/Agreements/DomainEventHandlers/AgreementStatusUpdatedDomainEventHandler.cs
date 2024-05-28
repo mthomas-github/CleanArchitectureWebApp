@@ -1,12 +1,9 @@
 using MediatR;
 using Microsoft.Extensions.Logging;
 using ThirdPartyFreight.Application.Abstractions.Hub;
-using ThirdPartyFreight.Application.Agreements.GetAgreement;
-using ThirdPartyFreight.Application.Shared;
-using ThirdPartyFreight.Domain.Abstractions;
 using ThirdPartyFreight.Domain.Agreements.Events;
 
-namespace ThirdPartyFreight.Application.Agreements.AddAgreement;
+namespace ThirdPartyFreight.Application.Agreements.DomainEventHandlers;
 
 public class AgreementStatusUpdatedDomainEventHandler(
     INotificationClient notificationClient, 

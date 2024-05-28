@@ -5,16 +5,13 @@ using MediatR;
 using Microsoft.Extensions.Logging;
 using ThirdPartyFreight.Application.Abstractions.Clock;
 using ThirdPartyFreight.Application.Abstractions.DocuSign;
-using ThirdPartyFreight.Application.Abstractions.Hub;
-using ThirdPartyFreight.Application.Agreements.GetAgreement;
-using ThirdPartyFreight.Application.Shared;
 using ThirdPartyFreight.Domain.Abstractions;
 using ThirdPartyFreight.Domain.Agreements;
 using ThirdPartyFreight.Domain.Envelopes;
 using ThirdPartyFreight.Domain.Sites;
 using Envelope = ThirdPartyFreight.Domain.Envelopes.Envelope;
 
-namespace ThirdPartyFreight.Application.Agreements.AddAgreement;
+namespace ThirdPartyFreight.Application.Agreements.DomainEventHandlers;
 
 internal sealed class AddAgreementDomainEventHandler(
     IAgreementRepository agreementRepository,

@@ -12,7 +12,7 @@ using ThirdPartyFreight.Domain.Envelopes;
 using ThirdPartyFreight.Domain.Envelopes.Events;
 using Envelope = ThirdPartyFreight.Domain.Envelopes.Envelope;
 
-namespace ThirdPartyFreight.Application.Envelopes.UpdateEnvelope;
+namespace ThirdPartyFreight.Application.Envelopes.DomainEventHandlers;
 
 internal sealed class UpdatedEnvelopeDomainEventHandler(
     IEnvelopeRepository envelopeRepository,

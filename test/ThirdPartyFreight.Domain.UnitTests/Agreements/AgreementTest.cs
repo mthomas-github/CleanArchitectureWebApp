@@ -43,7 +43,7 @@ public class AgreementTest : BaseTest
     {
         // Act
         var agreement = Agreement.Create(AgreementData.ContactInfo, AgreementData.Status, AgreementData.AgreementType, AgreementData.SiteType, AgreementData.CreatedBy, AgreementData.CreatedDate);
-        Result result = agreement.Complete(DateTime.UtcNow, new ModifiedBy("TestName"));
+        Result result = agreement.Complete(DateTime.UtcNow);
         
         // Assert
         result.IsSuccess.Should().BeFalse();
@@ -59,7 +59,7 @@ public class AgreementTest : BaseTest
         var agreement = Agreement.Create(AgreementData.ContactInfo, Status.Completed, AgreementData.AgreementType, AgreementData.SiteType, AgreementData.CreatedBy, AgreementData.CreatedDate);
         DateTime utcNow = DateTime.UtcNow;
         var modifiedBy = new ModifiedBy("TestName");
-        Result result = agreement.Complete(utcNow, modifiedBy);
+        Result result = agreement.Complete(utcNow);
 
 
         // Assert
@@ -84,7 +84,7 @@ public class AgreementTest : BaseTest
             utcNow);
 
         // Act
-        Result result = agreement.Complete(utcNow, modifiedBy);
+        Result result = agreement.Complete(utcNow);
 
         // Assert
         result.IsSuccess.Should().BeTrue();
@@ -99,7 +99,7 @@ public class AgreementTest : BaseTest
         // Arrange
         var agreement = Agreement.Create(AgreementData.ContactInfo, Status.Completed, AgreementData.AgreementType, AgreementData.SiteType, AgreementData.CreatedBy, AgreementData.CreatedDate);
 
-        agreement.Complete(DateTime.UtcNow, new ModifiedBy("TestName"));
+        agreement.Complete(DateTime.UtcNow);
 
         AgreementCompletedDomainEvent domainEvents = AssertDomainEventWasPublished<AgreementCompletedDomainEvent>(agreement);
 
