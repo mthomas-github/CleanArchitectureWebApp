@@ -1,6 +1,6 @@
 using System.ComponentModel;
-using System.Reflection;
 using ThirdPartyFreight.Domain.Agreements;
+using ThirdPartyFreight.Web.Extensions;
 
 namespace ThirdPartyFreight.Web.Features.Approvals.Models;
 
@@ -21,14 +21,9 @@ internal sealed class ApprovalResponse
     public DateTime? CompletedOn { get; init; }
     public string ProcessId { get; init; }
     
-    public string ApproverDisplayName => GetDisplayName(Approver);
+    public string ApproverDisplayName => GetEnumDisplayName.GetDisplayName(Approver);
 
-    private static string GetDisplayName(Enum enumValue)
-    {
-        FieldInfo? field = enumValue.GetType().GetField(enumValue.ToString());
-        var descriptionAttribute = (DescriptionAttribute)Attribute.GetCustomAttribute(field!, typeof(DescriptionAttribute));
-        return descriptionAttribute != null ? descriptionAttribute.Description : enumValue.ToString();
-    }
+    
 }
 public enum ApproverType
 {
