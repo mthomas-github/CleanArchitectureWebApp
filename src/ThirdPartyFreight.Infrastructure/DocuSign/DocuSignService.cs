@@ -122,6 +122,20 @@ internal sealed class DocuSignService(
         return response;
     }
 
+    public async Task<EnvelopeDocumentsResult> GetDocumentList(string envelopeId)
+    {
+        EnvelopesApi envelopesApi = await InitializeEnvelopesApi();
+        EnvelopeDocumentsResult? response = await envelopesApi.ListDocumentsAsync(await GetAccountId(), envelopeId);
+        return response;
+    }
+
+    public async Task<EnvelopeDocument> GetDocumentById(string envelopeId, string documentId)
+    {
+        EnvelopesApi envelopesApi = await InitializeEnvelopesApi();
+        Stream? response = await envelopesApi.GetDocumentAsync(await GetAccountId(), envelopeId, documentId);
+        return null;
+    }
+
     private async Task<EnvelopesApi> InitializeEnvelopesApi()
     {
         AuthInfo accountInfo = await GetAccessInfo();

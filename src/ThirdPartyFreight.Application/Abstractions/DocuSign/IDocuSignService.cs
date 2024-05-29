@@ -9,4 +9,6 @@ public interface IDocuSignService
     Task<RecipientsUpdateSummary> UpdateEnvelopeEmailSettings(string envelopeId, string newEmailAddress, string newName, bool resendEnvelope = true);
     Task<EnvelopeUpdateSummary> VoidEnvelope(string envelopeId, string reason, string status = "voided");
     Task<EnvelopeFormData> GetEnvelopeFormData(string envelopeId);
+    Task<EnvelopeDocumentsResult> GetDocumentList(string envelopeId);
+    Task<EnvelopeDocument> GetDocumentById(string envelopeId, string documentId);
 }
