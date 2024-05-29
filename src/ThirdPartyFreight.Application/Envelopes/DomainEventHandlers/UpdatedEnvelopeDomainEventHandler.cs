@@ -4,12 +4,16 @@ using Microsoft.Extensions.Logging;
 using ThirdPartyFreight.Application.Abstractions.Clock;
 using ThirdPartyFreight.Application.Abstractions.DocuSign;
 using ThirdPartyFreight.Application.Abstractions.Elsa;
+using ThirdPartyFreight.Application.Abstractions.Excel;
+using ThirdPartyFreight.Application.Shared;
 using ThirdPartyFreight.Domain.Abstractions;
 using ThirdPartyFreight.Domain.Agreements;
 using ThirdPartyFreight.Domain.Approvals;
 using ThirdPartyFreight.Domain.Carriers;
+using ThirdPartyFreight.Domain.Documents;
 using ThirdPartyFreight.Domain.Envelopes;
 using ThirdPartyFreight.Domain.Envelopes.Events;
+using Document = ThirdPartyFreight.Domain.Documents.Document;
 using Envelope = ThirdPartyFreight.Domain.Envelopes.Envelope;
 
 namespace ThirdPartyFreight.Application.Envelopes.DomainEventHandlers;
@@ -20,9 +24,11 @@ internal sealed class UpdatedEnvelopeDomainEventHandler(
     IApprovalRepository approvalRepository,
     ICarrierRepository carrierRepository,
     IAgreementRepository agreementRepository,
+    IDocumentRepository documentRepository,
     IUnitOfWork unitOfWork,
     IDocuSignService docuSignService,
     IElsaService elsaService,
+    IExcelService excelService,
     ILogger<UpdatedEnvelopeDomainEventHandler> logger)
     : INotificationHandler<EnvelopeUpdatedDomainEvent>
 {
@@ -45,6 +51,7 @@ internal sealed class UpdatedEnvelopeDomainEventHandler(
 
         // Need To Call DocuSign To Get Data From Envelope
         EnvelopeFormData completedEnv = await docuSignService.GetEnvelopeFormData(envelope.EnvelopeId.ToString()!);
+        
         if (completedEnv is null)
         {
             logger.LogWarning("Envelope with Id {EnvelopeId} did return any data from DocuSing", envelope.Id);
@@ -83,23 +90,69 @@ internal sealed class UpdatedEnvelopeDomainEventHandler(
                     address,
                     CarrierType.Ltl));
             carrierRepository.Add(primaryLtl);
+            
+            // Update Agreement
+            logger.LogInformation("Updating Agreement Record");
+            Agreement result = await agreementRepository.GetByIdAsync(envelope.AgreementId, cancellationToken);
+            result?.SetStatus(Status.PendingReviewTpf, dateTimeProvider.UtcNow);
+
+            // Then Save Approval
+            logger.LogInformation("Creating Approval Record");
+            var approval = Approval.Create(envelope.AgreementId, dateTimeProvider.UtcNow);
+            approvalRepository.Add(approval);
+        
+            // Save Signed Agreement
+            logger.LogInformation("Creating Document Record");
+            // Make Change To Get DocumentId From AppSettings
+            Stream signedDoc = await docuSignService.GetDocumentById(completedEnv.EnvelopeId, "1");
+            string singedDocBase64 = await StreamToBase64String(signedDoc);
+            var docRec = Document.Create(result!.Id, new Details(
+                "Third-Party Freight Agreement",
+                singedDocBase64,
+                DocumentType.Agreement));
+            documentRepository.Add(docRec);
+            string customerName = GetValue(completedEnv, CarrierFormFieldNames.CustomerName);
+            string customerNumber = GetValue(completedEnv, CarrierFormFieldNames.CustomerNumber);
+            string shipToSitesNumbers = GetValue(completedEnv, CarrierFormFieldNames.SiteNumbers);
+            
+            // Create Routing Guid
+            logger.LogInformation("Creating Routing Guide");
+            var routingGuideDataList = new List<RoutingGuideData>
+            {
+                new()
+                {
+                    CustomerName = customerName,
+                    CustomerNumber = customerNumber,
+                    ParcelCarrierName = primaryCarrierName,
+                    ParcelCarrierAcct = primaryCarrierAcct,
+                    SecondaryParcelCarrierName = primaryCarrierName,
+                    SecondaryParcelCarrierAcct = primaryCarrierAcct,
+                    LtlBillTo = ltlCarrierAcct,
+                    LtlCarrierName = ltlCarrierName,
+                    LtlAddress = ltlAddress,
+                    LtlCity = ltlCity,
+                    LtlState = ltlState,
+                    LtlZipcode = ltlZip,
+                    ShipToSites = shipToSitesNumbers
+                }
+            };
+            
+            string routingGuideBase64 = excelService.CreateRoutingGuide(routingGuideDataList);
+            
+            var routingGuide = Document.Create(result.Id, new Details(
+                $"Routing Guide For {customerName}",
+                routingGuideBase64,
+                DocumentType.RoutingGuide));
+            documentRepository.Add(routingGuide);
+            
+            await unitOfWork.SaveChangesAsync(cancellationToken);
         }
         catch (Exception ex)
         {
             logger.LogError(ex, "Error Creating Carrier Record");
             throw;
         }
-        // Update Agreement
-        logger.LogInformation("Updating Agreement Record");
-        Agreement result = await agreementRepository.GetByIdAsync(envelope.AgreementId, cancellationToken);
-        result?.SetStatus(Status.PendingReviewTpf, dateTimeProvider.UtcNow);
-
-        // Then Save Approval
-        logger.LogInformation("Creating Approval Record");
-        var approval = Approval.Create(envelope.AgreementId, dateTimeProvider.UtcNow);
-        approvalRepository.Add(approval);
-        await unitOfWork.SaveChangesAsync(cancellationToken);
-
+        
         //Call Elsa To Fire Off Process
         logger.LogInformation("Calling Elsa To Start WorkFlow Process");
         await elsaService.ExecuteTask(envelope.AgreementId.ToString(), cancellationToken);
@@ -112,5 +165,13 @@ internal sealed class UpdatedEnvelopeDomainEventHandler(
     {
         FormDataItem? field = envelopeFormData.FormData?.FirstOrDefault(f => f.Name == fieldName);
         return field?.Value;
+    }
+
+    private static async Task<string> StreamToBase64String(Stream stream)
+    {
+        using var memoryStream = new MemoryStream();
+        await stream.CopyToAsync(memoryStream);
+        byte[] byteArray = memoryStream.ToArray();
+        return Convert.ToBase64String(byteArray);
     }
 }

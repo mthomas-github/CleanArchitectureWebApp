@@ -10,5 +10,5 @@ public interface IDocuSignService
     Task<EnvelopeUpdateSummary> VoidEnvelope(string envelopeId, string reason, string status = "voided");
     Task<EnvelopeFormData> GetEnvelopeFormData(string envelopeId);
     Task<EnvelopeDocumentsResult> GetDocumentList(string envelopeId);
-    Task<EnvelopeDocument> GetDocumentById(string envelopeId, string documentId);
+    Task<Stream> GetDocumentById(string envelopeId, string documentId);
 }

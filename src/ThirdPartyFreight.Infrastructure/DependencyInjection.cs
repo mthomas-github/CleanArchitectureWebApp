@@ -26,6 +26,7 @@ using Microsoft.Extensions.Options;
 using Quartz;
 using ThirdPartyFreight.Application.Abstractions.DocuSign;
 using ThirdPartyFreight.Application.Abstractions.Elsa;
+using ThirdPartyFreight.Application.Abstractions.Excel;
 using ThirdPartyFreight.Application.Abstractions.Hub;
 using ThirdPartyFreight.Application.Abstractions.PowerAutomate;
 using ThirdPartyFreight.Domain.Customer;
@@ -39,6 +40,7 @@ using ThirdPartyFreight.Infrastructure.DocuSign;
 using ThirdPartyFreight.Infrastructure.DocuSign.BackgroundJobs;
 using ThirdPartyFreight.Infrastructure.Elsa;
 using ThirdPartyFreight.Infrastructure.Email;
+using ThirdPartyFreight.Infrastructure.Excel;
 using ThirdPartyFreight.Infrastructure.Hubs;
 using ThirdPartyFreight.Infrastructure.OutBox;
 using ThirdPartyFreight.Infrastructure.PowerAutomate;
@@ -56,6 +58,7 @@ public static class DependencyInjection
     {
         services.AddSignalR();
         services.AddTransient<IDateTimeProvider, DateTimeProvider>();
+        services.AddTransient<IExcelService, ExcelService>();
         AddPersistence(services, configuration);
         AddAuthentication(services, configuration);
         AddAuthorization(services);
