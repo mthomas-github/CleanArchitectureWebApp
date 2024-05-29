@@ -1,0 +1,23 @@
+﻿
+<TelerikPdfViewer 
+    @ref="@PdfViewerRef"
+    Width="100%"
+    Height="800px"
+    Data="@FileData">
+</TelerikPdfViewer>
+
+@code {
+    private TelerikPdfViewer PdfViewerRef { get; set; } = null!;
+    private byte[]? FileData { get; set; }
+    [Parameter]
+    public required string PdfString { get; set; }
+    
+    protected override async Task OnInitializedAsync()
+    {
+        var fileBytes = Convert.FromBase64String(PdfString);
+
+        FileData = fileBytes;
+
+        await base.OnInitializedAsync();
+    }
+}

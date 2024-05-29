@@ -1,27 +1,60 @@
-﻿@inject HttpClient Http
+﻿@using ThirdPartyFreight.Domain.Documents
+@inject HttpClient Http
 
 @if (GridList.Count >= 1)
 {
     <TelerikTabStrip @bind-ActiveTabIndex="@ActiveTabIndex">
-
         @foreach (var grid in GridList)
         {
             <TabStripTab Title="@grid.GridName">
-                <TelerikGrid Data="@grid.GridData"
-                             Height="@Height"
-                             Class="grid-no-scroll"
-                             Pageable="true"
-                             PageSize="5"
-                             Sortable="true"
-                             SortMode="SortMode.Single"
-                             Resizable="true">
-                    <GridColumns>
-                        @foreach (var col in grid.Columns)
-                        {
-                            <GridColumn Field="@col.Field" Title="@col.Title" />
-                        }
-                    </GridColumns>
-                </TelerikGrid>
+
+                @switch (grid)
+                {
+                    case ModalGrid<SiteResponse> siteGrid:
+                        <TelerikGrid Data="@siteGrid.GridData"
+                                     Height="@Height"
+                                     Width="100%"
+                                     Class="grid-no-scroll"
+                                     Pageable="true"
+                                     PageSize="5"
+                                     Sortable="true"
+                                     SortMode="SortMode.Single"
+                                     Resizable="true">
+                            <GridColumns>
+                                @foreach (var col in siteGrid.Columns)
+                                {
+                                    <GridColumn Field="@col.Field" Title="@col.Title"/>
+                                }
+                            </GridColumns>
+                        </TelerikGrid>
+                        break;
+                    case ModalGrid<DocumentResponse> docGrid:
+                        <TelerikGrid Data="@docGrid.GridData"
+                                     Height="@Height"
+                                     Width="100%"
+                                     Class="grid-no-scroll"
+                                     Pageable="true"
+                                     PageSize="5"
+                                     Sortable="true"
+                                     SortMode="SortMode.Single"
+                                     Resizable="true">
+                            <GridColumns>
+                                @foreach (var col in docGrid.Columns)
+                                {
+                                    <GridColumn Field="@col.Field" Title="@col.Title"/>
+                                }
+                                <GridCommandColumn Width="100px">
+                                    <GridCommandButton Icon="@SvgIcon.Download"></GridCommandButton>
+                                    @if (((DocumentResponse)context).IsPdf)
+                                    {
+                                        <GridCommandButton Icon="@SvgIcon.FilePdf" />
+                                    }
+                                </GridCommandColumn>
+                            </GridColumns>
+                        </TelerikGrid>
+                        break;
+                }
+
             </TabStripTab>
         }
     </TelerikTabStrip>
@@ -33,7 +66,7 @@ else
                             Text="@null"
                             Class="initial-data-loader">
         <Template>
-            <TelerikLoader Size="@ThemeConstants.Loader.Size.Large" Type="@LoaderType.InfiniteSpinner" />
+            <TelerikLoader Size="@ThemeConstants.Loader.Size.Large" Type="@LoaderType.InfiniteSpinner"/>
         </Template>
     </TelerikLoaderContainer>
     <TelerikGrid Data="@GridData"
@@ -58,12 +91,12 @@ else
             </GridSearchBox>
         </GridToolBarTemplate>
         <GridSettings>
-            <GridPagerSettings InputType="@InputType" PageSizes="@PageSizes" ButtonCount="@ButtonCount" Position="@PagerPosition" />
+            <GridPagerSettings InputType="@InputType" PageSizes="@PageSizes" ButtonCount="@ButtonCount" Position="@PagerPosition"/>
         </GridSettings>
         <GridColumns>
             <GridCheckboxColumn CheckBoxOnlySelection="true" SelectAll="@ShowSelectAll" Width="2px" ShowColumnMenu="false"></GridCheckboxColumn>
-            <GridColumn Field="Site" Title="Site #" VisibleInColumnChooser="true" Visible="true" Width="8px" />
-            <GridColumn Field="FullAddress" Title="Site Address" VisibleInColumnChooser="true" Width="35px" />
+            <GridColumn Field="Site" Title="Site #" VisibleInColumnChooser="true" Visible="true" Width="8px"/>
+            <GridColumn Field="FullAddress" Title="Site Address" VisibleInColumnChooser="true" Width="35px"/>
         </GridColumns>
     </TelerikGrid>
 }
@@ -73,7 +106,7 @@ else
 
     [Parameter] public AgreementResponse? DataModel { get; set; }
     [Parameter] public EventCallback<AgreementResponse> DataModelChanged { get; set; }
-    [Parameter] public List<ModalGrid> GridList { get; set; } = [];
+    [Parameter] public List<IModalGrid> GridList { get; set; } = [];
     [Parameter] public bool LoadData { get; set; } = true;
     GridSelectionMode SelectionMode { get; set; } = GridSelectionMode.Multiple;
     bool ShowSelectAll => SelectionMode == GridSelectionMode.Multiple;
@@ -92,6 +125,7 @@ else
     int DebounceDelay { get; set; } = 200;
     string Placeholder { get; set; } = "Search...";
     List<SiteResponse> _selectedSites = [];
+
     protected override async Task OnInitializedAsync()
     {
         if (IsInitialDataLoadComplete == false && LoadData)
@@ -102,6 +136,7 @@ else
             {
                 GridData = new ObservableCollection<CustomerSite>(AllData);
             }
+
             IsInitialDataLoadComplete = true;
         }
     }
@@ -112,5 +147,6 @@ else
 
         if (DataModel != null) DataModel.Sites = _selectedSites;
     }
+
 
 }

@@ -1,11 +1,10 @@
 ﻿
-
 <TelerikWindow Class="demo-window" Width="1260px" Height="968px" Centered="true" Visible="@WindowIsVisible" VisibleChanged="@WindowIsVisibleChanged" Modal="true" FooterLayoutAlign="WindowFooterLayoutAlign.Center">
     <WindowTitle>
         <strong>Agreement Request @Data!.Id</strong>
     </WindowTitle>
     <WindowActions>
-        <WindowAction Name="Close" />
+        <WindowAction Name="Close"/>
     </WindowActions>
     <WindowContent>
         <TelerikGridLayout RowSpacing="6px" ColumnSpacing="10px">
@@ -28,22 +27,22 @@
                     <div class="grid-layout-heading k-text-uppercase k-font-weight-bold k-text-inverse">Status Information</div>
                 </GridLayoutItem>
                 <GridLayoutItem Row="2" Column="1" ColumnSpan="2">
-                    <CustomerInfo CompanyName="@_businessName" CustomerNumber="@_customerNumber" CustomerEmail="@_contactEmail" CustomerName="@_contactName" />
+                    <CustomerInfo CompanyName="@_businessName" CustomerNumber="@_customerNumber" CustomerEmail="@_contactEmail" CustomerName="@_contactName"/>
                 </GridLayoutItem>
                 <GridLayoutItem Row="2" Column="3" ColumnSpan="2">
-                    <StatusInfo Status="@_status" EnvelopeStatus="@_envelopeStatus" MdmTicketNumber="@_mdmTicketNumber" AgreementType="@_agreementType" />
+                    <StatusInfo Status="@_status" EnvelopeStatus="@_envelopeStatus" MdmTicketNumber="@_mdmTicketNumber" AgreementType="@_agreementType"/>
                 </GridLayoutItem>
                 <GridLayoutItem Row="3" Column="1">
                     <div class="grid-layout-heading k-text-uppercase k-font-weight-bold k-text-inverse">Carrier Information</div>
                 </GridLayoutItem>
                 <GridLayoutItem Row="4" Column="1" ColumnSpan="2">
-                    <CarrierInfo StripTabList="@CourierStripTabList" TxtInputList="@CourierTxtInputList" />
+                    <CarrierInfo StripTabList="@CourierStripTabList" TxtInputList="@CourierTxtInputList"/>
                 </GridLayoutItem>
                 <GridLayoutItem Row="3" Column="3">
                     <div class="grid-layout-heading k-text-uppercase k-font-weight-bold k-text-inverse">Sites & Documents</div>
                 </GridLayoutItem>
                 <GridLayoutItem Row="4" Column="3" ColumnSpan="2">
-                    <SitesAndDocuments GridList="@GridDataList" LoadData="false" />
+                    <SitesAndDocuments GridList="@GridDataList" LoadData="false"/>
                 </GridLayoutItem>
             </GridLayoutItems>
         </TelerikGridLayout>
@@ -54,38 +53,50 @@
 </TelerikWindow>
 
 
-
-
 @code {
-    [Parameter]
-    public bool WindowIsVisible { get; set; }
+    [Parameter] public bool WindowIsVisible { get; set; }
 
-    [Parameter]
-    public EventCallback<bool> WindowIsVisibleChanged { get; set; }
+    [Parameter] public EventCallback<bool> WindowIsVisibleChanged { get; set; }
 
-    [Parameter]
-    public required AgreementResponse? Data { get; set; }
+    [Parameter] public required AgreementResponse? Data { get; set; }
 
     private List<StripTab> CourierStripTabList { get; set; } =
     [
         new StripTab { Title = "Primary Courier" },
-    new StripTab { Title = "LTL Courier" }
+        new StripTab { Title = "LTL Courier" }
     ];
 
     private List<TxtInput> CourierTxtInputList { get; set; } =
     [
-        new TxtInput { Label = "Courier Name", ForName = "primaryCourierName", PlaceHolder = "Courier Name", BindValue = "", StripTitleName="Primary Courier" },
-        new TxtInput { Label = "Account Number", ForName = "primaryAcctNumber", PlaceHolder = "Account Number", BindValue = "", StripTitleName="Primary Courier"},
-        new TxtInput { Label = "LTL Courier Name", ForName = "ltlCourierName", PlaceHolder = "LTL Carrier Name", BindValue = "", StripTitleName="LTL Courier"},
-        new TxtInput { Label = "LTL Courier Bill To", ForName = "ltlCourierBillTo", PlaceHolder = "LTL Bill To Name", BindValue = "", StripTitleName="LTL Courier"},
-        new TxtInput { Label = "LTL Address", ForName = "ltlCarrierAddress", PlaceHolder = "LTL Carrier Address", BindValue = "", StripTitleName="LTL Courier"}
+        new TxtInput { Label = "Courier Name", ForName = "primaryCourierName", PlaceHolder = "Courier Name", BindValue = "", StripTitleName = "Primary Courier" },
+        new TxtInput { Label = "Account Number", ForName = "primaryAcctNumber", PlaceHolder = "Account Number", BindValue = "", StripTitleName = "Primary Courier" },
+        new TxtInput { Label = "LTL Courier Name", ForName = "ltlCourierName", PlaceHolder = "LTL Carrier Name", BindValue = "", StripTitleName = "LTL Courier" },
+        new TxtInput { Label = "LTL Courier Bill To", ForName = "ltlCourierBillTo", PlaceHolder = "LTL Bill To Name", BindValue = "", StripTitleName = "LTL Courier" },
+        new TxtInput { Label = "LTL Address", ForName = "ltlCarrierAddress", PlaceHolder = "LTL Carrier Address", BindValue = "", StripTitleName = "LTL Courier" }
     ];
 
-    private List<ModalGrid> GridDataList { get; set; } =
+    private List<IModalGrid> GridDataList { get; set; } =
     [
-        new ModalGrid { GridName = "Sites", GridData = null, Columns = [ new ModalGridColumn() { Field = "SiteNumber", Title = "Site #" }, new ModalGridColumn() {Field = "FullAddress", Title = "Site Address"} ]},
-        new ModalGrid { GridName = "Documents", GridData = null, Columns = [new ModalGridColumn() { Field = "DocumentName", Title = "Document Name" }]}
+        new ModalGrid<SiteResponse>
+        {
+            GridName = "Sites",
+            GridData = null,
+            Columns =
+            [
+                new ModalGridColumn { Field = "SiteNumber", Title = "Site #" },
+                new ModalGridColumn { Field = "FullAddress", Title = "Site Address" }
+            ]
+        },
+
+        new ModalGrid<DocumentResponse>
+        {
+            GridName = "Documents",
+            GridData = null,
+            Columns = [new ModalGridColumn { Field = "DocumentName", Title = "Document Name", Width = "5px" }],
+            IsDocumentGrid = true
+        }
     ];
+
 
     string? _status;
     string? _agreementType;
@@ -101,7 +112,7 @@
         //Console.WriteLine(Data.ToString());
         //if (agreement.Envelope is not null) _envelopeStatus = agreement.Envelope.EnvelopeStatus.ToString();
         if (Data is null) return;
-        _status = Data.Status.ToString();
+        _status = Data.StatusDisplayName;
         _agreementType = Data.AgreementType.ToString();
         _mdmTicketNumber = Data.TicketNumber.HasValue() ? Data.TicketNumber : "Pending";
         _businessName = Data.BusinessName.HasValue() ? Data.BusinessName : "";
@@ -111,7 +122,6 @@
         if (Data.Envelope is not null) _envelopeStatus = Data.Envelope.EnvelopeStatus.ToString();
         if (Data.Carriers != null && Data.Carriers.Any())
         {
-
             var primaryCourier = Data.Carriers.FirstOrDefault(c => c.CarrierType == CarrierType.Parcel);
 
             if (primaryCourier is not null)
@@ -139,10 +149,21 @@
             }
         }
 
-        GridDataList[0].GridData = Data.Sites.Cast<object>().ToList();
-        
-        GridDataList[1].GridData = Data.Documents is not null ? Data.Documents.Cast<object>().ToList() : [];
+
+        var sitesGrid = GridDataList.OfType<ModalGrid<SiteResponse>>().FirstOrDefault(g => g.GridName == "Sites");
+        if (sitesGrid != null)
+        {
+            sitesGrid.GridData = Data.Sites.ToList();
+        }
 
 
+        if (Data.Documents == null) return;
+
+        var documentsGrid = GridDataList.OfType<ModalGrid<DocumentResponse>>().FirstOrDefault(g => g.GridName == "Documents");
+        if (documentsGrid != null)
+        {
+            documentsGrid.GridData = Data.Documents.ToList();
+        }
     }
+
 }

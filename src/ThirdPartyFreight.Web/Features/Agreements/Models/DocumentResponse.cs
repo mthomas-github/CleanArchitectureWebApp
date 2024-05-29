@@ -8,4 +8,6 @@ public sealed class DocumentResponse
     public string DocumentName { get; set; }
     public string DocumentData { get; set; }
     public DocumentType DocumentType { get; set; }
+    
+    public bool IsPdf => DocumentType.Equals(DocumentType.Agreement);
 }

@@ -36,9 +36,7 @@
 
     [Parameter]
     public AgreementResponse? DataModel { get; set; }
-
-    private List<ModalGrid> GridDataList { get; set; } = [];
-
+    
     string? _status;
     string? _agreementType;
     string? _envelopeStatus = string.Empty;
@@ -47,11 +45,11 @@
     string? _customerNumber;
     string? _contactEmail;
     string? _contactName;
-
+    private List<IModalGrid> GridDataList { get; set; } = [];
     protected override void OnParametersSet()
     {
         if (DataModel is null) return;
-        _status = DataModel.Status.ToString();
+        _status = DataModel.StatusDisplayName;
         _agreementType = DataModel.AgreementType.ToString();
         _envelopeStatus = DataModel.Envelope!.EnvelopeStatus.ToString();
         _businessName = DataModel.BusinessName;
@@ -59,30 +57,31 @@
         _contactEmail = DataModel.ContactEmail;
         _contactName = DataModel.ContactName;
 
-
-        var sites = new ModalGrid
+        
+        var sites = new ModalGrid<SiteResponse>
             {
                 GridName = "Sites",
-                GridData = DataModel.Sites.Cast<object>().ToList(),
+                IsDocumentGrid = false,
+                GridData = DataModel.Sites.ToList(),
                 Columns =
                         [
-                            new ModalGridColumn { Field = "SiteNumber", Title = "Site #" },
-                            new ModalGridColumn { Field = "FullAddress", Title = "Site Address" }
+                            new ModalGridColumn { Field = "SiteNumber", Title = "Site #", Width = "10px" },
+                            new ModalGridColumn { Field = "FullAddress", Title = "Site Address", Width = "20px" }
                         ]
             };
 
         DataModel.Documents ??= [];
-        var docs = new ModalGrid
+        var docs = new ModalGrid<DocumentResponse>
             {
                 GridName = "Documents",
-                GridData = DataModel.Documents.Cast<object>().ToList(),
+                IsDocumentGrid = true,
+                GridData = DataModel.Documents.ToList(),
                 Columns =
                                     [
-                                        new ModalGridColumn { Field = "DocumentType", Title = "Document AgreementType" }
+                                        new ModalGridColumn { Field = "DocumentType", Title = "Document AgreementType", Width = "20px"},
                                     ]
             };
 
-        if (GridDataList.Any()) return;
         GridDataList.Add(sites);
         GridDataList.Add(docs);
     }
