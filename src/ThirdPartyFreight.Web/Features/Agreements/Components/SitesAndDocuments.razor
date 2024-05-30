@@ -1,4 +1,6 @@
-﻿@inject HttpClient Http
+﻿@using ThirdPartyFreight.Domain.Documents
+@inject HttpClient Http
+@inject  IJSRuntime JsRuntime
 
 @if (GridList.Count >= 1)
 {
@@ -49,7 +51,7 @@
                                     }
                                     else
                                     {
-                                        <GridCommandButton Icon="@SvgIcon.Download"></GridCommandButton>
+                                        <GridCommandButton Icon="@SvgIcon.Download" OnClick="@((args)=> OnDownload(args.Item as DocumentResponse))"></GridCommandButton>
                                     }
                                 </GridCommandColumn>
                             </GridColumns>
@@ -164,6 +166,28 @@ else
         }
 
         VisiblePdf = !VisiblePdf;
+    }
+
+    private async Task OnDownload(DocumentResponse? item)
+    {
+        if (item is null) return;
+
+        var mimeType = item.DocumentType switch
+        {
+            DocumentType.RoutingGuide or DocumentType.MultiTemplate => "application/vnd.ms-excel\t",
+            DocumentType.Agreement => "application/pdf",
+            _ => "text/plain"
+        };
+
+        var documentName = item.DocumentType switch
+        {
+            DocumentType.RoutingGuide => "RoutingGuide.xlsx",
+            DocumentType.MultiTemplate => "MultiTemplate.xlsx",
+            DocumentType.Agreement => "agreement.pdf",
+            _ => "download.txt"
+        };
+
+        await JsRuntime.InvokeVoidAsync("downloadFile", mimeType, item.DocumentData, documentName);
     }
 
 }
