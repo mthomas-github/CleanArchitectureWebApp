@@ -1,5 +1,4 @@
-﻿@using ThirdPartyFreight.Domain.Documents
-@inject HttpClient Http
+﻿@inject HttpClient Http
 
 @if (GridList.Count >= 1)
 {
@@ -44,10 +43,13 @@
                                     <GridColumn Field="@col.Field" Title="@col.Title"/>
                                 }
                                 <GridCommandColumn Width="100px">
-                                    <GridCommandButton Icon="@SvgIcon.Download"></GridCommandButton>
                                     @if (((DocumentResponse)context).IsPdf)
                                     {
-                                        <GridCommandButton Icon="@SvgIcon.FilePdf" />
+                                        <GridCommandButton Icon="@SvgIcon.FilePdf" OnClick="@((args)=> TogglerPdfViewer(args.Item as DocumentResponse))" />
+                                    }
+                                    else
+                                    {
+                                        <GridCommandButton Icon="@SvgIcon.Download"></GridCommandButton>
                                     }
                                 </GridCommandColumn>
                             </GridColumns>
@@ -58,6 +60,8 @@
             </TabStripTab>
         }
     </TelerikTabStrip>
+    <PopupWindow IsVisiblePdf="@VisiblePdf" Data="@DocumentBase64String" />
+                
 }
 else
 {
@@ -99,6 +103,7 @@ else
             <GridColumn Field="FullAddress" Title="Site Address" VisibleInColumnChooser="true" Width="35px"/>
         </GridColumns>
     </TelerikGrid>
+
 }
 
 
@@ -125,7 +130,8 @@ else
     int DebounceDelay { get; set; } = 200;
     string Placeholder { get; set; } = "Search...";
     List<SiteResponse> _selectedSites = [];
-
+    private string? DocumentBase64String { get; set; }
+    bool VisiblePdf { get; set; }
     protected override async Task OnInitializedAsync()
     {
         if (IsInitialDataLoadComplete == false && LoadData)
@@ -148,5 +154,16 @@ else
         if (DataModel != null) DataModel.Sites = _selectedSites;
     }
 
+
+    private void TogglerPdfViewer(DocumentResponse? item)
+    {
+        if (item is null) return;
+        if (!string.IsNullOrEmpty(item.DocumentData))
+        {
+            DocumentBase64String = item.DocumentData;
+        }
+
+        VisiblePdf = !VisiblePdf;
+    }
 
 }

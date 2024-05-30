@@ -48,7 +48,7 @@
         </TelerikGridLayout>
     </WindowContent>
     <WindowFooter>
-        <TelerikButton Icon="@SvgIcon.X" OnClick="@(() => WindowIsVisibleChanged.InvokeAsync(false))">Close</TelerikButton>
+        <TelerikButton Icon="@SvgIcon.X" OnClick="Cancel">Close</TelerikButton>
     </WindowFooter>
 </TelerikWindow>
 
@@ -59,7 +59,7 @@
     [Parameter] public EventCallback<bool> WindowIsVisibleChanged { get; set; }
 
     [Parameter] public required AgreementResponse? Data { get; set; }
-
+    public void Cancel() => WindowIsVisible = false;
     private List<StripTab> CourierStripTabList { get; set; } =
     [
         new StripTab { Title = "Primary Courier" },

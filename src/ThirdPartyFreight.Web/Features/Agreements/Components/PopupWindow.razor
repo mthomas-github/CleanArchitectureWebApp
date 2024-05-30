@@ -1,0 +1,25 @@
+﻿<TelerikWindow
+    Height="fit-content"
+    Centered="true"
+    Visible="@IsVisiblePdf"
+    FooterLayoutAlign="WindowFooterLayoutAlign.Center"
+    Modal="true"
+    VisibleChanged="@IsVisibleChanged">
+    <WindowActions>
+        <WindowAction Name="Close"/>
+    </WindowActions>
+    <WindowContent>
+        <PdfViewer PdfString="@Data"/>
+    </WindowContent>
+    <WindowFooter>
+        <TelerikButton Icon="@SvgIcon.X" OnClick="Cancel">Close</TelerikButton>
+    </WindowFooter>
+</TelerikWindow>
+
+@code {
+    [Parameter] public bool IsVisiblePdf { get; set; }
+    
+    [Parameter] public required string Data { get; set; }
+    [Parameter] public EventCallback<bool> IsVisibleChanged { get; set; }
+    public void Cancel() => IsVisiblePdf = false;
+}

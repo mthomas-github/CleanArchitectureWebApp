@@ -12,12 +12,12 @@
     [Parameter]
     public required string PdfString { get; set; }
     
-    protected override async Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
         var fileBytes = Convert.FromBase64String(PdfString);
 
         FileData = fileBytes;
 
-        await base.OnInitializedAsync();
+        //await base.OnInitializedAsync();
     }
 }
