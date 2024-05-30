@@ -47,7 +47,7 @@ public class ExcelService : IExcelService
                 string billTo =
                     $"{billToHeader}\n{currentObj.LtlAddress}\n{currentObj.LtlCity} {currentObj.LtlState} {currentObj.LtlZipcode}";
 
-                worksheet.Cell("D2").Value = "0-150-- " + currentObj.ParcelCarrierAcct;
+                worksheet.Cell("D2").Value = "0-150-- " + currentObj.SecondaryParcelCarrierName;
 
                 if (string.IsNullOrEmpty(currentObj.SecondaryParcelCarrierName))
                 {

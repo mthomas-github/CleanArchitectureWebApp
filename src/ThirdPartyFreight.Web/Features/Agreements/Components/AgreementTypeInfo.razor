@@ -43,9 +43,9 @@
 
     private readonly List<AgreementButton> _agreementButtons =
     [
-        new AgreementButton { BtnLabel = "Add", IsActive = false, AgreementType = AgreementType.Add, Description = "When customer request to add a new ship to site to there agreement or adding for the first time."},
-        new AgreementButton { BtnLabel = "Remove", IsActive = false, AgreementType = AgreementType.Removal, Description = "When customer request to remove a site from agreement, or if an internal request comes in with invalid information."},
-        new AgreementButton { BtnLabel = "Update", IsActive = false, AgreementType = AgreementType.Update, Description = "Use this when we are going to be updating information, for example: Carrier information Needs to be updated."}
+        new AgreementButton { BtnLabel = "Add", IsActive = false, AgreementType = AgreementType.Add, Description = "Use \"Add: \" When adding a new site."},
+        new AgreementButton { BtnLabel = "Remove", IsActive = false, AgreementType = AgreementType.Removal, Description = "Use \"Remove: \" When customer request to remove a site or internal request."},
+        new AgreementButton { BtnLabel = "Update", IsActive = false, AgreementType = AgreementType.Update, Description = "Use \"Update: \" When updating carrier information." }
     ];
 
     protected 

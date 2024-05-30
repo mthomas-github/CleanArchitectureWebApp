@@ -9,4 +9,5 @@ public sealed class CarrierResponse
     public string CarrierAccount { get; set; }
     public string CarrierAddress { get; set; }
     public CarrierType CarrierType { get; set; }
+    
 }
