@@ -30,7 +30,7 @@ public class CustomerController(ISender sender) : ControllerBase
 
         Result<IReadOnlyList<CustomerResponse>> result = await sender.Send(query, cancellationToken);
 
-        return result.IsSuccess ? Ok(result.Value.Take(10000)) : NotFound(result.Error);
+        return result.IsSuccess ? Ok(result.Value) : NotFound(result.Error);
     }
-
+    
 }

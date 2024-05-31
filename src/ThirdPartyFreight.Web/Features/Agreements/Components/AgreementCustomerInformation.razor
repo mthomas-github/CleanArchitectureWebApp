@@ -16,20 +16,49 @@ else
         <TelerikCard Class="select-customer-card">
             <CardBody>
                 <label for="customer-select" class="label-space">Select a Customer:</label>
-                <TelerikAutoComplete ScrollMode="@DropDownScrollMode.Virtual"
+            @*<TelerikAutoComplete ScrollMode="DropDownScrollMode.Virtual"
                                      Id="customer-select"
                                      class="customer-select-au"
                                      Data="@Customers"
                                      ValueField="@(nameof(CustomerResponse.CustomerNumber))"
                                      Width="100%"
                                      Filterable="true"
-                                     PageSize="50"
+                                     PageSize="20"
                                      ItemHeight="35"
                                      Placeholder="Start Typing Customer #..."
-                                     FilterOperator="@StringFilterOperator.StartsWith"
+                                     FilterOperator="@StringFilterOperator.Contains"
                                      @bind-Value="@_customerNumber"
-                                     OnChange="@SetCustomerName">
+                                     OnChange="@SetCustomerName">*@
+                <TelerikAutoComplete
+                    id="customer-select"
+                    class="customer-select-au"
+                    TItem="@CustomerResponse"
+                    OnChange="@SetCustomerName"
+                    ValueField="@(nameof(CustomerResponse.CustomerNumber))"
+                    Placeholder="Start Typing Customer #..."
+                    ScrollMode="DropDownScrollMode.Virtual"
+                    ItemHeight="30"
+                    PageSize="20"
+                    OnRead="@GetRemoteData"
+                    @bind-Value="@AutoCompleteValue"
+                    Filterable="true"
+                    FilterOperator="StringFilterOperator.StartsWith">
+                    <AutoCompleteSettings>
+                        <AutoCompletePopupSettings Height="300px"></AutoCompletePopupSettings>
+                    </AutoCompleteSettings>
+                    <ItemTemplate>
+                        <span>@($"{context.CustomerNumber} ({context.CustomerName})")</span>
+                    </ItemTemplate>
+                    <NoDataTemplate>
+                        <div>
+                            <TelerikSvgIcon Icon="@SvgIcon.InfoCircle" Size="@ThemeConstants.SvgIcon.Size.Large" />
+                            <br />
+                            <br />
+                            No items to display...
+                        </div>
+                    </NoDataTemplate>
                 </TelerikAutoComplete>
+                
                 <div style="margin-bottom: 10px">
                     <TelerikFloatingLabel Text="Business Name:" Class="custom-label">
                         <div class="k-form-field-wrap txt-margin-bottom">
@@ -68,9 +97,9 @@ else
 
 @code {
 
-    IEnumerable<CustomerResponse>? Customers { get; set; }
+    List<CustomerResponse>? Customers { get; set; }
 
-    private string _customerNumber = string.Empty;
+    private readonly string _customerNumber = string.Empty;
     private string _businessName = string.Empty;
     bool _isLoading = true;
 
@@ -80,22 +109,37 @@ else
     [Parameter]
     public EventCallback<AgreementResponse> DataModelChanged { get; set; }
 
+    string AutoCompleteValue { get; set; } = "";
+
     protected override async Task OnInitializedAsync()
     {
-        Customers = await Http.GetFromJsonAsync<IEnumerable<CustomerResponse>>(GetCustomersEndPoint);
+        Customers = await Http.GetFromJsonAsync<List<CustomerResponse>>(GetCustomersEndPoint);
         _isLoading = false;
     }
 
+    private async Task GetRemoteData(AutoCompleteReadEventArgs args)
+    {
+        if (Customers is null)
+        {
+            args.Data = null;
+            args.Total = 0;
+        }
+        else
+        {
+
+            var result = await Customers.ToDataSourceResultAsync(args.Request);
+            if (result is null) return;
+            args.Data = result.Data;
+            args.Total = result.Total;
+        }
+    }
+    
     private void SetCustomerName()
     {
         try
         {
-            if (Customers == null)
-            {
-                Console.WriteLine("Customers collection is null.");
-                return;
-            }
-
+            if (Customers == null) return;
+            
             var customer = Customers.FirstOrDefault(x => x.CustomerNumber.ToString() == _customerNumber);
             if (customer != null && DataModel is not null)
             {

@@ -2,6 +2,6 @@
 
 public sealed class CustomerResponse
 {
-    public int CustomerNumber { get; set; }
+    public string CustomerNumber { get; set; }
     public string CustomerName { get; set; }
 }
