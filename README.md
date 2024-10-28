@@ -1,0 +1,1 @@
+This project is a C# .NET Core Project using the Clean Architecture, this has API layer and started on Blazor Web Assemply, this was used also as a prototype project that developed for my last company. This also has several different system including Redis, KeyClock, SEQ, MSSQQL DB, Docker and Esla WorkFlows
